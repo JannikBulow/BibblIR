@@ -52,7 +52,7 @@ namespace bibblir {
         return mLoopEnd;
     }
 
-    bool BasicBlock::exists() {
+    bool BasicBlock::exists() const {
         return mExists;
     }
 

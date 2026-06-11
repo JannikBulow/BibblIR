@@ -24,7 +24,7 @@ namespace bibblir {
         std::vector<BasicBlock*>& successors();
         std::vector<BasicBlock*>& predecessors();
         BasicBlock*& loopEnd();
-        bool exists();
+        bool exists() const;
 
         void accept(Visitor& visitor) override;
 
