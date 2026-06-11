@@ -28,7 +28,7 @@ namespace bibblir {
 
         Module& getModule() const { return mModule; }
         Type* getType() const { return mType; }
-        virtual std::vector<std::reference_wrapper<Value*>> getOperands(){ return {}; }
+        virtual std::vector<std::reference_wrapper<Value*>> getOperands() { return {}; }
         virtual bool isConstant() const { return false; }
 
         bool requiresRegister() const { return mRequiresRegister; }
