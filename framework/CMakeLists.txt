@@ -20,6 +20,7 @@ set(SOURCES
 
 set(HEADERS
     include/BibblIR/ir/basicblock.h
+    include/BibblIR/ir/global.h
     include/BibblIR/ir/value.h
 
     include/BibblIR/type/integer_type.h
