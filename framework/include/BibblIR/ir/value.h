@@ -9,6 +9,7 @@
 
 #include <BibbleASM/instruction/operand.h>
 
+#include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
@@ -50,6 +51,8 @@ namespace bibblir {
         bool mRegisterSmashesDone = false;
         int mPreferredRegister = -1;
     };
+
+    using ValuePtr = std::unique_ptr<Value>;
 }
 
 #endif // BIBBLIR_IR_VALUE_H
