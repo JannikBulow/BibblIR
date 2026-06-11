@@ -36,6 +36,26 @@ namespace bibblir {
         });
     }
 
+    std::vector<Value*>& BasicBlock::liveIn() {
+        return mLiveIn;
+    }
+
+    std::vector<BasicBlock*>& BasicBlock::successors() {
+        return mSuccessors;
+    }
+
+    std::vector<BasicBlock*>& BasicBlock::predecessors() {
+        return mPredecessors;
+    }
+
+    BasicBlock*& BasicBlock::loopEnd() {
+        return mLoopEnd;
+    }
+
+    bool BasicBlock::exists() {
+        return mExists;
+    }
+
     void BasicBlock::accept(Visitor& visitor) {
         visitor.visit(*this);
     }

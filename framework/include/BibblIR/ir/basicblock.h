@@ -20,6 +20,12 @@ namespace bibblir {
         void insertValue(Value* insertAfter, ValuePtr value);
         void eraseValue(Value* value);
 
+        std::vector<Value*>& liveIn();
+        std::vector<BasicBlock*>& successors();
+        std::vector<BasicBlock*>& predecessors();
+        BasicBlock*& loopEnd();
+        bool exists();
+
         void accept(Visitor& visitor) override;
 
     private:
@@ -27,6 +33,14 @@ namespace bibblir {
         Function* mParent;
 
         std::vector<ValuePtr> mValueList;
+        std::vector<Value*> mLiveIn;
+
+        std::vector<BasicBlock*> mSuccessors;
+        std::vector<BasicBlock*> mPredecessors;
+
+        BasicBlock* mLoopEnd = nullptr;
+
+        bool mExists = true;
 
         BasicBlock(std::string name, Function* parent);
 
