@@ -16,8 +16,8 @@ namespace bibblir {
     public:
         Function* getParent() const;
 
-        void insertValue(Value* value);
-        void insertValue(Value* insertAfter, Value* value);
+        void insertValue(ValuePtr value);
+        void insertValue(Value* insertAfter, ValuePtr value);
         void eraseValue(Value* value);
 
         void accept(Visitor& visitor) override;
@@ -32,6 +32,8 @@ namespace bibblir {
 
         void setEmittedValue(); // called when emitting a function
     };
+
+    using BasicBlockPtr = std::unique_ptr<BasicBlock>;
 }
 
 #endif //BIBBLIR_IR_BASICBLOCK_H
