@@ -17,6 +17,7 @@ namespace bibblir {
         explicit Module(std::string name);
 
         std::string_view getName() const;
+        int getNextValueId();
 
         const std::vector<GlobalPtr>& getGlobals() const;
         void insertGlobal(GlobalPtr global);
@@ -29,6 +30,8 @@ namespace bibblir {
 
     private:
         std::string mName;
+
+        int mNextValueId = 0;
 
         std::vector<GlobalPtr> mGlobals;
         std::vector<ValuePtr> mConstants;

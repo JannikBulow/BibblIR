@@ -12,6 +12,10 @@ namespace bibblir {
         return mName;
     }
 
+    int Module::getNextValueId() {
+        return ++mNextValueId;
+    }
+
     const std::vector<GlobalPtr>& Module::getGlobals() const {
         return mGlobals;
     }
