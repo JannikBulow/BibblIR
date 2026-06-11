@@ -10,6 +10,8 @@ FetchContent_Declare(BibbleASM
 FetchContent_MakeAvailable(BibbleASM)
 
 set(SOURCES
+    src/ir/basicblock.cpp
+
     src/type/type.cpp
 
     src/module.cpp
@@ -17,6 +19,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    include/BibblIR/ir/basicblock.h
     include/BibblIR/ir/value.h
 
     include/BibblIR/type/integer_type.h
