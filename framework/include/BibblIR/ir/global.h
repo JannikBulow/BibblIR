@@ -11,6 +11,8 @@ namespace bibblir {
         Global(Module& module) : Value(module) {}
         ~Global() override = default;
     };
+
+    using GlobalPtr = std::unique_ptr<Global>;
 }
 
 #endif //BIBBLIR_IR_GLOBAL_H
