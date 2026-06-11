@@ -1,0 +1,51 @@
+// Copyright 2026 Jannik Laugmand Bülow
+
+#ifndef BIBBLIR_IR_FUNCTION_H
+#define BIBBLIR_IR_FUNCTION_H
+
+#include "BibblIR/ir/basicblock.h"
+#include "BibblIR/ir/global.h"
+
+#include "BibblIR/type/function_type.h"
+
+namespace bibblir {
+    class Argument : public Value {
+    public:
+        Argument(Module& module, Type* type, std::string name, int index);
+
+        void accept(Visitor& visitor) override;
+
+    private:
+        std::string mName;
+        int mIndex;
+    };
+
+    using ArgumentPtr = std::unique_ptr<Argument>;
+
+    class Function : public Global {
+    public:
+        static Function* Create(Module& module, FunctionType* type, std::string name);
+
+        FunctionType* getFunctionType() const;
+        Argument* getArgument(int index) const;
+
+        BasicBlock* createBasicBlock(std::string name);
+        size_t getBasicBlockCount() const;
+        std::vector<BasicBlockPtr>& basicBlocks();
+
+        void accept(Visitor& visitor) override;
+
+    private:
+        std::string mName;
+        std::vector<ArgumentPtr> mArguments;
+
+        std::vector<BasicBlockPtr> mBasicBlockList;
+
+        Function(Module& module, FunctionType* type, std::string name);
+
+        void orderBasicBlocks();
+        void setEmittedValue();
+    };
+}
+
+#endif //BIBBLIR_IR_FUNCTION_H
