@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#include "BibblIR/type/function_type.h"
 #include "BibblIR/type/integer_type.h"
 
 namespace bibblir {
@@ -45,5 +46,17 @@ namespace bibblir {
             [](IntegerType* value, int bytes) { return value->getSizeInBytes() == bytes; },
             [](int bytes) { return std::make_unique<IntegerType>(bytes); }
         >(bytes);
+    }
+
+    Type* Type::GetFunctionType(Type* returnType, const std::vector<Type*>& argumentTypes) {
+        return GetType<
+            FunctionType,
+            [](FunctionType* value, Type* returnType, const std::vector<Type*>& argumentTypes) {
+                return value->getReturnType() == returnType && value->getArgumentTypes() == argumentTypes;
+            },
+            [](Type* returnType, const std::vector<Type*>& argumentTypes) {
+                return std::make_unique<FunctionType>(returnType, argumentTypes);
+            }
+        >(returnType, argumentTypes);
     }
 }

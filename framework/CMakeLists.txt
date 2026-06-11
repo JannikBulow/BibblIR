@@ -23,6 +23,7 @@ set(HEADERS
     include/BibblIR/ir/global.h
     include/BibblIR/ir/value.h
 
+    include/BibblIR/type/function_type.h
     include/BibblIR/type/integer_type.h
     include/BibblIR/type/type.h
     include/BibblIR/type/void_type.h
