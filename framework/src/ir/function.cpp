@@ -102,8 +102,4 @@ namespace bibblir {
             mBasicBlockList.push_back(BasicBlockPtr(bb));
         }
     }
-
-    void Function::setEmittedValue() {
-        //TODO: const-pool manager, then use that to set emitted value to the constant pool index of this function
-    }
 }

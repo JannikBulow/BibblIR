@@ -44,7 +44,6 @@ namespace bibblir {
         Function(Module& module, FunctionType* type, std::string name);
 
         void orderBasicBlocks();
-        void setEmittedValue();
     };
 }
 
