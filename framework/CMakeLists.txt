@@ -14,9 +14,9 @@ set(SOURCES
     src/ir/function.cpp
 
     src/type/type.cpp
+    src/type/types.cpp
 
     src/module.cpp
-    src/type/types.cpp
 )
 
 set(HEADERS
