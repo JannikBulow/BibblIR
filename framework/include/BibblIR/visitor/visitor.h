@@ -18,6 +18,7 @@ namespace bibblir {
         virtual void visit(Module& module) = 0;
 
         virtual void visit(Function& function) = 0;
+
         virtual void visit(BasicBlock& block) = 0;
 
         virtual void visit(Argument& arg) = 0;
