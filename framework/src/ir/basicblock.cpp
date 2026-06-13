@@ -56,6 +56,10 @@ namespace bibblir {
         return mExists;
     }
 
+    std::string BasicBlock::identifier() const {
+        return "label " + mName;
+    }
+
     void BasicBlock::accept(Visitor& visitor) {
         visitor.visit(*this);
     }

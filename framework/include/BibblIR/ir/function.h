@@ -14,6 +14,8 @@ namespace bibblir {
     public:
         Argument(Module& module, Type* type, std::string name, int index);
 
+        std::string identifier() const override;
+
         void accept(Visitor& visitor) override;
 
     private:
@@ -34,6 +36,8 @@ namespace bibblir {
         BasicBlock* createBasicBlock(std::string name);
         size_t getBasicBlockCount() const;
         std::vector<BasicBlockPtr>& basicBlocks();
+
+        std::string identifier() const override;
 
         void accept(Visitor& visitor) override;
 

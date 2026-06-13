@@ -34,6 +34,8 @@ namespace bibblir {
         bool requiresRegister() const { return mRequiresRegister; }
         void setPreferredRegister(int id) { mPreferredRegister = id; }
 
+        virtual std::string identifier() const = 0;
+
         virtual void accept(Visitor& visitor) = 0;
 
     protected:

@@ -27,6 +27,8 @@ namespace bibblir {
         BasicBlock*& loopEnd();
         bool exists() const;
 
+        std::string identifier() const override;
+
         void accept(Visitor& visitor) override;
 
     private:

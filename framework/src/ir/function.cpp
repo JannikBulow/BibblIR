@@ -16,6 +16,10 @@ namespace bibblir {
         mType = type;
     }
 
+    std::string Argument::identifier() const {
+        return mName;
+    }
+
     void Argument::accept(Visitor& visitor) {
         visitor.visit(*this);
     }
@@ -51,6 +55,10 @@ namespace bibblir {
 
     std::vector<BasicBlockPtr>& Function::basicBlocks() {
         return mBasicBlockList;
+    }
+
+    std::string Function::identifier() const {
+        return mName;
     }
 
     void Function::accept(Visitor& visitor) {
