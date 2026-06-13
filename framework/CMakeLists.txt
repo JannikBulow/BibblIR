@@ -12,6 +12,7 @@ FetchContent_MakeAvailable(BibbleASM)
 set(SOURCES
     src/ir/basicblock.cpp
     src/ir/function.cpp
+    src/ir/instruction.cpp
 
     src/type/type.cpp
     src/type/types.cpp
@@ -25,6 +26,7 @@ set(HEADERS
     include/BibblIR/ir/basicblock.h
     include/BibblIR/ir/function.h
     include/BibblIR/ir/global.h
+    include/BibblIR/ir/instruction.h
     include/BibblIR/ir/value.h
 
     include/BibblIR/type/function_type.h
