@@ -10,6 +10,7 @@
 
 namespace bibblir {
     class BIBBLIR_EXPORT Argument : public Value {
+        friend class CodegenVisitor;
         friend class PrintVisitor;
     public:
         Argument(Module& module, Type* type, std::string name, int index);
@@ -26,6 +27,7 @@ namespace bibblir {
     using ArgumentPtr = std::unique_ptr<Argument>;
 
     class BIBBLIR_EXPORT Function : public Global {
+        friend class CodegenVisitor;
         friend class PrintVisitor;
     public:
         static Function* Create(Module& module, FunctionType* type, std::string name);

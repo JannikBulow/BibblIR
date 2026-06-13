@@ -20,6 +20,7 @@ set(SOURCES
     src/type/type.cpp
     src/type/types.cpp
 
+    src/visitor/codegen_visitor.cpp
     src/visitor/print_visitor.cpp
 
     src/module.cpp
@@ -40,6 +41,7 @@ set(HEADERS
     include/BibblIR/type/type.h
     include/BibblIR/type/void_type.h
 
+    include/BibblIR/visitor/codegen_visitor.h
     include/BibblIR/visitor/print_visitor.h
     include/BibblIR/visitor/visitor.h
 

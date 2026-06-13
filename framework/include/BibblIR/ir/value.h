@@ -19,6 +19,7 @@ namespace bibblir {
     class Visitor;
 
     class BIBBLIR_EXPORT Value {
+        friend class CodegenVisitor;
     public:
         Value(Module& module)
             : mModule(module)

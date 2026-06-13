@@ -12,6 +12,7 @@ namespace bibblir {
     class Function;
 
     class BIBBLIR_EXPORT BasicBlock : public Value {
+        friend class CodegenVisitor;
         friend class Function;
         friend class PrintVisitor;
     public:

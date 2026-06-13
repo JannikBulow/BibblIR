@@ -7,6 +7,7 @@
 
 namespace bibblir {
     class ReturnInstruction : public Instruction {
+        friend class CodegenVisitor;
         friend class IRBuilder;
         friend class PrintVisitor;
     public:
