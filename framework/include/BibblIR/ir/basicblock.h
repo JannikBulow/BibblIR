@@ -46,8 +46,6 @@ namespace bibblir {
         bool mExists = true;
 
         BasicBlock(std::string name, Function* parent);
-
-        void setEmittedValue(); // called when emitting a function
     };
 
     using BasicBlockPtr = std::unique_ptr<BasicBlock>;

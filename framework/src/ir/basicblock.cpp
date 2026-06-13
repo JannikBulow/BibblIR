@@ -78,8 +78,4 @@ namespace bibblir {
 
         if (alldigits) mName = "." + mName;
     }
-
-    void BasicBlock::setEmittedValue() {
-        mEmittedValue = bibbleasm::Label(mName);
-    }
 }
