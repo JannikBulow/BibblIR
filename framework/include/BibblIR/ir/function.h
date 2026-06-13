@@ -49,7 +49,8 @@ namespace bibblir {
 
         std::vector<BasicBlockPtr> mBasicBlockList;
 
-        uint16_t mRegisterCount = 1;
+        std::vector<std::unique_ptr<VReg>> mVRegs;
+        uint16_t mRegisterCount = 1; // real registers
 
         Function(Module& module, FunctionType* type, std::string name);
 
