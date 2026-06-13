@@ -1,0 +1,28 @@
+// Copyright 2026 Jannik Laugmand Bülow
+
+#ifndef BIBBLIR_VISITOR_PRINT_VISITOR_H
+#define BIBBLIR_VISITOR_PRINT_VISITOR_H
+
+#include "BibblIR/visitor/visitor.h"
+
+#include <ostream>
+
+namespace bibblir {
+    class PrintVisitor : public Visitor {
+    public:
+        explicit PrintVisitor(std::ostream& stream);
+
+        void visit(Module& module) override;
+
+        void visit(Function& function) override;
+
+        void visit(BasicBlock& block) override;
+
+        void visit(Argument& arg) override;
+
+    private:
+        std::ostream& mStream;
+    };
+}
+
+#endif //BIBBLIR_VISITOR_PRINT_VISITOR_H

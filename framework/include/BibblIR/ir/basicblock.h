@@ -13,6 +13,7 @@ namespace bibblir {
 
     class BasicBlock : public Value {
     friend class Function;
+    friend class PrintVisitor;
     public:
         Function* getParent() const;
 

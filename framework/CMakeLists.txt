@@ -16,6 +16,8 @@ set(SOURCES
     src/type/type.cpp
     src/type/types.cpp
 
+    src/visitor/print_visitor.cpp
+
     src/module.cpp
 )
 
@@ -30,6 +32,7 @@ set(HEADERS
     include/BibblIR/type/type.h
     include/BibblIR/type/void_type.h
 
+    include/BibblIR/visitor/print_visitor.h
     include/BibblIR/visitor/visitor.h
 
     include/BibblIR/module.h
