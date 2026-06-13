@@ -8,7 +8,7 @@
 #include <ostream>
 
 namespace bibblir {
-    class PrintVisitor : public Visitor {
+    class BIBBLIR_EXPORT PrintVisitor : public Visitor {
     public:
         explicit PrintVisitor(std::ostream& stream);
 

@@ -11,7 +11,7 @@
 namespace bibblir {
     class Function;
 
-    class BasicBlock : public Value {
+    class BIBBLIR_EXPORT BasicBlock : public Value {
     friend class Function;
     friend class PrintVisitor;
     public:

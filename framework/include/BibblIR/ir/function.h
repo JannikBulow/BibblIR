@@ -9,7 +9,7 @@
 #include "BibblIR/type/function_type.h"
 
 namespace bibblir {
-    class Argument : public Value {
+    class BIBBLIR_EXPORT Argument : public Value {
     friend class PrintVisitor;
     public:
         Argument(Module& module, Type* type, std::string name, int index);
@@ -23,7 +23,7 @@ namespace bibblir {
 
     using ArgumentPtr = std::unique_ptr<Argument>;
 
-    class Function : public Global {
+    class BIBBLIR_EXPORT Function : public Global {
     friend class PrintVisitor;
     public:
         static Function* Create(Module& module, FunctionType* type, std::string name);

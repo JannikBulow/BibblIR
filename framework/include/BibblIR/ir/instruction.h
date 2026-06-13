@@ -8,7 +8,7 @@
 namespace bibblir {
     class BasicBlock;
 
-    class Instruction : public Value {
+    class BIBBLIR_EXPORT Instruction : public Value {
     public:
         Instruction(Module& module, BasicBlock* parent) : Value(module), mParent(parent) {}
 

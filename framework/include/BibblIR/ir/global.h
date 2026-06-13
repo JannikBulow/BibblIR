@@ -6,7 +6,7 @@
 #include "BibblIR/ir/value.h"
 
 namespace bibblir {
-    class Global : public Value {
+    class BIBBLIR_EXPORT Global : public Value {
     public:
         Global(Module& module) : Value(module) {}
         ~Global() override = default;
