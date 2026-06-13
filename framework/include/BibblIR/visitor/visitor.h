@@ -11,6 +11,8 @@ namespace bibblir {
     class Function;
     class Module;
 
+    class ReturnInstruction;
+
     class BIBBLIR_EXPORT Visitor {
     public:
         virtual ~Visitor() = default;
@@ -22,6 +24,8 @@ namespace bibblir {
         virtual void visit(BasicBlock& block) = 0;
 
         virtual void visit(Argument& arg) = 0;
+
+        virtual void visit(ReturnInstruction& instruction) = 0;
     };
 }
 

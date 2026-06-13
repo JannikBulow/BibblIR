@@ -8,6 +8,8 @@
 
 #include <format>
 
+#include "BibblIR/ir/instruction/return_instruction.h"
+
 namespace bibblir {
     PrintVisitor::PrintVisitor(std::ostream& stream)
         : mStream(stream) {}
@@ -55,4 +57,13 @@ namespace bibblir {
     }
 
     void PrintVisitor::visit(Argument& arg) {}
+
+    void PrintVisitor::visit(ReturnInstruction& instruction) {
+        mStream << "return ";
+        if (instruction.mReturnValue) {
+            mStream << instruction.mReturnValue->identifier();
+        } else {
+            mStream << "void";
+        }
+    }
 }
