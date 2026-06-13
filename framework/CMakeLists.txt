@@ -17,6 +17,8 @@ set(SOURCES
     src/ir/function.cpp
     src/ir/instruction.cpp
 
+    src/optimizer/regalloc/vreg.cpp
+
     src/type/type.cpp
     src/type/types.cpp
 
@@ -35,6 +37,8 @@ set(HEADERS
     include/BibblIR/ir/global.h
     include/BibblIR/ir/instruction.h
     include/BibblIR/ir/value.h
+
+    include/BibblIR/optimizer/regalloc/vreg.h
 
     include/BibblIR/type/function_type.h
     include/BibblIR/type/integer_type.h

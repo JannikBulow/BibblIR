@@ -82,10 +82,10 @@ namespace bibblir {
             mInstBuilder->load_imm(bibbleasm::Register(0), bibbleasm::Immediate(67));
             mInstBuilder->return_(bibbleasm::Register(0)); // if the regalloc always makes sure there's 1 register available on void functions, we can do this safely
         } else {
-            if (!instruction.mRequiresRegister) { // in this case, the return value uses a register and that can be directly returned
-                mInstBuilder->return_(bibbleasm::Register(instruction.mReturnValue->mRegister));
+            if (instruction.mReturnValue->requiresVReg()) { // in this case, the return value uses a register and that can be directly returned
+                mInstBuilder->return_(instruction.mReturnValue->mVReg->toOperand());
             } else {
-                //TODO: implement codegen helpers to move an unknown value into a register, then use and return it here
+                //TODO: implement codegen helpers to move an unknown value into register 0, then use and return it here
             }
         }
     }
