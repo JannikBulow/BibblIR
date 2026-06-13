@@ -8,7 +8,7 @@ namespace bibblir {
     Module::Module(std::string name)
         : mName(std::move(name)) {}
 
-    std::string_view Module::getName() const {
+    const std::string& Module::getName() const {
         return mName;
     }
 

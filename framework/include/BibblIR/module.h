@@ -16,7 +16,7 @@ namespace bibblir {
     public:
         explicit Module(std::string name);
 
-        std::string_view getName() const;
+        const std::string& getName() const;
         int getNextValueId();
 
         const std::vector<GlobalPtr>& getGlobals() const;
