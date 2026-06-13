@@ -36,6 +36,10 @@ namespace bibblir {
     }
 
     BasicBlock* Function::createBasicBlock(std::string name) {
+        if (name.empty()) {
+            name = std::to_string(mModule.getNextValueId());
+        }
+
         BasicBlock* bb = new BasicBlock(std::move(name), this);
         mBasicBlockList.push_back(BasicBlockPtr(bb));
         return bb;
