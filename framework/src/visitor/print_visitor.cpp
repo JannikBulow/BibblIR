@@ -48,11 +48,13 @@ namespace bibblir {
     }
 
     void PrintVisitor::visit(BasicBlock& block) {
-        mStream << std::format("  {}:\n", block.mName);
-        for (const ValuePtr& value : block.mValueList) {
-            mStream << "    ";
-            value->accept(*this);
-            mStream << "\n";
+        if (block.exists()) {
+            mStream << std::format("  {}:\n", block.mName);
+            for (const ValuePtr& value : block.mValueList) {
+                mStream << "    ";
+                value->accept(*this);
+                mStream << "\n";
+            }
         }
     }
 
