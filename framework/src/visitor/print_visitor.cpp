@@ -38,7 +38,7 @@ namespace bibblir {
             }
             mStream << std::format("{} {}", function.mArguments.back()->mType->getName(), function.mArguments.back()->mName);
         }
-        mStream << std::format(") ->\n", function.getFunctionType()->getReturnType()->getName());
+        mStream << std::format(") -> {}\n", function.getFunctionType()->getReturnType()->getName());
 
         mStream << "{\n";
         for (const BasicBlockPtr& bb : function.mBasicBlockList) {
