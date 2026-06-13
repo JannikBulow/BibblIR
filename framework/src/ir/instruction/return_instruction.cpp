@@ -26,11 +26,14 @@ namespace bibblir {
     ReturnInstruction::ReturnInstruction(BasicBlock* parent, Value* returnValue)
         : Instruction(parent->getModule(), parent)
         , mReturnValue(returnValue) {
-        mRequiresRegister = true;
 
         if (!mReturnValue) {
+            // Assumption that r0 will always exist, maybe enforce it in codegen, that way we can avoid allocating another register here
+            mRequiresRegister = false;
             assert(mParent->getParent()->getFunctionType()->getReturnType()->isVoidType());
         } else {
+            // An ugly hack, but if the return value is a constant, this instruction needs its own register to move it to
+            mRequiresRegister = !mReturnValue->requiresRegister();
             assert(mReturnValue->getType() == mParent->getParent()->getFunctionType()->getReturnType());
         }
     }
