@@ -1,5 +1,7 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/ir/instruction/return_instruction.h"
+
 #include "BibblIR/ir/function.h"
 
 #include "BibblIR/visitor/print_visitor.h"
@@ -7,8 +9,6 @@
 #include "BibblIR/module.h"
 
 #include <format>
-
-#include "BibblIR/ir/instruction/return_instruction.h"
 
 namespace bibblir {
     PrintVisitor::PrintVisitor(std::ostream& stream)
