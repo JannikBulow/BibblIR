@@ -10,6 +10,8 @@ FetchContent_Declare(BibbleASM
 FetchContent_MakeAvailable(BibbleASM)
 
 set(SOURCES
+    src/ir/instruction/return_instruction.cpp
+
     src/ir/basicblock.cpp
     src/ir/function.cpp
     src/ir/instruction.cpp
@@ -23,6 +25,8 @@ set(SOURCES
 )
 
 set(HEADERS
+    include/BibblIR/ir/instruction/return_instruction.h
+
     include/BibblIR/ir/basicblock.h
     include/BibblIR/ir/function.h
     include/BibblIR/ir/global.h
