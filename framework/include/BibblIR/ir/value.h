@@ -53,7 +53,7 @@ namespace bibblir {
         VReg* mVReg = nullptr;
         bool mRequiresVReg = true;
         std::vector<VReg*> mDisallowedVRegs;
-        std::vector<int> mDisallowedRegisters; // real registers
+        std::vector<uint16_t> mDisallowedRegisters; // real registers
         bool mRegisterSmashesDone = false;
         int mPreferredRegister = -1; // real register
     };
