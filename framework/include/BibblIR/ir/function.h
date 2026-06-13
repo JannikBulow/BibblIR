@@ -47,6 +47,8 @@ namespace bibblir {
 
         std::vector<BasicBlockPtr> mBasicBlockList;
 
+        uint16_t mRegisterCount = 1;
+
         Function(Module& module, FunctionType* type, std::string name);
 
         void orderBasicBlocks();
