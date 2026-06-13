@@ -1,8 +1,29 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include <BibblIR/ir/builder.h>
+#include <BibblIR/ir/function.h>
+
+#include <BibblIR/visitor/print_visitor.h>
+
+#include <BibblIR/module.h>
+
 #include <iostream>
 
+using namespace bibblir;
+
 int main() {
-    std::cout << "Hello World!" << std::endl;
+    Module module("Test");
+
+    IRBuilder builder;
+
+    Function* mainFunc = Function::Create(module, FunctionType::Create(Type::GetVoidType(), {}), "main");
+    BasicBlock* mainEntryBB = mainFunc->createBasicBlock("");
+
+    builder.setInsertPoint(mainEntryBB);
+    builder.createReturn(nullptr);
+
+    PrintVisitor printVisitor(std::cout);
+    module.accept(printVisitor);
+
     return 0;
 }
