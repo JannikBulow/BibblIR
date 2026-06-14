@@ -29,6 +29,7 @@ namespace bibblir {
     class BIBBLIR_EXPORT Function : public Global {
         friend class CodegenVisitor;
         friend class PrintVisitor;
+        friend class RegAlloc;
     public:
         static Function* Create(Module& module, FunctionType* type, std::string name);
 

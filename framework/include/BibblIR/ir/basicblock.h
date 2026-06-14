@@ -15,6 +15,7 @@ namespace bibblir {
         friend class CodegenVisitor;
         friend class Function;
         friend class PrintVisitor;
+        friend class RegAlloc;
     public:
         Function* getParent() const;
 

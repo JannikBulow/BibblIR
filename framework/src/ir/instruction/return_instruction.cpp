@@ -26,7 +26,7 @@ namespace bibblir {
     ReturnInstruction::ReturnInstruction(BasicBlock* parent, Value* returnValue)
         : Instruction(parent->getModule(), parent)
         , mReturnValue(returnValue) {
-        mRequiresVReg = false;
+        mRequiresVReg = true;
 
         if (!mReturnValue) {
             assert(mParent->getParent()->getFunctionType()->getReturnType()->isVoidType());

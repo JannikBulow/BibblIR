@@ -4,6 +4,8 @@
 
 #include "BibblIR/ir/function.h"
 
+#include "BibblIR/optimizer/regalloc/allocator.h"
+
 #include "BibblIR/visitor/codegen_visitor.h"
 
 #include "BibblIR/module.h"
@@ -28,7 +30,12 @@ namespace bibblir {
             }
         }
 
-        //TODO: regalloc here. it's so tightly coupled with codegen that i refuse to make it its own visitor. fight me
+        RegAlloc regalloc;
+        for (const GlobalPtr& global : globals) {
+            if (auto func = dynamic_cast<Function*>(global.get())) {
+                regalloc.assignVRegs(func);
+            }
+        }
 
         for (const ValuePtr& constant : constants) {
             constant->accept(*this);
@@ -79,8 +86,8 @@ namespace bibblir {
 
     void CodegenVisitor::visit(ReturnInstruction& instruction) {
         if (!instruction.mReturnValue) {
-            mInstBuilder->load_imm(bibbleasm::Register(0), bibbleasm::Immediate(67));
-            mInstBuilder->return_(bibbleasm::Register(0)); // if the regalloc always makes sure there's 1 register available on void functions, we can do this safely
+            mInstBuilder->load_imm(instruction.mVReg->toOperand(), bibbleasm::Immediate(67));
+            mInstBuilder->return_(instruction.mVReg->toOperand()); // if the regalloc always makes sure there's 1 register available on void functions, we can do this safely
         } else {
             if (instruction.mReturnValue->requiresVReg()) { // in this case, the return value uses a register and that can be directly returned
                 mInstBuilder->return_(instruction.mReturnValue->mVReg->toOperand());

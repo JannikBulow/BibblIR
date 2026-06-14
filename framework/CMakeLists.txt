@@ -17,6 +17,7 @@ set(SOURCES
     src/ir/function.cpp
     src/ir/instruction.cpp
 
+    src/optimizer/regalloc/allocator.cpp
     src/optimizer/regalloc/vreg.cpp
 
     src/type/type.cpp
@@ -38,6 +39,7 @@ set(HEADERS
     include/BibblIR/ir/instruction.h
     include/BibblIR/ir/value.h
 
+    include/BibblIR/optimizer/regalloc/allocator.h
     include/BibblIR/optimizer/regalloc/vreg.h
 
     include/BibblIR/type/function_type.h
