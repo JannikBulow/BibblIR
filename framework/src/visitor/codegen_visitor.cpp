@@ -1,5 +1,7 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/bytecode/utils.h"
+
 #include "BibblIR/ir/instruction/return_instruction.h"
 
 #include "BibblIR/ir/function.h"
@@ -92,7 +94,7 @@ namespace bibblir {
             if (instruction.mReturnValue->requiresVReg()) { // in this case, the return value uses a register and that can be directly returned
                 mInstBuilder->return_(instruction.mReturnValue->mVReg->toOperand());
             } else {
-                //TODO: implement codegen helpers to move an unknown value into register 0, then use and return it here
+                bytecode::Move(*mInstBuilder, bibbleasm::Register(0), instruction.mReturnValue->mEmittedValue.value());
             }
         }
     }
