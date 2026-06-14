@@ -29,7 +29,7 @@ namespace bibblir {
             }
         }
 
-        function->mRegisterCount = regCount;
+        function->mRegisterCount = std::min(1, regCount);
     }
 
     void RegAlloc::setLiveIntervals(Function* function) {
