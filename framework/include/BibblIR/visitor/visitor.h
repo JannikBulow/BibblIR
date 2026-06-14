@@ -6,10 +6,13 @@
 #include "BibblIR/api.h"
 
 namespace bibblir {
-    class Argument;
-    class BasicBlock;
-    class Function;
     class Module;
+
+    class Argument;
+    class Function;
+    class BasicBlock;
+
+    class ConstantInt;
 
     class ReturnInstruction;
 
@@ -24,6 +27,8 @@ namespace bibblir {
         virtual void visit(BasicBlock& block) = 0;
 
         virtual void visit(Argument& arg) = 0;
+
+        virtual void visit(ConstantInt& constant) = 0;
 
         virtual void visit(ReturnInstruction& instruction) = 0;
     };

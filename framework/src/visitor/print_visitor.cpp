@@ -68,4 +68,6 @@ namespace bibblir {
             mStream << "void";
         }
     }
+
+    void PrintVisitor::visit(ConstantInt& constant) {}
 }

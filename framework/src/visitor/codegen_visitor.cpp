@@ -11,6 +11,7 @@
 #include "BibblIR/visitor/codegen_visitor.h"
 
 #include "BibblIR/module.h"
+#include "BibblIR/ir/constant/constant_int.h"
 
 namespace bibblir {
     bibbleasm::Module CodegenVisitor::buildModule() {
@@ -86,15 +87,20 @@ namespace bibblir {
         arg.mEmittedValue = bibbleasm::Register(arg.mIndex);
     }
 
+    void CodegenVisitor::visit(ConstantInt& constant) {
+        constant.mEmittedValue = bibbleasm::Immediate(constant.mValue);
+    }
+
     void CodegenVisitor::visit(ReturnInstruction& instruction) {
         if (!instruction.mReturnValue) {
             mInstBuilder->load_imm(bibbleasm::Register(0), bibbleasm::Immediate(67));
             mInstBuilder->return_(bibbleasm::Register(0)); // if the regalloc always makes sure there's 1 register available on void functions, we can do this safely
         } else {
-            if (instruction.mReturnValue->requiresVReg()) { // in this case, the return value uses a register and that can be directly returned
-                mInstBuilder->return_(instruction.mReturnValue->mVReg->toOperand());
+            if (std::holds_alternative<bibbleasm::Register>(*instruction.mReturnValue->mEmittedValue)) { // in this case, the return value uses a register and that can be directly returned
+                mInstBuilder->return_(std::get<bibbleasm::Register>(*instruction.mReturnValue->mEmittedValue));
             } else {
                 bytecode::Move(*mInstBuilder, bibbleasm::Register(0), instruction.mReturnValue->mEmittedValue.value());
+                mInstBuilder->return_(bibbleasm::Register(0));
             }
         }
     }

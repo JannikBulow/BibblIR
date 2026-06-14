@@ -20,6 +20,8 @@ namespace bibblir {
 
         void visit(Argument& arg) override;
 
+        void visit(ConstantInt& constant) override;
+
         void visit(ReturnInstruction& instruction) override;
 
     private:

@@ -2,6 +2,8 @@
 
 #include <BibbleBytecode/writer.h>
 
+#include "BibblIR/ir/constant/constant_int.h"
+
 #include <BibblIR/ir/builder.h>
 #include <BibblIR/ir/function.h>
 
@@ -20,11 +22,11 @@ int main() {
 
     IRBuilder builder;
 
-    Function* mainFunc = Function::Create(module, FunctionType::Create(Type::GetVoidType(), {}), ".main");
+    Function* mainFunc = Function::Create(module, FunctionType::Create(Type::GetIntegerType(4), {}), ".main");
     BasicBlock* mainEntryBB = mainFunc->createBasicBlock("");
 
     builder.setInsertPoint(mainEntryBB);
-    builder.createReturn(nullptr);
+    builder.createReturn(ConstantInt::Get(module, 42, Type::GetIntegerType(4)));
 
     PrintVisitor printVisitor(std::cout);
     module.accept(printVisitor);

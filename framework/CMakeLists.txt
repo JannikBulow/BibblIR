@@ -12,6 +12,8 @@ FetchContent_MakeAvailable(BibbleASM)
 set(SOURCES
     src/bytecode/utils.cpp
 
+    src/ir/constant/constant_int.cpp
+
     src/ir/instruction/return_instruction.cpp
 
     src/ir/basicblock.cpp
@@ -33,6 +35,8 @@ set(SOURCES
 
 set(HEADERS
     include/BibblIR/bytecode/utils.h
+
+    include/BibblIR/ir/constant/constant_int.h
 
     include/BibblIR/ir/instruction/return_instruction.h
 
