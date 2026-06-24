@@ -8,7 +8,7 @@
 #include <cstdint>
 
 namespace bibblir {
-    class ConstantInt : public Value {
+    class BIBBLIR_EXPORT ConstantInt : public Value {
         friend class CodegenVisitor;
     public:
         static ConstantInt* Get(Module& module, intmax_t value, Type* type);

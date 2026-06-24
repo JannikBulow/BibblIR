@@ -11,7 +11,7 @@
 
 namespace bibblir {
     // I could easily make this a visitor, but regalloc without codegen is unnecessary and codegen without regalloc will result in a segfault
-    class RegAlloc {
+    class BIBBLIR_EXPORT RegAlloc {
     public:
         void assignVRegs(Function* function);
 
