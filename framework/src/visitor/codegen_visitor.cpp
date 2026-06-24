@@ -11,6 +11,7 @@
 #include "BibblIR/visitor/codegen_visitor.h"
 
 #include "BibblIR/module.h"
+#include "BibblIR/ir/constant/constant_boolean.h"
 #include "BibblIR/ir/constant/constant_int.h"
 
 namespace bibblir {
@@ -85,6 +86,10 @@ namespace bibblir {
 
     void CodegenVisitor::visit(Argument& arg) {
         arg.mEmittedValue = bibbleasm::Register(arg.mIndex);
+    }
+
+    void CodegenVisitor::visit(ConstantBoolean& constant) {
+        constant.mEmittedValue = bibbleasm::Immediate(bibbleasm::OperandSize::Byte, constant.mValue);
     }
 
     void CodegenVisitor::visit(ConstantInt& constant) {

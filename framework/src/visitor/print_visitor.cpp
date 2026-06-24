@@ -60,6 +60,10 @@ namespace bibblir {
 
     void PrintVisitor::visit(Argument& arg) {}
 
+    void PrintVisitor::visit(ConstantBoolean& constant) {}
+
+    void PrintVisitor::visit(ConstantInt& constant) {}
+
     void PrintVisitor::visit(ReturnInstruction& instruction) {
         mStream << "return ";
         if (instruction.mReturnValue) {
@@ -68,6 +72,4 @@ namespace bibblir {
             mStream << "void";
         }
     }
-
-    void PrintVisitor::visit(ConstantInt& constant) {}
 }

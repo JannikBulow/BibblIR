@@ -24,6 +24,7 @@ namespace bibblir {
 
         void visit(Argument& arg) override;
 
+        void visit(ConstantBoolean& constant) override;
         void visit(ConstantInt& constant) override;
 
         void visit(ReturnInstruction& instruction) override;
