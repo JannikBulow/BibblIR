@@ -20,7 +20,9 @@ namespace bibblir::bytecode {
 
         std::visit(overloaded{
             [&builder, &dstReg](const bibbleasm::Register& reg) {
-                builder.mov(dstReg, reg);
+                if (dstReg.index != reg.index) {
+                    builder.mov(dstReg, reg);
+                }
             },
             [&builder, &dstReg](const bibbleasm::Immediate& imm) {
                 builder.load_imm(dstReg, imm);
