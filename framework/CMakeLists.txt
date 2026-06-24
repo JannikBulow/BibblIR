@@ -50,6 +50,7 @@ set(HEADERS
     include/BibblIR/optimizer/regalloc/allocator.h
     include/BibblIR/optimizer/regalloc/vreg.h
 
+    include/BibblIR/type/boolean_type.h
     include/BibblIR/type/function_type.h
     include/BibblIR/type/integer_type.h
     include/BibblIR/type/type.h

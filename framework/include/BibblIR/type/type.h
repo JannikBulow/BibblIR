@@ -20,10 +20,12 @@ namespace bibblir {
 
         virtual bool isVoidType() const { return false; }
         virtual bool isIntegerType() const { return false; }
+        virtual bool isBooleanType() const { return false; }
         virtual bool isFunctionType() const { return false; }
 
         static Type* GetVoidType();
         static Type* GetIntegerType(int bytes);
+        static Type* GetBooleanType();
         static Type* GetFunctionType(Type* returnType, const std::vector<Type*>& argumentTypes);
 
     protected:

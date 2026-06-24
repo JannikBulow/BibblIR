@@ -1,14 +1,14 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/type/boolean_type.h"
+#include "BibblIR/type/function_type.h"
+#include "BibblIR/type/integer_type.h"
 #include "BibblIR/type/type.h"
 #include "BibblIR/type/void_type.h"
 
 #include <functional>
 #include <memory>
 #include <vector>
-
-#include "BibblIR/type/function_type.h"
-#include "BibblIR/type/integer_type.h"
 
 namespace bibblir {
     std::vector<std::unique_ptr<Type>> types;
@@ -46,6 +46,10 @@ namespace bibblir {
             [](IntegerType* value, int bytes) { return value->getSizeInBytes() == bytes; },
             [](int bytes) { return std::make_unique<IntegerType>(bytes); }
         >(bytes);
+    }
+
+    Type* Type::GetBooleanType() {
+        return GetType<BooleanType>();
     }
 
     Type* Type::GetFunctionType(Type* returnType, const std::vector<Type*>& argumentTypes) {

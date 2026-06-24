@@ -1,5 +1,6 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/type/boolean_type.h"
 #include "BibblIR/type/function_type.h"
 #include "BibblIR/type/integer_type.h"
 #include "BibblIR/type/void_type.h"
@@ -7,6 +8,14 @@
 #include <format>
 
 namespace bibblir {
+    BooleanType::BooleanType() : Type(1, "boolean") {
+        mOperandSize = bibbleasm::OperandSize::Byte;
+    }
+
+    bool BooleanType::isBooleanType() const {
+        return true;
+    }
+
     FunctionType::FunctionType(Type* returnType, std::vector<Type*> argumentTypes)
         : Type(0, std::format("{}(", returnType->getName()))
         , mReturnType(returnType)
