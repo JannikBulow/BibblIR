@@ -18,9 +18,9 @@ namespace bibblir {
         void accept(Visitor& visitor) override;
 
     private:
-        ReturnInstruction(BasicBlock* parent, Value* returnValue);
-
         Value* mReturnValue;
+
+        ReturnInstruction(BasicBlock* parent, Value* returnValue);
     };
 }
 
