@@ -41,7 +41,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createAdd(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::ADD, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -49,7 +49,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createSub(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SUB, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -57,7 +57,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createMul(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::MUL, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -65,7 +65,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createSDiv(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SDIV, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -73,7 +73,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createUDiv(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::UDIV, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -81,7 +81,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createSMod(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::UMOD, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -89,7 +89,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createUMod(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SMOD, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -97,7 +97,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createAnd(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::AND, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -105,7 +105,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createOr(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::OR, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -113,7 +113,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createXor(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::XOR, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -121,7 +121,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createSHL(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SHL, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -129,7 +129,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createSHR(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SHR, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -137,7 +137,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createSAR(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SAR, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -145,7 +145,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createCmpEQ(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::EQ, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -153,7 +153,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createCmpNE(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::NE, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -161,7 +161,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createCmpLT(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::LT, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -169,7 +169,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createCmpGT(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::GT, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -177,7 +177,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createCmpLE(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::LE, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
@@ -185,7 +185,7 @@ namespace bibblir {
     BinaryInstruction* IRBuilder::createCmpGE(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::GE, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
         return instruction;
     }
