@@ -2,6 +2,9 @@
 
 #include "BibblIR/optimizer/regalloc/allocator.h"
 
+#include <algorithm>
+#include <set>
+
 namespace bibblir {
     void RegAlloc::assignVRegs(Function* function) {
         setLiveIntervals(function);
@@ -9,6 +12,8 @@ namespace bibblir {
     }
 
     void RegAlloc::doRegAlloc(Function* function) {
+        std::vector<VReg*> availableVRegs;
+
         int regCount = 0;
         auto createVReg = [function, &regCount]() {
             int index = regCount++;
@@ -17,15 +22,78 @@ namespace bibblir {
             return function->mVRegs.back().get();
         };
 
-        auto getNextFreeVReg = [function, &createVReg](const std::vector<VReg*>& disallowed, int preferred) {
-            return createVReg();
+        auto getNextFreeVReg = [&availableVRegs, &createVReg](const std::vector<VReg*>& disallowed, int preferred) {
+            if (availableVRegs.empty()) {
+                return createVReg();
+            }
+
+            if (preferred != -1) {
+                auto it = std::ranges::find_if(availableVRegs, [preferred, &disallowed](const VReg* vreg) {
+                    return std::ranges::find(disallowed, vreg) == disallowed.end() && vreg->getActualRegister() == preferred;
+                });
+                if (it != availableVRegs.end()) {
+                    VReg* vreg = *it;
+                    availableVRegs.erase(it);
+                    vreg->mUses++;
+                    return vreg;
+                }
+            }
+
+            auto it = std::ranges::find_if(availableVRegs, [&disallowed](const VReg* vreg) {
+                return std::ranges::find(disallowed, vreg) == disallowed.end();
+            });
+            if (it == availableVRegs.end()) return createVReg();
+
+            VReg* vreg = *it;
+            availableVRegs.erase(it);
+            vreg->mUses++;
+            return vreg;
         };
 
-        for (const BasicBlockPtr& bb : function->basicBlocks()) {
-            for (const ValuePtr& value : bb->mValueList) {
-                if (value->mRequiresVReg) {
-                    value->mVReg = getNextFreeVReg(value->mDisallowedVRegs, value->mPreferredRegister);
+        std::vector<Value*> activeValues;
+        auto expireOldIntervals = [&activeValues, &availableVRegs](int i) {
+            std::erase_if(activeValues, [i, &availableVRegs](Value* value) {
+                if (value->mInterval.second <= i) {
+                    availableVRegs.push_back(value->mVReg);
+                    return true;
                 }
+                return false;
+            });
+        };
+
+        struct Compare {
+            bool operator()(const Value* lhs, const Value* rhs) const {
+                return lhs->mInterval.first < rhs->mInterval.first;
+            }
+        };
+
+        std::multiset<Value*, Compare> values;
+        for (auto& bb : function->basicBlocks()) {
+            for (auto& value : bb->mValueList) {
+                values.insert(value.get());
+            }
+        }
+
+        for (auto value : values) {
+            expireOldIntervals(value->mId);
+
+            if (value->requiresVReg()) {
+                activeValues.push_back(value);
+                std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
+                    return lhs->mInterval.second < rhs->mInterval.second;
+                });
+
+                auto disallowed = value->mDisallowedVRegs;
+                for (auto id : value->mDisallowedRegisters) {
+                    auto it = std::ranges::find_if(function->mVRegs, [id](const auto& vreg) {
+                        return vreg->getActualRegister() == id;
+                    });
+                    if (it != function->mVRegs.end()) {
+                        disallowed.push_back(it->get());
+                    }
+                }
+
+                value->mVReg = getNextFreeVReg(disallowed, value->mPreferredRegister);
             }
         }
 
@@ -49,12 +117,12 @@ namespace bibblir {
             bb->mInterval.second = index;
         }
 
-        for (auto it = function->basicBlocks().begin(); it != function->basicBlocks().end(); ++it) {
+        for (auto it = function->basicBlocks().rbegin(); it != function->basicBlocks().rend(); ++it) {
             auto& bb = *it;
             std::vector<Value*> live;
 
             for (auto successor : bb->successors()) {
-                std::copy(successor->liveIn().begin(), successor->liveIn().end(), std::back_inserter(live));
+                std::ranges::copy(successor->liveIn(), std::back_inserter(live));
 
                 //TODO: special phi shit goes here once those are added
             }
@@ -64,19 +132,20 @@ namespace bibblir {
                 value->mInterval.second = std::max(value->mInterval.second, bb->mInterval.second);
             }
 
-            for (auto valueIt = bb->mValueList.begin(); valueIt != bb->mValueList.end(); ++valueIt) {
+            for (auto valueIt = bb->mValueList.rbegin(); valueIt != bb->mValueList.rend(); ++valueIt) {
                 auto& value = *valueIt;
 
                 for (auto operandR : value->getOperands()) {
                     auto operand = operandR.get();
                     operand->mInterval.first = std::min(operand->mInterval.first, bb->mInterval.first);
-                    operand->mInterval.second = std::max(operand->mInterval.second, value->mInterval.second);
+                    operand->mInterval.second = std::max(operand->mInterval.second, value->mId);
+                    live.push_back(operand);
                 }
                 value->mInterval.first = value->mId;
 
-                std::erase_if(live, [&value](const Value* liveValue) {
+                live.erase(std::ranges::remove_if(live, [&value](const Value* liveValue) {
                     return liveValue == value.get();
-                });
+                }).begin(), live.end());
             }
 
             // more phi shit
