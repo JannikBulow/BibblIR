@@ -1,4 +1,4 @@
-// Copyright 2026 Jannik Laugmand Bülow
+// Copyright 2026 Jannik Laugmand Bülowvoid CodegenVisitor::visit(BinaryInstruction& instruction) {}
 
 #ifndef BIBBLIR_IR_VALUE_H
 #define BIBBLIR_IR_VALUE_H
@@ -11,6 +11,7 @@
 
 #include <BibbleASM/instruction/operand.h>
 
+#include <format>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -22,6 +23,7 @@ namespace bibblir {
 
     class BIBBLIR_EXPORT Value {
         friend class CodegenVisitor;
+        friend class PrintVisitor;
         friend class RegAlloc;
     public:
         Value(Module& module)
@@ -37,6 +39,19 @@ namespace bibblir {
 
         bool requiresVReg() const { return mRequiresVReg; }
         void setPreferredRegister(int id) { mPreferredRegister = id; }
+
+        void forceRegister() {
+            mRequiresVReg = true;
+            mForceRegister = true;
+        }
+
+        std::string getName(int valueId) const {
+            if (mVReg) {
+                return std::format("VREG{}", mVReg->getId());
+            } else {
+                return std::format("{}", valueId);
+            }
+        }
 
         virtual std::string identifier() const = 0;
 
@@ -57,6 +72,7 @@ namespace bibblir {
         std::vector<uint16_t> mDisallowedRegisters; // real registers
         bool mRegisterSmashesDone = false;
         int mPreferredRegister = -1; // real register
+        bool mForceRegister = false; // some instructions which needs its operands in a register, can force them in a register during construction
     };
 
     using ValuePtr = std::unique_ptr<Value>;

@@ -2,34 +2,33 @@
 
 #include "BibblIR/ir/constant/constant_boolean.h"
 
-#include "BibblIR/visitor/visitor.h"
+#include "BibblIR/ir/basicblock.h"
 
-#include "BibblIR/module.h"
+#include "BibblIR/visitor/visitor.h"
 
 #include <format>
 
 namespace bibblir {
-    ConstantBoolean* ConstantBoolean::Get(Module& module, bool value) {
-        ConstantBoolean* constant = new ConstantBoolean(module, value);
-        module.insertConstant(ValuePtr(constant));
-        return constant;
-    }
-
     bool ConstantBoolean::isConstant() const {
         return true;
     }
 
     std::string ConstantBoolean::identifier() const {
-        return std::format("{} {}", mType->getName(), mValue);
+        if (mForceRegister) {
+            return std::format("%{}", getName(-1)); // valueId does not matter cuz we know we have a vreg
+        } else {
+            return std::format("{} {}", mType->getName(), mValue);
+        }
     }
 
     void ConstantBoolean::accept(Visitor& visitor) {
         visitor.visit(*this);
     }
 
-    ConstantBoolean::ConstantBoolean(Module& module, bool value)
-        : Value(module)
+    ConstantBoolean::ConstantBoolean(BasicBlock* parent, bool value)
+        : Value(parent->getModule())
         , mValue(value) {
         mType = Type::GetBooleanType();
+        mRequiresVReg = false;
     }
 }

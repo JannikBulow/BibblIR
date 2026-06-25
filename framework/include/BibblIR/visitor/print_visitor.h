@@ -23,6 +23,7 @@ namespace bibblir {
         void visit(ConstantBoolean& constant) override;
         void visit(ConstantInt& constant) override;
 
+        void visit(BinaryInstruction& instruction) override;
         void visit(ReturnInstruction& instruction) override;
 
     private:

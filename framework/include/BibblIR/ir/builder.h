@@ -9,6 +9,10 @@ namespace bibblir {
     class BasicBlock;
     class Function;
 
+    class ConstantBoolean;
+    class ConstantInt;
+
+    class BinaryInstruction;
     class ReturnInstruction;
 
     class BIBBLIR_EXPORT IRBuilder {
@@ -17,6 +21,11 @@ namespace bibblir {
         void setInsertPoint(BasicBlock* newInsertPoint);
 
         void insertAfter(Value* value);
+
+        ConstantBoolean* createConstantBoolean(bool value);
+        ConstantInt* createConstantInt(intmax_t value, Type* type);
+
+        BinaryInstruction* createBinaryInstruction(Value* left, BinaryInstruction::Operator op, Value* right);
 
         ReturnInstruction* createReturn(Value* returnValue);
 

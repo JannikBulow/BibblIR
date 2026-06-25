@@ -8,11 +8,12 @@
 #include <cstdint>
 
 namespace bibblir {
+    class BasicBlock;
     class BIBBLIR_EXPORT ConstantInt : public Value {
         friend class CodegenVisitor;
+        friend class IRBuilder;
+        friend class PrintVisitor;
     public:
-        static ConstantInt* Get(Module& module, intmax_t value, Type* type);
-
         bool isConstant() const override;
 
         std::string identifier() const override;
@@ -21,7 +22,7 @@ namespace bibblir {
     private:
         intmax_t mValue;
 
-        ConstantInt(Module& module, intmax_t value, Type* type);
+        ConstantInt(BasicBlock* parent, intmax_t value, Type* type);
     };
 }
 

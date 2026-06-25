@@ -1,8 +1,14 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/ir/constant/constant_boolean.h"
+#include "BibblIR/ir/constant/constant_int.h"
+
+#include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 
 #include "BibblIR/ir/function.h"
+
+#include "BibblIR/optimizer/regalloc/allocator.h"
 
 #include "BibblIR/visitor/print_visitor.h"
 
@@ -20,6 +26,13 @@ namespace bibblir {
         for (const GlobalPtr& global : globals) {
             if (auto func = dynamic_cast<Function*>(global.get())) {
                 func->orderBasicBlocks();
+            }
+        }
+
+        RegAlloc regalloc;
+        for (const GlobalPtr& global : globals) {
+            if (auto func = dynamic_cast<Function*>(global.get())) {
+                regalloc.assignVRegs(func);
             }
         }
 
@@ -60,9 +73,67 @@ namespace bibblir {
 
     void PrintVisitor::visit(Argument& arg) {}
 
-    void PrintVisitor::visit(ConstantBoolean& constant) {}
+    void PrintVisitor::visit(ConstantBoolean& constant) {
+        if (constant.mForceRegister) {
+            mStream << std::format("store {} -> {}", constant.mValue, constant.identifier());
+        }
+    }
 
-    void PrintVisitor::visit(ConstantInt& constant) {}
+    void PrintVisitor::visit(ConstantInt& constant) {
+        if (constant.mForceRegister) {
+            mStream << std::format("store {} -> {}", constant.mValue, constant.identifier());
+        }
+    }
+
+    void PrintVisitor::visit(BinaryInstruction& instruction) {
+        std::string operatorSymbol;
+        switch (instruction.mOperator) {
+            case BinaryInstruction::ADD:
+                operatorSymbol = "+";
+                break;
+            case BinaryInstruction::SUB:
+                operatorSymbol = "-";
+                break;
+            case BinaryInstruction::MUL:
+                operatorSymbol = "*";
+                break;
+            case BinaryInstruction::SDIV:
+                operatorSymbol = "/";
+                break;
+            case BinaryInstruction::UDIV:
+                operatorSymbol = "/";
+                break;
+            case BinaryInstruction::AND:
+                operatorSymbol = "&";
+                break;
+            case BinaryInstruction::OR:
+                operatorSymbol = "|";
+                break;
+            case BinaryInstruction::XOR:
+                operatorSymbol = "^";
+                break;
+            case BinaryInstruction::EQ:
+                operatorSymbol = "==";
+                break;
+            case BinaryInstruction::NE:
+                operatorSymbol = "!=";
+                break;
+            case BinaryInstruction::LT:
+                operatorSymbol = "<";
+                break;
+            case BinaryInstruction::GT:
+                operatorSymbol = ">";
+                break;
+            case BinaryInstruction::LE:
+                operatorSymbol = "<=";
+                break;
+            case BinaryInstruction::GE:
+                operatorSymbol = ">=";
+                break;
+        }
+
+        mStream << std::format("%{} = {} {} {}", instruction.getName(instruction.mValueId), instruction.mLeft->identifier(), operatorSymbol, instruction.mRight->identifier());
+    }
 
     void PrintVisitor::visit(ReturnInstruction& instruction) {
         mStream << "return ";

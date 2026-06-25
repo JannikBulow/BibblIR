@@ -15,6 +15,7 @@ namespace bibblir {
     class ConstantBoolean;
     class ConstantInt;
 
+    class BinaryInstruction;
     class ReturnInstruction;
 
     class BIBBLIR_EXPORT Visitor {
@@ -32,6 +33,7 @@ namespace bibblir {
         virtual void visit(ConstantBoolean& constant) = 0;
         virtual void visit(ConstantInt& constant) = 0;
 
+        virtual void visit(BinaryInstruction& instruction) = 0;
         virtual void visit(ReturnInstruction& instruction) = 0;
     };
 }

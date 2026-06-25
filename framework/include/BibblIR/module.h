@@ -23,9 +23,6 @@ namespace bibblir {
         void insertGlobal(GlobalPtr global);
         void insertGlobalAtFront(GlobalPtr global);
 
-        const std::vector<ValuePtr>& getConstants() const;
-        void insertConstant(ValuePtr constant);
-
         void accept(Visitor& visitor);
 
     private:
@@ -34,7 +31,6 @@ namespace bibblir {
         int mNextValueId = 0;
 
         std::vector<GlobalPtr> mGlobals;
-        std::vector<ValuePtr> mConstants;
     };
 }
 

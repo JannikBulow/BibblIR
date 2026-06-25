@@ -2,7 +2,9 @@
 
 #include <BibbleBytecode/writer.h>
 
-#include "BibblIR/ir/constant/constant_int.h"
+#include <BibblIR/ir/constant/constant_int.h>
+
+#include <BibblIR/ir/instruction/binary_instruction.h>
 
 #include <BibblIR/ir/builder.h>
 #include <BibblIR/ir/function.h>
@@ -25,8 +27,12 @@ int main() {
     Function* mainFunc = Function::Create(module, FunctionType::Create(Type::GetIntegerType(4), {}), ".main");
     BasicBlock* mainEntryBB = mainFunc->createBasicBlock("");
 
+    Type* intType = Type::GetIntegerType(4);
+
     builder.setInsertPoint(mainEntryBB);
-    builder.createReturn(ConstantInt::Get(module, 42, Type::GetIntegerType(4)));
+    builder.createReturn(
+        builder.createBinaryInstruction(builder.createConstantInt(34, intType), BinaryInstruction::ADD, builder.createConstantInt(35, intType))
+    );
 
     PrintVisitor printVisitor(std::cout);
     module.accept(printVisitor);

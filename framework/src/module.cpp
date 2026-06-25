@@ -28,14 +28,6 @@ namespace bibblir {
         mGlobals.insert(mGlobals.begin(), std::move(global));
     }
 
-    const std::vector<ValuePtr>& Module::getConstants() const {
-        return mConstants;
-    }
-
-    void Module::insertConstant(ValuePtr constant) {
-        mConstants.push_back(std::move(constant));
-    }
-
     void Module::accept(Visitor& visitor) {
         visitor.visit(*this);
     }

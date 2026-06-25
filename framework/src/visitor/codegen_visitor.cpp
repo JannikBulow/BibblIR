@@ -2,6 +2,7 @@
 
 #include "BibblIR/bytecode/utils.h"
 
+#include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 
 #include "BibblIR/ir/function.h"
@@ -26,7 +27,6 @@ namespace bibblir {
         mBuilder.setName(getStringConstant(module.getName()));
 
         const std::vector<GlobalPtr>& globals = module.getGlobals();
-        const std::vector<ValuePtr>& constants = module.getConstants();
 
         for (const GlobalPtr& global : globals) {
             if (auto func = dynamic_cast<Function*>(global.get())) {
@@ -39,10 +39,6 @@ namespace bibblir {
             if (auto func = dynamic_cast<Function*>(global.get())) {
                 regalloc.assignVRegs(func);
             }
-        }
-
-        for (const ValuePtr& constant : constants) {
-            constant->accept(*this);
         }
 
         for (const GlobalPtr& global : globals) {
@@ -90,10 +86,68 @@ namespace bibblir {
 
     void CodegenVisitor::visit(ConstantBoolean& constant) {
         constant.mEmittedValue = bibbleasm::Immediate(bibbleasm::OperandSize::Byte, constant.mValue);
+
+        if (constant.mForceRegister) {
+            bibbleasm::Register reg = constant.mVReg->toOperand();
+            bytecode::Move(*mInstBuilder, reg, *constant.mEmittedValue);
+            constant.mEmittedValue = reg;
+        }
     }
 
     void CodegenVisitor::visit(ConstantInt& constant) {
         constant.mEmittedValue = bibbleasm::Immediate(constant.mValue);
+
+        if (constant.mForceRegister) {
+            bibbleasm::Register reg = constant.mVReg->toOperand();
+            bytecode::Move(*mInstBuilder, reg, *constant.mEmittedValue);
+            constant.mEmittedValue = reg;
+        }
+    }
+
+    void CodegenVisitor::visit(BinaryInstruction& instruction) {
+        bibbleasm::Register leftReg = std::get<bibbleasm::Register>(*instruction.mLeft->mEmittedValue);
+        bibbleasm::Register rightReg = std::get<bibbleasm::Register>(*instruction.mRight->mEmittedValue);
+
+        bibbleasm::Register dst = instruction.mVReg->toOperand();
+
+        if (instruction.getType()->isIntegerType()) {
+            switch (instruction.mOperator) {
+                case BinaryInstruction::ADD:
+                    mInstBuilder->add(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::SUB:
+                    mInstBuilder->sub(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::MUL:
+                    mInstBuilder->mul(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::SDIV:
+                    mInstBuilder->sdiv(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::UDIV:
+                    mInstBuilder->udiv(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::AND:
+                    mInstBuilder->and_(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::OR:
+                    mInstBuilder->or_(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::XOR:
+                    mInstBuilder->xor_(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::EQ:
+                case BinaryInstruction::NE:
+                case BinaryInstruction::LT:
+                case BinaryInstruction::GT:
+                case BinaryInstruction::LE:
+                case BinaryInstruction::GE:
+                    mInstBuilder->icmp(dst, leftReg, rightReg);
+                    break;
+            }
+        }
+
+        instruction.mEmittedValue = dst; // the conditional branch codegen could simply check if its condition is a BinaryInstruction, then check the operator
     }
 
     void CodegenVisitor::visit(ReturnInstruction& instruction) {

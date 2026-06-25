@@ -6,11 +6,12 @@
 #include "BibblIR/ir/value.h"
 
 namespace bibblir {
+    class BasicBlock;
     class BIBBLIR_EXPORT ConstantBoolean : public Value {
         friend class CodegenVisitor;
+        friend class IRBuilder;
+        friend class PrintVisitor;
     public:
-        static ConstantBoolean* Get(Module& module, bool value);
-
         bool isConstant() const override;
 
         std::string identifier() const override;
@@ -19,7 +20,7 @@ namespace bibblir {
     private:
         bool mValue;
 
-        ConstantBoolean(Module& module, bool value);
+        ConstantBoolean(BasicBlock* parent, bool value);
     };
 }
 
