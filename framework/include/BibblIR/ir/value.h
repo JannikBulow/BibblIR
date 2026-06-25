@@ -70,7 +70,6 @@ namespace bibblir {
         bool mRequiresVReg = true;
         std::vector<VReg*> mDisallowedVRegs;
         std::vector<uint16_t> mDisallowedRegisters; // real registers
-        bool mRegisterSmashesDone = false;
         int mPreferredRegister = -1; // real register
         bool mForceRegister = false; // some instructions which needs its operands in a register, can force them in a register during construction
     };
