@@ -1,5 +1,7 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/ir/instruction/phi_instruction.h"
+
 #include "BibblIR/optimizer/regalloc/allocator.h"
 
 #include <algorithm>
@@ -124,7 +126,15 @@ namespace bibblir {
             for (auto successor : bb->successors()) {
                 std::ranges::copy(successor->liveIn(), std::back_inserter(live));
 
-                //TODO: special phi shit goes here once those are added
+                for (auto phi : successor->mPhis) {
+                    auto incomingIt = std::ranges::find_if(phi->mIncoming, [&bb](const auto& incoming) {
+                        return incoming.second == bb.get();
+                    });
+
+                    if (incomingIt != phi->mIncoming.end()) {
+                        live.push_back(incomingIt->first);
+                    }
+                }
             }
 
             for (Value* value : live) {
@@ -143,12 +153,14 @@ namespace bibblir {
                 }
                 value->mInterval.first = value->mId;
 
-                live.erase(std::ranges::remove_if(live, [&value](const Value* liveValue) {
+                std::erase_if(live, [&value](const Value* liveValue) {
                     return liveValue == value.get();
-                }).begin(), live.end());
+                });
             }
 
-            // more phi shit
+            for (auto phi : bb->mPhis) {
+                std::erase(live, phi);
+            }
 
             if (bb->loopEnd()) {
                 for (auto value : live) {

@@ -56,6 +56,10 @@ namespace bibblir {
         return mExists;
     }
 
+    bibbleasm::InstructionId& BasicBlock::endId() {
+        return mEndId;
+    }
+
     std::string BasicBlock::identifier() const {
         return "label " + mName;
     }

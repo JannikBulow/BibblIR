@@ -9,7 +9,10 @@
 
 #include <BibbleASM/instruction/builder.h>
 
+#include <optional>
+
 namespace bibblir::bytecode {
+    BIBBLIR_EXPORT std::optional<bibbleasm::Instruction> BuildMove(bibbleasm::Operand dst, bibbleasm::Operand src);
     BIBBLIR_EXPORT void Move(bibbleasm::InstructionBuilder& builder, bibbleasm::Operand dst, bibbleasm::Operand src);
 }
 

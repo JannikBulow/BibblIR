@@ -2,7 +2,11 @@
 
 #include "BibblIR/bytecode/utils.h"
 
+#include "BibblIR/ir/constant/constant_boolean.h"
+#include "BibblIR/ir/constant/constant_int.h"
+
 #include "BibblIR/ir/instruction/binary_instruction.h"
+#include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 
 #include "BibblIR/ir/function.h"
@@ -12,8 +16,6 @@
 #include "BibblIR/visitor/codegen_visitor.h"
 
 #include "BibblIR/module.h"
-#include "BibblIR/ir/constant/constant_boolean.h"
-#include "BibblIR/ir/constant/constant_int.h"
 
 namespace bibblir {
     bibbleasm::Module CodegenVisitor::buildModule() {
@@ -68,6 +70,12 @@ namespace bibblir {
             bb->accept(*this);
         }
 
+        for (const BasicBlockPtr& bb : function.basicBlocks()) {
+            for (auto phi : bb->mPhis) {
+                phi->accept(*this);
+            }
+        }
+
         mInstBuilder = nullptr;
     }
 
@@ -75,7 +83,11 @@ namespace bibblir {
         if (block.exists()) {
             mInstBuilder->label(block.mName);
             for (const ValuePtr& value : block.mValueList) {
-                value->accept(*this);
+                if (auto phi = dynamic_cast<PhiInstruction*>(value.get())) {
+                    phi->setEmittedValue();
+                } else {
+                    value->accept(*this);
+                }
             }
         }
     }
@@ -165,7 +177,25 @@ namespace bibblir {
         instruction.mEmittedValue = dst; // the conditional branch codegen could simply check if its condition is a BinaryInstruction, then check the operator
     }
 
+    void CodegenVisitor::visit(PhiInstruction& instruction) {
+        std::vector<BasicBlock*> done;
+        for (auto& incoming : instruction.mIncoming) {
+            if (std::ranges::find(done, incoming.second) != done.end()) continue;
+            if (incoming.second->exists()) {
+                if (incoming.first == &instruction) continue;
+
+                done.push_back(incoming.second);
+                std::optional<bibbleasm::Instruction> move = bytecode::BuildMove(*instruction.mEmittedValue, *incoming.first->mEmittedValue);
+                if (move) {
+                    incoming.second->endId() = mInstBuilder->assembler().emit(incoming.second->endId(), *move);
+                }
+            }
+        }
+    }
+
     void CodegenVisitor::visit(ReturnInstruction& instruction) {
+        instruction.mParent->endId() = mInstBuilder->assembler().getLastInstructionId();
+
         if (!instruction.mReturnValue) {
             mInstBuilder->load_imm(bibbleasm::Register(0), bibbleasm::Immediate(67));
             mInstBuilder->return_(bibbleasm::Register(0)); // if the regalloc always makes sure there's 1 register available on void functions, we can do this safely

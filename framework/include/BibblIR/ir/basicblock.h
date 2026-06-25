@@ -5,15 +5,19 @@
 
 #include "BibblIR/ir/value.h"
 
+#include <BibbleASM/codegen/assembler.h>
+
 #include <string>
 #include <vector>
 
 namespace bibblir {
     class Function;
+    class PhiInstruction;
 
     class BIBBLIR_EXPORT BasicBlock : public Value {
         friend class CodegenVisitor;
         friend class Function;
+        friend class PhiInstruction;
         friend class PrintVisitor;
         friend class RegAlloc;
     public:
@@ -28,6 +32,7 @@ namespace bibblir {
         std::vector<BasicBlock*>& predecessors();
         BasicBlock*& loopEnd();
         bool exists() const;
+        bibbleasm::InstructionId& endId();
 
         std::string identifier() const override;
 
@@ -43,9 +48,12 @@ namespace bibblir {
         std::vector<BasicBlock*> mSuccessors;
         std::vector<BasicBlock*> mPredecessors;
 
+        std::vector<PhiInstruction*> mPhis;
         BasicBlock* mLoopEnd = nullptr;
 
         bool mExists = true;
+
+        bibbleasm::InstructionId mEndId = 0;
 
         BasicBlock(std::string name, Function* parent);
     };

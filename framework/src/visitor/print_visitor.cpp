@@ -4,6 +4,7 @@
 #include "BibblIR/ir/constant/constant_int.h"
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
+#include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 
 #include "BibblIR/ir/function.h"
@@ -150,6 +151,14 @@ namespace bibblir {
         }
 
         mStream << std::format("{} = {} {} {}", instruction.getName(instruction.mValueId), instruction.mLeft->identifier(), operatorSymbol, instruction.mRight->identifier());
+    }
+
+    void PrintVisitor::visit(PhiInstruction& instruction) {
+        mStream << std::format("{} = phi [", instruction.getName(instruction.mValueId));
+        for (size_t i = 0; i < instruction.mIncoming.size() - 1; i++) {
+            mStream << std::format("{} : {}, ", instruction.mIncoming[i].first->identifier(), instruction.mIncoming[i].second->identifier());
+        }
+        mStream << std::format("{} : {} ]", instruction.mIncoming.back().first->identifier(), instruction.mIncoming.back().second->identifier());
     }
 
     void PrintVisitor::visit(ReturnInstruction& instruction) {

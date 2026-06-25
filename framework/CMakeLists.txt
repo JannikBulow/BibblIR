@@ -16,6 +16,7 @@ set(SOURCES
     src/ir/constant/constant_int.cpp
 
     src/ir/instruction/binary_instruction.cpp
+    src/ir/instruction/phi_instruction.cpp
     src/ir/instruction/return_instruction.cpp
 
     src/ir/basicblock.cpp
@@ -45,6 +46,7 @@ set(HEADERS
     include/BibblIR/ir/constant/constant_int.h
 
     include/BibblIR/ir/instruction/binary_instruction.h
+    include/BibblIR/ir/instruction/phi_instruction.h
     include/BibblIR/ir/instruction/return_instruction.h
 
     include/BibblIR/ir/basicblock.h

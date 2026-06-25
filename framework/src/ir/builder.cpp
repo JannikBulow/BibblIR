@@ -4,6 +4,7 @@
 #include "BibblIR/ir/constant/constant_int.h"
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
+#include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 
 #include "BibblIR/ir/basicblock.h"
@@ -184,6 +185,14 @@ namespace bibblir {
 
     BinaryInstruction* IRBuilder::createCmpGE(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::GE, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    PhiInstruction* IRBuilder::createPhi(Type* type) {
+        PhiInstruction* instruction = new PhiInstruction(mInsertPoint, type);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 

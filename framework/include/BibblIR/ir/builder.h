@@ -13,6 +13,7 @@ namespace bibblir {
     class ConstantInt;
 
     class BinaryInstruction;
+    class PhiInstruction;
     class ReturnInstruction;
 
     class BIBBLIR_EXPORT IRBuilder {
@@ -46,6 +47,8 @@ namespace bibblir {
         BinaryInstruction* createCmpGT(Value* left, Value* right);
         BinaryInstruction* createCmpLE(Value* left, Value* right);
         BinaryInstruction* createCmpGE(Value* left, Value* right);
+
+        PhiInstruction* createPhi(Type* type);
 
         ReturnInstruction* createReturn(Value* returnValue);
 
