@@ -44,12 +44,14 @@ namespace bibblir {
     }
 
     void PrintVisitor::visit(Function& function) {
-        mStream << std::format("\n\nfunction \"{}\"(", function.mName);
+        mStream << std::format("\n\nfunction \"{}\" (", function.mName);
         if (!function.mArguments.empty()) {
             for (int i = 0; i < function.mArguments.size() - 1; i++) {
                 mStream << std::format("{} {}, ", function.mArguments[i]->mType->getName(), function.mArguments[i ]->mName);
             }
             mStream << std::format("{} {}", function.mArguments.back()->mType->getName(), function.mArguments.back()->mName);
+        } else {
+            mStream << "void";
         }
         mStream << std::format(") -> {}\n", function.getFunctionType()->getReturnType()->getName());
 
@@ -75,13 +77,13 @@ namespace bibblir {
 
     void PrintVisitor::visit(ConstantBoolean& constant) {
         if (constant.mForceRegister) {
-            mStream << std::format("store {} -> {}", constant.mValue, constant.identifier());
+            mStream << std::format("{} = {} {}", constant.identifier(), constant.mType->getName(), constant.mValue);
         }
     }
 
     void PrintVisitor::visit(ConstantInt& constant) {
         if (constant.mForceRegister) {
-            mStream << std::format("store {} -> {}", constant.mValue, constant.identifier());
+            mStream << std::format("{} = {} {}", constant.identifier(), constant.mType->getName(), constant.mValue);
         }
     }
 
@@ -147,7 +149,7 @@ namespace bibblir {
                 break;
         }
 
-        mStream << std::format("%{} = {} {} {}", instruction.getName(instruction.mValueId), instruction.mLeft->identifier(), operatorSymbol, instruction.mRight->identifier());
+        mStream << std::format("{} = {} {} {}", instruction.getName(instruction.mValueId), instruction.mLeft->identifier(), operatorSymbol, instruction.mRight->identifier());
     }
 
     void PrintVisitor::visit(ReturnInstruction& instruction) {

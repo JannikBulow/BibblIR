@@ -21,7 +21,7 @@ namespace bibblir {
     }
 
     std::string BinaryInstruction::identifier() const {
-        return std::format("%{}", getName(mValueId));
+        return getName(mValueId);
     }
 
     void BinaryInstruction::accept(Visitor& visitor) {

@@ -47,9 +47,9 @@ namespace bibblir {
 
         std::string getName(int valueId) const {
             if (mVReg) {
-                return std::format("VREG{}", mVReg->getId());
+                return std::format("v{}", mVReg->getId());
             } else {
-                return std::format("{}", valueId);
+                return std::format("%{}", valueId);
             }
         }
 

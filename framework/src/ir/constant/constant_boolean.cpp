@@ -15,7 +15,7 @@ namespace bibblir {
 
     std::string ConstantBoolean::identifier() const {
         if (mForceRegister) {
-            return std::format("%{}", getName(-1)); // valueId does not matter cuz we know we have a vreg
+            return getName(-1); // valueId does not matter cuz we know we have a vreg
         } else {
             return std::format("{} {}", mType->getName(), mValue);
         }
