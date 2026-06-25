@@ -6,6 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
+#include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/function.h"
 
@@ -168,5 +169,22 @@ namespace bibblir {
         } else {
             mStream << "void";
         }
+    }
+
+    void PrintVisitor::visit(UnaryInstruction& instruction) {
+        std::string operatorSymbol;
+        switch (instruction.getOperator()) {
+            case UnaryInstruction::NEG:
+                operatorSymbol = "-";
+                break;
+            case UnaryInstruction::ABS:
+                operatorSymbol = "abs ";
+                break;
+            case UnaryInstruction::NOT:
+                operatorSymbol = "~";
+                break;
+        }
+
+        mStream << std::format("{} = {}{}", instruction.getName(instruction.mValueId), operatorSymbol, instruction.mOperand->identifier());
     }
 }

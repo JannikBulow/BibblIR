@@ -26,6 +26,7 @@ namespace bibblir {
         void visit(BinaryInstruction& instruction) override;
         void visit(PhiInstruction& instruction) override;
         void visit(ReturnInstruction& instruction) override;
+        void visit(UnaryInstruction& instruction) override;
 
     private:
         std::ostream& mStream;

@@ -5,6 +5,7 @@
 #include <BibblIR/ir/constant/constant_int.h>
 
 #include <BibblIR/ir/instruction/binary_instruction.h>
+#include <BibblIR/ir/instruction/unary_instruction.h>
 
 #include <BibblIR/ir/builder.h>
 #include <BibblIR/ir/function.h>
@@ -31,7 +32,13 @@ int main() {
 
     builder.setInsertPoint(mainEntryBB);
     builder.createReturn(
-        builder.createAdd(builder.createConstantInt(34, intType), builder.createConstantInt(35, intType))
+        builder.createAbs(
+            builder.createNeg(
+                builder.createAdd(
+                    builder.createConstantInt(34, intType), builder.createConstantInt(35, intType)
+                )
+            )
+        )
     );
 
     PrintVisitor printVisitor(std::cout);

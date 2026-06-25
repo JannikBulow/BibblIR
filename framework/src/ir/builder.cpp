@@ -6,6 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
+#include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/basicblock.h"
 #include "BibblIR/ir/builder.h"
@@ -185,6 +186,30 @@ namespace bibblir {
 
     BinaryInstruction* IRBuilder::createCmpGE(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::GE, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    UnaryInstruction* IRBuilder::createNeg(Value* value) {
+        UnaryInstruction* instruction = new UnaryInstruction(mInsertPoint, value, UnaryInstruction::NEG);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    UnaryInstruction* IRBuilder::createAbs(Value* value) {
+        UnaryInstruction* instruction = new UnaryInstruction(mInsertPoint, value, UnaryInstruction::ABS);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    UnaryInstruction* IRBuilder::createNot(Value* value) {
+        UnaryInstruction* instruction = new UnaryInstruction(mInsertPoint, value, UnaryInstruction::NOT);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 

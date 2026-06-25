@@ -8,6 +8,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
+#include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/function.h"
 
@@ -207,6 +208,25 @@ namespace bibblir {
                 mInstBuilder->return_(bibbleasm::Register(0));
             }
         }
+    }
+
+    void CodegenVisitor::visit(UnaryInstruction& instruction) {
+        bibbleasm::Register operandReg = std::get<bibbleasm::Register>(*instruction.mOperand->mEmittedValue);
+        bibbleasm::Register dst = instruction.mVReg->toOperand();
+
+        switch (instruction.getOperator()) {
+            case UnaryInstruction::NEG:
+                mInstBuilder->neg(dst, operandReg);
+                break;
+            case UnaryInstruction::ABS:
+                mInstBuilder->abs(dst, operandReg);
+                break;
+            case UnaryInstruction::NOT:
+                mInstBuilder->not_(dst, operandReg);
+                break;
+        }
+
+        instruction.mEmittedValue = dst;
     }
 
     bibbleasm::ConstantIndex CodegenVisitor::getStringConstant(const std::string& str) {

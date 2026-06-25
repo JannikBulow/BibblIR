@@ -15,6 +15,7 @@ namespace bibblir {
     class BinaryInstruction;
     class PhiInstruction;
     class ReturnInstruction;
+    class UnaryInstruction;
 
     class BIBBLIR_EXPORT IRBuilder {
     public:
@@ -47,6 +48,12 @@ namespace bibblir {
         BinaryInstruction* createCmpGT(Value* left, Value* right);
         BinaryInstruction* createCmpLE(Value* left, Value* right);
         BinaryInstruction* createCmpGE(Value* left, Value* right);
+
+
+        UnaryInstruction* createNeg(Value* value);
+        UnaryInstruction* createAbs(Value* value);
+        UnaryInstruction* createNot(Value* value);
+
 
         PhiInstruction* createPhi(Type* type);
 
