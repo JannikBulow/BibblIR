@@ -6,7 +6,7 @@
 #include "BibblIR/ir/instruction.h"
 
 namespace bibblir {
-    class PhiInstruction : public Instruction {
+    class BIBBLIR_EXPORT PhiInstruction : public Instruction {
         friend class BasicBlock;
         friend class CodegenVisitor;
         friend class Function;
