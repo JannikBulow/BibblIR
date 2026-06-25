@@ -33,6 +33,62 @@ namespace bibblir {
     }
 
     void RegAlloc::setLiveIntervals(Function* function) {
+        int index = 0;
 
+        for (auto& argument : function->mArguments) {
+            argument->mInterval.first = 0;
+        }
+
+        for (auto& bb : function->basicBlocks()) {
+            bb->mInterval.first = index;
+            for (auto& value : bb->mValueList) {
+                value->mInterval.first = index;
+                value->mId = index;
+                index++;
+            }
+            bb->mInterval.second = index;
+        }
+
+        for (auto it = function->basicBlocks().begin(); it != function->basicBlocks().end(); ++it) {
+            auto& bb = *it;
+            std::vector<Value*> live;
+
+            for (auto successor : bb->successors()) {
+                std::copy(successor->liveIn().begin(), successor->liveIn().end(), std::back_inserter(live));
+
+                //TODO: special phi shit goes here once those are added
+            }
+
+            for (Value* value : live) {
+                value->mInterval.first = std::min(value->mInterval.first, bb->mInterval.first);
+                value->mInterval.second = std::max(value->mInterval.second, bb->mInterval.second);
+            }
+
+            for (auto valueIt = bb->mValueList.begin(); valueIt != bb->mValueList.end(); ++valueIt) {
+                auto& value = *valueIt;
+
+                for (auto operandR : value->getOperands()) {
+                    auto operand = operandR.get();
+                    operand->mInterval.first = std::min(operand->mInterval.first, bb->mInterval.first);
+                    operand->mInterval.second = std::max(operand->mInterval.second, value->mInterval.second);
+                }
+                value->mInterval.first = value->mId;
+
+                std::erase_if(live, [&value](const Value* liveValue) {
+                    return liveValue == value.get();
+                });
+            }
+
+            // more phi shit
+
+            if (bb->loopEnd()) {
+                for (auto value : live) {
+                    value->mInterval.first = std::min(value->mInterval.first, bb->mInterval.first);
+                    value->mInterval.second = std::max(value->mInterval.second, bb->loopEnd()->mInterval.second);
+                }
+            }
+
+            bb->liveIn() = live;
+        }
     }
 }
