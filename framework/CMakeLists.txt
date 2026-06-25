@@ -26,8 +26,11 @@ set(SOURCES
     src/optimizer/regalloc/allocator.cpp
     src/optimizer/regalloc/vreg.cpp
 
+    src/type/boolean_type.cpp
+    src/type/function_type.cpp
+    src/type/integer_type.cpp
     src/type/type.cpp
-    src/type/types.cpp
+    src/type/void_type.cpp
 
     src/visitor/codegen_visitor.cpp
     src/visitor/print_visitor.cpp
