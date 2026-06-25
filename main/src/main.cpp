@@ -31,7 +31,7 @@ int main() {
 
     builder.setInsertPoint(mainEntryBB);
     builder.createReturn(
-        builder.createBinaryInstruction(builder.createConstantInt(34, intType), BinaryInstruction::ADD, builder.createConstantInt(35, intType))
+        builder.createAdd(builder.createConstantInt(34, intType), builder.createConstantInt(35, intType))
     );
 
     PrintVisitor printVisitor(std::cout);

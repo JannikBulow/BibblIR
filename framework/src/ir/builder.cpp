@@ -38,12 +38,116 @@ namespace bibblir {
         return constant;
     }
 
-    BinaryInstruction* IRBuilder::createBinaryInstruction(Value* left, BinaryInstruction::Operator op, Value* right) {
-        BinaryInstruction* inst = new BinaryInstruction(mInsertPoint, left, op, right);
+    BinaryInstruction* IRBuilder::createAdd(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::ADD, right);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(inst));
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
 
-        return inst;
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createSub(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SUB, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createMul(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::MUL, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createSDiv(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SDIV, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createUDiv(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::UDIV, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createAnd(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::AND, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createOr(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::OR, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createXor(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::XOR, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createCmpEQ(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::EQ, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createCmpNE(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::NE, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createCmpLT(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::LT, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createCmpGT(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::GT, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createCmpLE(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::LE, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createCmpGE(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::GE, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
     }
 
     ReturnInstruction* IRBuilder::createReturn(Value* returnValue) {
