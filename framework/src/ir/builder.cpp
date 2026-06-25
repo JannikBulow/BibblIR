@@ -78,6 +78,22 @@ namespace bibblir {
         return instruction;
     }
 
+    BinaryInstruction* IRBuilder::createSMod(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::UMOD, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createUMod(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SMOD, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
     BinaryInstruction* IRBuilder::createAnd(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::AND, right);
 
@@ -96,6 +112,30 @@ namespace bibblir {
 
     BinaryInstruction* IRBuilder::createXor(Value* left, Value* right) {
         BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::XOR, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createSHL(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SHL, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createSHR(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SHR, right);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
+
+        return instruction;
+    }
+
+    BinaryInstruction* IRBuilder::createSAR(Value* left, Value* right) {
+        BinaryInstruction* instruction = new BinaryInstruction(mInsertPoint, left, BinaryInstruction::SAR, right);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(left));
 

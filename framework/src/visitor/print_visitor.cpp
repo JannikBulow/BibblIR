@@ -87,7 +87,7 @@ namespace bibblir {
 
     void PrintVisitor::visit(BinaryInstruction& instruction) {
         std::string operatorSymbol;
-        switch (instruction.mOperator) {
+        switch (instruction.getOperator()) {
             case BinaryInstruction::ADD:
                 operatorSymbol = "+";
                 break;
@@ -103,6 +103,12 @@ namespace bibblir {
             case BinaryInstruction::UDIV:
                 operatorSymbol = "/";
                 break;
+            case BinaryInstruction::SMOD:
+                operatorSymbol = "%";
+                break;
+            case BinaryInstruction::UMOD:
+                operatorSymbol = "%";
+                break;
             case BinaryInstruction::AND:
                 operatorSymbol = "&";
                 break;
@@ -111,6 +117,15 @@ namespace bibblir {
                 break;
             case BinaryInstruction::XOR:
                 operatorSymbol = "^";
+                break;
+            case BinaryInstruction::SHL:
+                operatorSymbol = "<<";
+                break;
+            case BinaryInstruction::SHR:
+                operatorSymbol = ">>>";
+                break;
+            case BinaryInstruction::SAR:
+                operatorSymbol = ">>";
                 break;
             case BinaryInstruction::EQ:
                 operatorSymbol = "==";

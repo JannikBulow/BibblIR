@@ -14,8 +14,11 @@ namespace bibblir {
         enum Operator {
             ADD, SUB, MUL,
             SDIV, UDIV,
+            SMOD, UMOD,
 
             AND, OR, XOR,
+
+            SHL, SHR, SAR,
 
             EQ, NE,
             LT, GT,

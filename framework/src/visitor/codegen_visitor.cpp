@@ -127,6 +127,12 @@ namespace bibblir {
                 case BinaryInstruction::UDIV:
                     mInstBuilder->udiv(dst, leftReg, rightReg);
                     break;
+                case BinaryInstruction::SMOD:
+                    mInstBuilder->smod(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::UMOD:
+                    mInstBuilder->umod(dst, leftReg, rightReg);
+                    break;
                 case BinaryInstruction::AND:
                     mInstBuilder->and_(dst, leftReg, rightReg);
                     break;
@@ -135,6 +141,15 @@ namespace bibblir {
                     break;
                 case BinaryInstruction::XOR:
                     mInstBuilder->xor_(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::SHL:
+                    mInstBuilder->shl(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::SHR:
+                    mInstBuilder->shr(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::SAR:
+                    mInstBuilder->sar(dst, leftReg, rightReg);
                     break;
                 case BinaryInstruction::EQ:
                 case BinaryInstruction::NE:

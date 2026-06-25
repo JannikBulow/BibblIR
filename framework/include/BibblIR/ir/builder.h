@@ -30,10 +30,15 @@ namespace bibblir {
         BinaryInstruction* createMul(Value* left, Value* right);
         BinaryInstruction* createSDiv(Value* left, Value* right);
         BinaryInstruction* createUDiv(Value* left, Value* right);
+        BinaryInstruction* createSMod(Value* left, Value* right);
+        BinaryInstruction* createUMod(Value* left, Value* right);
 
         BinaryInstruction* createAnd(Value* left, Value* right);
         BinaryInstruction* createOr(Value* left, Value* right);
         BinaryInstruction* createXor(Value* left, Value* right);
+        BinaryInstruction* createSHL(Value* left, Value* right);
+        BinaryInstruction* createSHR(Value* left, Value* right);
+        BinaryInstruction* createSAR(Value* left, Value* right);
 
         BinaryInstruction* createCmpEQ(Value* left, Value* right);
         BinaryInstruction* createCmpNE(Value* left, Value* right);

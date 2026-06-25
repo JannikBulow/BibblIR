@@ -45,9 +45,14 @@ namespace bibblir {
             case MUL:
             case SDIV:
             case UDIV:
+            case SMOD:
+            case UMOD:
             case AND:
             case OR:
             case XOR:
+            case SHL:
+            case SHR:
+            case SAR:
                 mType = mLeft->getType();
                 break;
             case EQ:
