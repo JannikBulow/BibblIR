@@ -4,6 +4,7 @@
 #include "BibblIR/ir/constant/constant_int.h"
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
+#include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
@@ -152,6 +153,14 @@ namespace bibblir {
         }
 
         mStream << std::format("{} = {} {} {}", instruction.getName(instruction.mValueId), instruction.mLeft->identifier(), operatorSymbol, instruction.mRight->identifier());
+    }
+
+    void PrintVisitor::visit(BranchInstruction& instruction) {
+        if (!instruction.mFalseBranch) {
+            mStream << std::format("branch {}", instruction.mTrueBranch->identifier());
+        } else {
+            mStream << std::format("branch if {} ? {} : {}", instruction.mCondition->identifier(), instruction.mTrueBranch->identifier(), instruction.mFalseBranch->identifier());
+        }
     }
 
     void PrintVisitor::visit(PhiInstruction& instruction) {

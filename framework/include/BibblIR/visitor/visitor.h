@@ -16,6 +16,7 @@ namespace bibblir {
     class ConstantInt;
 
     class BinaryInstruction;
+    class BranchInstruction;
     class PhiInstruction;
     class ReturnInstruction;
     class UnaryInstruction;
@@ -36,6 +37,7 @@ namespace bibblir {
         virtual void visit(ConstantInt& constant) = 0;
 
         virtual void visit(BinaryInstruction& instruction) = 0;
+        virtual void visit(BranchInstruction& instruction) = 0;
         virtual void visit(PhiInstruction& instruction) = 0;
         virtual void visit(ReturnInstruction& instruction) = 0;
         virtual void visit(UnaryInstruction& instruction) = 0;

@@ -9,6 +9,7 @@
 
 #include <BibbleASM/instruction/builder.h>
 
+#include <ostream>
 #include <unordered_map>
 
 namespace bibblir {
@@ -28,6 +29,7 @@ namespace bibblir {
         void visit(ConstantInt& constant) override;
 
         void visit(BinaryInstruction& instruction) override;
+        void visit(BranchInstruction& instruction) override;
         void visit(PhiInstruction& instruction) override;
         void visit(ReturnInstruction& instruction) override;
         void visit(UnaryInstruction& instruction) override;

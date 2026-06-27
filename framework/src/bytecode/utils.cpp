@@ -48,4 +48,61 @@ namespace bibblir::bytecode {
             builder.assembler().emit(*insn);
         }
     }
+
+    void Jump(bibbleasm::InstructionBuilder& builder, bibbleasm::Operand destination) {
+        std::visit(overloaded{
+            [&builder](const bibbleasm::Label& label) {
+                builder.jmp(label);
+            },
+            [&builder](const bibbleasm::BranchOffset& offset) {
+                builder.jmp(offset);
+            },
+
+            [](const auto& value) {
+                assert(false);
+            }
+        }, destination);
+    }
+
+    void CondJump(bibbleasm::InstructionBuilder& builder, CondType condType, bibbleasm::Operand condition, bibbleasm::Operand destination) {
+        assert(std::holds_alternative<bibbleasm::Register>(condition));
+
+        bibbleasm::Register conditionReg = std::get<bibbleasm::Register>(condition);
+
+#define GENERATE_SWITCH(dst) switch (condType) {\
+    case CondType::EQ:\
+        builder.jeq(conditionReg, dst);\
+        break;\
+    case CondType::NE:\
+        builder.jne(conditionReg, dst);\
+        break;\
+    case CondType::LT:\
+        builder.jlt(conditionReg, dst);\
+        break;\
+    case CondType::GT:\
+        builder.jgt(conditionReg, dst);\
+        break;\
+    case CondType::LE:\
+        builder.jle(conditionReg, dst);\
+        break;\
+    case CondType::GE:\
+        builder.jge(conditionReg, dst);\
+        break;\
+    }
+
+        std::visit(overloaded{
+            [&builder, condType, &conditionReg](const bibbleasm::Label& label) {
+                GENERATE_SWITCH(label);
+            },
+            [&builder, condType, &conditionReg](const bibbleasm::BranchOffset& offset) {
+                GENERATE_SWITCH(offset);
+            },
+
+            [](const auto& value) {
+                assert(false);
+            }
+        }, destination);
+    }
+
+#undef GENERATE_SWITCH
 }

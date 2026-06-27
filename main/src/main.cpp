@@ -30,16 +30,24 @@ int main() {
 
     Type* intType = Type::GetIntegerType(4);
 
+    BasicBlock* trueBB = mainFunc->createBasicBlock("");
+    BasicBlock* falseBB = mainFunc->createBasicBlock("");
+
     builder.setInsertPoint(mainEntryBB);
-    builder.createReturn(
-        builder.createAbs(
-            builder.createNeg(
-                builder.createAdd(
-                    builder.createConstantInt(34, intType), builder.createConstantInt(35, intType)
-                )
-            )
-        )
+
+    builder.createCondBr(
+        builder.createCmpEQ(
+            builder.createConstantInt(67, intType),
+            builder.createConstantInt(67, intType)
+        ),
+        trueBB, falseBB
     );
+
+    builder.setInsertPoint(trueBB);
+    builder.createReturn(builder.createConstantInt(1, intType));
+
+    builder.setInsertPoint(falseBB);
+    builder.createReturn(builder.createConstantInt(0, intType));
 
     PrintVisitor printVisitor(std::cout);
     module.accept(printVisitor);

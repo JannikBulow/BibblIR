@@ -13,6 +13,7 @@ namespace bibblir {
     class ConstantInt;
 
     class BinaryInstruction;
+    class BranchInstruction;
     class PhiInstruction;
     class ReturnInstruction;
     class UnaryInstruction;
@@ -53,6 +54,10 @@ namespace bibblir {
         UnaryInstruction* createNeg(Value* value);
         UnaryInstruction* createAbs(Value* value);
         UnaryInstruction* createNot(Value* value);
+
+
+        BranchInstruction* createBr(BasicBlock* destination);
+        BranchInstruction* createCondBr(Value* condition, BasicBlock* trueBranch, BasicBlock* falseBranch);
 
 
         PhiInstruction* createPhi(Type* type);

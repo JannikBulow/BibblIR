@@ -12,8 +12,17 @@
 #include <optional>
 
 namespace bibblir::bytecode {
+    enum class CondType {
+        EQ, NE,
+        LT, GT,
+        LE, GE
+    };
+
     BIBBLIR_EXPORT std::optional<bibbleasm::Instruction> BuildMove(bibbleasm::Operand dst, bibbleasm::Operand src);
     BIBBLIR_EXPORT void Move(bibbleasm::InstructionBuilder& builder, bibbleasm::Operand dst, bibbleasm::Operand src);
+
+    BIBBLIR_EXPORT void Jump(bibbleasm::InstructionBuilder& builder, bibbleasm::Operand destination);
+    BIBBLIR_EXPORT void CondJump(bibbleasm::InstructionBuilder& builder, CondType condType, bibbleasm::Operand condition, bibbleasm::Operand destination);
 }
 
 #endif //BIBBLIR_BYTECODE_UTILS_H

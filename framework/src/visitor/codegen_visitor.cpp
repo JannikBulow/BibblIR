@@ -6,6 +6,7 @@
 #include "BibblIR/ir/constant/constant_int.h"
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
+#include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
@@ -17,6 +18,8 @@
 #include "BibblIR/visitor/codegen_visitor.h"
 
 #include "BibblIR/module.h"
+
+#include <cassert>
 
 namespace bibblir {
     bibbleasm::Module CodegenVisitor::buildModule() {
@@ -123,7 +126,7 @@ namespace bibblir {
 
         bibbleasm::Register dst = instruction.mVReg->toOperand();
 
-        if (instruction.getType()->isIntegerType()) {
+        if (instruction.mLeft->getType()->isIntegerType()) {
             switch (instruction.mOperator) {
                 case BinaryInstruction::ADD:
                     mInstBuilder->add(dst, leftReg, rightReg);
@@ -176,6 +179,53 @@ namespace bibblir {
         }
 
         instruction.mEmittedValue = dst; // the conditional branch codegen could simply check if its condition is a BinaryInstruction, then check the operator
+    }
+
+    void CodegenVisitor::visit(BranchInstruction& instruction) {
+        assert(instruction.mParent->endId() == static_cast<bibbleasm::InstructionId>(-1));
+        instruction.mParent->endId() = mInstBuilder->assembler().getLastInstructionId();
+
+        if (!instruction.mFalseBranch) {
+            bytecode::Jump(*mInstBuilder, *instruction.mTrueBranch->mEmittedValue);
+        } else {
+            if (auto binary = dynamic_cast<BinaryInstruction*>(instruction.mCondition)) {
+                bytecode::CondType condType;
+                switch (binary->mOperator) {
+                    case BinaryInstruction::EQ:
+                        condType = bytecode::CondType::EQ;
+                        break;
+                    case BinaryInstruction::NE:
+                        condType = bytecode::CondType::NE;
+                        break;
+                    case BinaryInstruction::LT:
+                        condType = bytecode::CondType::LT;
+                        break;
+                    case BinaryInstruction::GT:
+                        condType = bytecode::CondType::GT;
+                        break;
+                    case BinaryInstruction::LE:
+                        condType = bytecode::CondType::LE;
+                        break;
+                    case BinaryInstruction::GE:
+                        condType = bytecode::CondType::GE;
+                        break;
+
+                    default:
+                        assert(false);
+                        break;
+                }
+
+                bytecode::CondJump(*mInstBuilder, condType, *instruction.mCondition->mEmittedValue,  *instruction.mTrueBranch->mEmittedValue);
+                bytecode::Jump(*mInstBuilder, *instruction.mFalseBranch->mEmittedValue);
+            } else if (std::holds_alternative<bibbleasm::Immediate>(*instruction.mCondition->mEmittedValue)) {
+                bibbleasm::Immediate imm = std::get<bibbleasm::Immediate>(*instruction.mCondition->mEmittedValue);
+                if (imm.value) {
+                    bytecode::Jump(*mInstBuilder, *instruction.mTrueBranch->mEmittedValue);
+                } else {
+                    bytecode::Jump(*mInstBuilder, *instruction.mFalseBranch->mEmittedValue);
+                }
+            }
+        }
     }
 
     void CodegenVisitor::visit(PhiInstruction& instruction) {

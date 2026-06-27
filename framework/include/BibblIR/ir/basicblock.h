@@ -53,7 +53,7 @@ namespace bibblir {
 
         bool mExists = true;
 
-        bibbleasm::InstructionId mEndId = 0;
+        bibbleasm::InstructionId mEndId = -1;
 
         BasicBlock(std::string name, Function* parent);
     };
