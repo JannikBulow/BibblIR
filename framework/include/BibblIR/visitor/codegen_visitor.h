@@ -32,17 +32,22 @@ namespace bibblir {
 
         void visit(BinaryInstruction& instruction) override;
         void visit(BranchInstruction& instruction) override;
+        void visit(CallInstruction& instruction) override;
         void visit(PhiInstruction& instruction) override;
         void visit(ReturnInstruction& instruction) override;
         void visit(UnaryInstruction& instruction) override;
 
     private:
+        const std::string* mModuleName = nullptr;
+
         bibbleasm::ModuleBuilder mBuilder;
         bibbleasm::InstructionBuilder* mInstBuilder = nullptr;
 
         std::unordered_map<std::string, bibbleasm::ConstantIndex> mStringConstants;
+        std::unordered_map<std::string, bibbleasm::ConstantIndex> mModuleInfoConstants;
 
         bibbleasm::ConstantIndex getStringConstant(const std::string& str);
+        bibbleasm::ConstantIndex getModuleInfoConstant(const std::string& name);
     };
 }
 

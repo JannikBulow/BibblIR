@@ -14,6 +14,7 @@ namespace bibblir {
 
     class BinaryInstruction;
     class BranchInstruction;
+    class CallInstruction;
     class PhiInstruction;
     class ReturnInstruction;
     class UnaryInstruction;
@@ -61,6 +62,10 @@ namespace bibblir {
 
 
         PhiInstruction* createPhi(Type* type);
+
+
+        CallInstruction* createCall(Value* callee, std::vector<Value*> parameters);
+
 
         ReturnInstruction* createReturn(Value* returnValue);
 

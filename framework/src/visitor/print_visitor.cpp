@@ -5,6 +5,7 @@
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
+#include "BibblIR/ir/instruction/call_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
@@ -18,6 +19,8 @@
 #include "BibblIR/module.h"
 
 #include <format>
+
+#include "BibblIR/ir/instruction/call_instruction.h"
 
 namespace bibblir {
     PrintVisitor::PrintVisitor(std::ostream& stream)
@@ -161,6 +164,17 @@ namespace bibblir {
         } else {
             mStream << std::format("branch if {} ? {} : {}", instruction.mCondition->identifier(), instruction.mTrueBranch->identifier(), instruction.mFalseBranch->identifier());
         }
+    }
+
+    void PrintVisitor::visit(CallInstruction& instruction) {
+        mStream << std::format("{} = call {}(", instruction.identifier(), instruction.mCallee->identifier());
+        if (!instruction.mParameters.empty()) {
+            for (int i = 0; i < instruction.mParameters.size() - 1; i++) {
+                mStream << std::format("{}, ", instruction.mParameters[i]->identifier());
+            }
+            mStream << instruction.mParameters.back()->identifier();
+        }
+        mStream << ')';
     }
 
     void PrintVisitor::visit(PhiInstruction& instruction) {

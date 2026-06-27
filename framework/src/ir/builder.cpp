@@ -5,6 +5,7 @@
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
+#include "BibblIR/ir/instruction/call_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
@@ -235,6 +236,14 @@ namespace bibblir {
 
     PhiInstruction* IRBuilder::createPhi(Type* type) {
         PhiInstruction* instruction = new PhiInstruction(mInsertPoint, type);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    CallInstruction* IRBuilder::createCall(Value* callee, std::vector<Value*> parameters) {
+        CallInstruction* instruction = new CallInstruction(mInsertPoint, callee, parameters);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
