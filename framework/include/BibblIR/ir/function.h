@@ -12,6 +12,7 @@ namespace bibblir {
     class BIBBLIR_EXPORT Argument : public Value {
         friend class CodegenVisitor;
         friend class PrintVisitor;
+        friend class RegAlloc;
     public:
         Argument(Module& module, Type* type, std::string name, int index);
 

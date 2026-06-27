@@ -113,7 +113,7 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(Argument& arg) {
-        arg.mEmittedValue = bibbleasm::Register(arg.mIndex);
+        arg.mEmittedValue = arg.mVReg->toOperand();
     }
 
     void CodegenVisitor::visit(ConstantBoolean& constant) {

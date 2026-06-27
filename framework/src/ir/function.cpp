@@ -17,7 +17,7 @@ namespace bibblir {
     }
 
     std::string Argument::identifier() const {
-        return mName;
+        return "%" + mName;
     }
 
     void Argument::accept(Visitor& visitor) {

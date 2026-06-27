@@ -5,6 +5,7 @@
 #include "BibblIR/optimizer/regalloc/allocator.h"
 
 #include <algorithm>
+#include <cassert>
 #include <numeric>
 #include <set>
 
@@ -16,8 +17,13 @@ namespace bibblir {
 
     void RegAlloc::doRegAlloc(Function* function) {
         std::vector<VReg*> availableVRegs;
-
         int regCount = 0;
+
+        for (const auto& argument : function->mArguments) {
+            function->mVRegs.push_back(std::make_unique<VReg>(regCount++, argument->mIndex));
+            availableVRegs.push_back(function->mVRegs.back().get());
+        }
+
         auto createVReg = [function, &regCount]() {
             int index = regCount++;
             function->mVRegs.push_back(std::make_unique<VReg>(index, index));
@@ -25,7 +31,7 @@ namespace bibblir {
             return function->mVRegs.back().get();
         };
 
-        auto getNextFreeVReg = [&availableVRegs, &createVReg](int preferred) {
+        auto getNextFreeVReg = [&availableVRegs, &createVReg](int preferred, bool strictPreferred = false) {
             if (availableVRegs.empty()) {
                 return createVReg();
             }
@@ -34,6 +40,11 @@ namespace bibblir {
                 auto it = std::ranges::find_if(availableVRegs, [preferred](const VReg* vreg) {
                     return vreg->getActualRegister() == preferred;
                 });
+
+                if (strictPreferred) {
+                    assert(it != availableVRegs.end());
+                }
+
                 if (it != availableVRegs.end()) {
                     VReg* vreg = *it;
                     availableVRegs.erase(it);
@@ -102,6 +113,11 @@ namespace bibblir {
                 return false;
             });
         };
+
+        for (const auto& argument : function->mArguments) {
+            argument->mVReg = getNextFreeVReg(argument->mIndex, true);
+            activeValues.push_back(argument.get());
+        }
 
         struct Compare {
             bool operator()(const Value* lhs, const Value* rhs) const {
