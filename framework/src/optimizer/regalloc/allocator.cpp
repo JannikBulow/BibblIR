@@ -5,6 +5,7 @@
 #include "BibblIR/optimizer/regalloc/allocator.h"
 
 #include <algorithm>
+#include <numeric>
 #include <set>
 
 namespace bibblir {
@@ -24,14 +25,14 @@ namespace bibblir {
             return function->mVRegs.back().get();
         };
 
-        auto getNextFreeVReg = [&availableVRegs, &createVReg](const std::vector<VReg*>& disallowed, int preferred) {
+        auto getNextFreeVReg = [&availableVRegs, &createVReg](int preferred) {
             if (availableVRegs.empty()) {
                 return createVReg();
             }
 
             if (preferred != -1) {
-                auto it = std::ranges::find_if(availableVRegs, [preferred, &disallowed](const VReg* vreg) {
-                    return std::ranges::find(disallowed, vreg) == disallowed.end() && vreg->getActualRegister() == preferred;
+                auto it = std::ranges::find_if(availableVRegs, [preferred](const VReg* vreg) {
+                    return vreg->getActualRegister() == preferred;
                 });
                 if (it != availableVRegs.end()) {
                     VReg* vreg = *it;
@@ -41,22 +42,61 @@ namespace bibblir {
                 }
             }
 
-            auto it = std::ranges::find_if(availableVRegs, [&disallowed](const VReg* vreg) {
-                return std::ranges::find(disallowed, vreg) == disallowed.end();
-            });
-            if (it == availableVRegs.end()) return createVReg();
-
-            VReg* vreg = *it;
-            availableVRegs.erase(it);
+            VReg* vreg = availableVRegs.back();
+            availableVRegs.pop_back();
             vreg->mUses++;
             return vreg;
+        };
+
+        auto getNextFreeVRegRange = [&availableVRegs, &createVReg](uint16_t count) {
+            if (!availableVRegs.empty()) {
+                std::vector<size_t> order(availableVRegs.size());
+                std::iota(order.begin(), order.end(), 0);
+                std::ranges::sort(order, [&availableVRegs](size_t lhs, size_t rhs) {
+                    return availableVRegs[lhs]->getActualRegister() < availableVRegs[rhs]->getActualRegister();
+                });
+
+                int runStart = 0;
+                for (int i = 0; i < static_cast<int>(order.size()); ++i) {
+                    bool contiguous = i > runStart && availableVRegs[order[i]]->getActualRegister() == availableVRegs[order[i - 1]]->getActualRegister() + 1;
+
+                    if (!contiguous) {
+                        runStart = i;
+                    }
+
+                    if (i - runStart + 1 == count) {
+                        std::vector<VReg*> result;
+                        result.reserve(count);
+                        std::vector<size_t> toErase(order.begin() + runStart, order.begin() + i + 1);
+                        std::ranges::sort(toErase, std::greater<>());
+                        for (size_t idx : toErase) {
+                            VReg* v = availableVRegs[idx];
+                            v->mUses++;
+                            result.push_back(v);
+                            availableVRegs.erase(availableVRegs.begin() + idx);
+                        }
+                        std::ranges::reverse(result);
+                        return result;
+                    }
+                }
+            }
+
+            std::vector<VReg*> range;
+            range.reserve(count);
+            for (uint16_t i = 0; i < count; i++) {
+                range.push_back(createVReg());
+            }
+            return range;
         };
 
         std::vector<Value*> activeValues;
         auto expireOldIntervals = [&activeValues, &availableVRegs](int i) {
             std::erase_if(activeValues, [i, &availableVRegs](Value* value) {
                 if (value->mInterval.second <= i) {
-                    availableVRegs.push_back(value->mVReg);
+                    if (value->mVReg) availableVRegs.push_back(value->mVReg);
+                    for (VReg* vreg : value->mVRegRange) {
+                        availableVRegs.push_back(vreg);
+                    }
                     return true;
                 }
                 return false;
@@ -85,17 +125,16 @@ namespace bibblir {
                     return lhs->mInterval.second < rhs->mInterval.second;
                 });
 
-                auto disallowed = value->mDisallowedVRegs;
-                for (auto id : value->mDisallowedRegisters) {
-                    auto it = std::ranges::find_if(function->mVRegs, [id](const auto& vreg) {
-                        return vreg->getActualRegister() == id;
-                    });
-                    if (it != function->mVRegs.end()) {
-                        disallowed.push_back(it->get());
-                    }
-                }
+                value->mVReg = getNextFreeVReg(value->mPreferredRegister);
+            }
 
-                value->mVReg = getNextFreeVReg(disallowed, value->mPreferredRegister);
+            if (value->requiresVRegRange()) {
+                activeValues.push_back(value);
+                std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
+                    return lhs->mInterval.second < rhs->mInterval.second;
+                });
+
+                value->mVRegRange = getNextFreeVRegRange(value->mVRegRangeSize);
             }
         }
 

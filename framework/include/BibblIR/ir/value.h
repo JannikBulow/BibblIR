@@ -40,6 +40,8 @@ namespace bibblir {
         bool requiresVReg() const { return mRequiresVReg; }
         void setPreferredRegister(int id) { mPreferredRegister = id; }
 
+        bool requiresVRegRange() const { return mVRegRangeSize > 0; }
+
         void forceRegister() {
             mRequiresVReg = true;
             mForceRegister = true;
@@ -68,10 +70,11 @@ namespace bibblir {
 
         VReg* mVReg = nullptr;
         bool mRequiresVReg = true;
-        std::vector<VReg*> mDisallowedVRegs;
-        std::vector<uint16_t> mDisallowedRegisters; // real registers
         int mPreferredRegister = -1; // real register
         bool mForceRegister = false; // some instructions which needs its operands in a register, can force them in a register during construction
+
+        std::vector<VReg*> mVRegRange; // a vreg range is a range of vregs where the first element is the lowest actual register id, and each following element is incrementing it by one
+        uint16_t mVRegRangeSize = 0; // 0 means it doesn't need a vreg range
     };
 
     using ValuePtr = std::unique_ptr<Value>;
