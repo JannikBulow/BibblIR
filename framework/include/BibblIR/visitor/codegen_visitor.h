@@ -17,6 +17,8 @@ namespace bibblir {
     public:
         bibbleasm::Module buildModule();
 
+        void printDisassembly(std::ostream& stream);
+
         void visit(Module& module) override;
 
         void visit(Function& function) override;

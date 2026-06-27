@@ -55,6 +55,10 @@ int main() {
     CodegenVisitor codegenVisitor;
     module.accept(codegenVisitor);
 
+    std::cout << "\n\n";
+
+    codegenVisitor.printDisassembly(std::cout);
+
     bibbleasm::Module builtModule = codegenVisitor.buildModule();
 
     bibblebytecode::WritableByteBuffer buf;

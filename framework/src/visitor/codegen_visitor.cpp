@@ -28,6 +28,17 @@ namespace bibblir {
         return module;
     }
 
+    void CodegenVisitor::printDisassembly(std::ostream& stream) {
+        const auto& functions = mBuilder.functions();
+        for (size_t i = 0; i < functions.size() - 1; i++) {
+            stream << "function " << functions[i]->getName() << ":\n";
+            stream << functions[i]->assembler().disassemble();
+            stream << "\n\n";
+        }
+        stream << "function " << functions.back()->getName() << ":\n";
+        stream << functions.back()->assembler().disassemble();
+    }
+
     void CodegenVisitor::visit(Module& module) {
         mBuilder.setVersion(1);
         mBuilder.setName(getStringConstant(module.getName()));
