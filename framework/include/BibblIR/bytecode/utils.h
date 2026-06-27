@@ -23,6 +23,8 @@ namespace bibblir::bytecode {
 
     BIBBLIR_EXPORT void Jump(bibbleasm::InstructionBuilder& builder, bibbleasm::Operand destination);
     BIBBLIR_EXPORT void CondJump(bibbleasm::InstructionBuilder& builder, CondType condType, bibbleasm::Operand condition, bibbleasm::Operand destination);
+
+    BIBBLIR_EXPORT void Call(bibbleasm::InstructionBuilder& builder, bibbleasm::Operand dst, bibbleasm::Operand callee, bibbleasm::Operand params);
 }
 
 #endif //BIBBLIR_BYTECODE_UTILS_H

@@ -7,6 +7,7 @@
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
+#include "BibblIR/ir/instruction/call_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
@@ -40,6 +41,8 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(Module& module) {
+        mModuleName = &module.getName();
+
         mBuilder.setVersion(1);
         mBuilder.setName(getStringConstant(module.getName()));
 
@@ -61,6 +64,8 @@ namespace bibblir {
         for (const GlobalPtr& global : globals) {
             global->accept(*this);
         }
+
+        mModuleName = nullptr;
     }
 
     void CodegenVisitor::visit(Function& function) {
@@ -239,6 +244,24 @@ namespace bibblir {
         }
     }
 
+    void CodegenVisitor::visit(CallInstruction& instruction) {
+        if (!instruction.mCallee->mEmittedValue) { // we lazy emit call targets to save constpool space
+            if (auto* function = dynamic_cast<Function*>(instruction.mCallee)) {
+                function->mEmittedValue = bibbleasm::ConstPoolIndex(mBuilder.constPool().addFunctionInfo(getModuleInfoConstant(*mModuleName), getStringConstant(function->mName)));
+            } else {
+                assert(false); //TODO: revisit when extern functions
+            }
+        }
+
+        int index = 0;
+        for (Value* parameter : instruction.mParameters) {
+            bytecode::Move(*mInstBuilder, instruction.mVRegRange[index++]->toOperand(), *parameter->mEmittedValue);
+        }
+        bytecode::Call(*mInstBuilder, instruction.mVReg->toOperand(), *instruction.mCallee->mEmittedValue, instruction.mParameters.empty() ? bibbleasm::Register(0) : instruction.mVRegRange.front()->toOperand());
+
+        instruction.mEmittedValue = instruction.mVReg->toOperand();
+    }
+
     void CodegenVisitor::visit(PhiInstruction& instruction) {
         std::vector<BasicBlock*> done;
         for (auto& incoming : instruction.mIncoming) {
@@ -295,6 +318,16 @@ namespace bibblir {
         if (it == mStringConstants.end()) {
             bibbleasm::ConstantIndex idx = mBuilder.constPool().addString(str);
             mStringConstants[str] = idx;
+            return idx;
+        }
+        return it->second;
+    }
+
+    bibbleasm::ConstantIndex CodegenVisitor::getModuleInfoConstant(const std::string& name) {
+        auto it = mModuleInfoConstants.find(name);
+        if (it == mModuleInfoConstants.end()) {
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addModuleInfo(getStringConstant(name));
+            mModuleInfoConstants[name] = idx;
             return idx;
         }
         return it->second;

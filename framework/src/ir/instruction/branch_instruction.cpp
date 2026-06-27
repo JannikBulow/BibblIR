@@ -38,7 +38,7 @@ namespace bibblir {
         , mCondition(condition)
         , mTrueBranch(trueBranch)
         , mFalseBranch(falseBranch) {
-        assert(mCondition->getType() == Type::GetBooleanType());
+        assert(mCondition->getType()->isBooleanType());
 
         mRequiresVReg = false;
 

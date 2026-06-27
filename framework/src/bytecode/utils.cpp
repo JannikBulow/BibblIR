@@ -102,7 +102,28 @@ namespace bibblir::bytecode {
                 assert(false);
             }
         }, destination);
-    }
 
 #undef GENERATE_SWITCH
+    }
+
+    void Call(bibbleasm::InstructionBuilder& builder, bibbleasm::Operand dst, bibbleasm::Operand callee, bibbleasm::Operand params) {
+        assert(std::holds_alternative<bibbleasm::Register>(dst));
+        assert(std::holds_alternative<bibbleasm::Register>(params));
+
+        bibbleasm::Register dstReg = std::get<bibbleasm::Register>(dst);
+        bibbleasm::Register paramsReg = std::get<bibbleasm::Register>(params);
+
+        std::visit(overloaded{
+            [&builder, &dstReg, &paramsReg](const bibbleasm::Register& reg) {
+                builder.call_dyn(dstReg, reg, paramsReg);
+            },
+            [&builder, &dstReg, &paramsReg](const bibbleasm::ConstPoolIndex& constant) {
+                builder.call(dstReg, constant, paramsReg);
+            },
+
+            [](const auto& value) {
+                assert(false);
+            }
+        }, callee);
+    }
 }

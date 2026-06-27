@@ -5,7 +5,7 @@
 #include <BibblIR/ir/constant/constant_int.h>
 
 #include <BibblIR/ir/instruction/binary_instruction.h>
-#include <BibblIR/ir/instruction/unary_instruction.h>
+#include <BibblIR/ir/instruction/call_instruction.h>
 
 #include <BibblIR/ir/builder.h>
 #include <BibblIR/ir/function.h>
@@ -25,29 +25,31 @@ int main() {
 
     IRBuilder builder;
 
-    Function* mainFunc = Function::Create(module, FunctionType::Create(Type::GetIntegerType(4), {}), ".main");
-    BasicBlock* mainEntryBB = mainFunc->createBasicBlock("");
-
     Type* intType = Type::GetIntegerType(4);
 
-    BasicBlock* trueBB = mainFunc->createBasicBlock("");
-    BasicBlock* falseBB = mainFunc->createBasicBlock("");
+    Function* addFunc = Function::Create(module, FunctionType::Create(intType, {intType, intType}), "add");
+    BasicBlock* addEntryBB = addFunc->createBasicBlock("");
+
+    builder.setInsertPoint(addEntryBB);
+
+    builder.createReturn(
+        builder.createAdd(
+            addFunc->getArgument(0),
+            addFunc->getArgument(1)
+        )
+    );
+
+    Function* mainFunc = Function::Create(module, FunctionType::Create(intType, {}), ".main");
+    BasicBlock* mainEntryBB = mainFunc->createBasicBlock("");
 
     builder.setInsertPoint(mainEntryBB);
 
-    builder.createCondBr(
-        builder.createCmpEQ(
-            builder.createConstantInt(67, intType),
-            builder.createConstantInt(67, intType)
-        ),
-        trueBB, falseBB
+    builder.createReturn(
+        builder.createCall(addFunc, {
+            builder.createConstantInt(34, intType),
+            builder.createConstantInt(33, intType)
+        })
     );
-
-    builder.setInsertPoint(trueBB);
-    builder.createReturn(builder.createConstantInt(1, intType));
-
-    builder.setInsertPoint(falseBB);
-    builder.createReturn(builder.createConstantInt(0, intType));
 
     PrintVisitor printVisitor(std::cout);
     module.accept(printVisitor);
@@ -56,7 +58,6 @@ int main() {
     module.accept(codegenVisitor);
 
     std::cout << "\n\n";
-
     codegenVisitor.printDisassembly(std::cout);
 
     bibbleasm::Module builtModule = codegenVisitor.buildModule();
