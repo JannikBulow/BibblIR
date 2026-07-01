@@ -23,38 +23,38 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
     add_custom_command(TARGET BibblIR-main PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:BibblIR-framework-shared>
-        $<TARGET_FILE_DIR:BibbleASM-main>
+        $<TARGET_FILE_DIR:BibblIR-main>
     )
 
     add_custom_command(TARGET BibblIR-main PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:BibbleASM-framework-shared>
-        $<TARGET_FILE_DIR:BibbleASM-main>
+        $<TARGET_FILE_DIR:BibblIR-main>
     )
 
     add_custom_command(TARGET BibblIR-main PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:BibbleBytecode-shared>
-        $<TARGET_FILE_DIR:BibbleASM-main>
+        $<TARGET_FILE_DIR:BibblIR-main>
     )
 
     if (MSVC)
         add_custom_command(TARGET BibblIR-main PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_PDB_FILE:BibblIR-framework-shared>
-            $<TARGET_PDB_FILE_DIR:BibbleASM-main>
+            $<TARGET_PDB_FILE_DIR:BibblIR-main>
         )
 
         add_custom_command(TARGET BibblIR-main PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_PDB_FILE:BibbleASM-framework-shared>
-            $<TARGET_PDB_FILE_DIR:BibbleASM-main>
+            $<TARGET_PDB_FILE_DIR:BibblIR-main>
         )
 
         add_custom_command(TARGET BibblIR-main PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_PDB_FILE:BibbleBytecode-shared>
-            $<TARGET_PDB_FILE_DIR:BibbleASM-main>
+            $<TARGET_PDB_FILE_DIR:BibblIR-main>
         )
     endif()
 endif()
