@@ -15,6 +15,7 @@ namespace bibblir {
     class BinaryInstruction;
     class BranchInstruction;
     class CallInstruction;
+    class LoadInstruction;
     class PhiInstruction;
     class ReturnInstruction;
     class UnaryInstruction;
@@ -25,6 +26,7 @@ namespace bibblir {
         void setInsertPoint(BasicBlock* newInsertPoint);
 
         void insertAfter(Value* value);
+
 
         ConstantBoolean* createConstantBoolean(bool value);
         ConstantInt* createConstantInt(intmax_t value, Type* type);
@@ -59,6 +61,9 @@ namespace bibblir {
 
         BranchInstruction* createBr(BasicBlock* destination);
         BranchInstruction* createCondBr(Value* condition, BasicBlock* trueBranch, BasicBlock* falseBranch);
+
+
+        LoadInstruction* createLoad(Value* variable);
 
 
         PhiInstruction* createPhi(Type* type);

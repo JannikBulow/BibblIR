@@ -6,6 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
@@ -228,6 +229,14 @@ namespace bibblir {
 
     BranchInstruction* IRBuilder::createCondBr(Value* condition, BasicBlock* trueBranch, BasicBlock* falseBranch) {
         BranchInstruction* instruction = new BranchInstruction(mInsertPoint, condition, trueBranch, falseBranch);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    LoadInstruction* IRBuilder::createLoad(Value* variable) {
+        LoadInstruction* instruction = new LoadInstruction(mInsertPoint, variable);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 

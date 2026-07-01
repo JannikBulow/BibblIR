@@ -6,6 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
@@ -175,6 +176,10 @@ namespace bibblir {
             mStream << instruction.mParameters.back()->identifier();
         }
         mStream << ')';
+    }
+
+    void PrintVisitor::visit(LoadInstruction& instruction) {
+        mStream << std::format("{} = load {}", instruction.identifier(), instruction.mVariable->identifier());
     }
 
     void PrintVisitor::visit(PhiInstruction& instruction) {
