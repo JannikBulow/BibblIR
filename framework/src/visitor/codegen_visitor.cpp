@@ -13,6 +13,7 @@
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
+#include "BibblIR/ir/external_function.h"
 #include "BibblIR/ir/function.h"
 
 #include "BibblIR/optimizer/regalloc/allocator.h"
@@ -98,6 +99,10 @@ namespace bibblir {
         }
 
         mInstBuilder = nullptr;
+    }
+
+    void CodegenVisitor::visit(ExternalFunction& function) {
+
     }
 
     void CodegenVisitor::visit(BasicBlock& block) {
@@ -249,6 +254,8 @@ namespace bibblir {
         if (!instruction.mCallee->mEmittedValue) { // we lazy emit call targets to save constpool space
             if (auto* function = dynamic_cast<Function*>(instruction.mCallee)) {
                 function->mEmittedValue = bibbleasm::ConstPoolIndex(mBuilder.constPool().addFunctionInfo(getModuleInfoConstant(*mModuleName), getStringConstant(function->mName)));
+            } else if (auto* function = dynamic_cast<ExternalFunction*>(instruction.mCallee)) {
+                function->mEmittedValue = bibbleasm::ConstPoolIndex(mBuilder.constPool().addFunctionInfo(getModuleInfoConstant(function->mModuleName), getStringConstant(function->mName)));
             } else {
                 assert(false); //TODO: revisit when extern functions
             }

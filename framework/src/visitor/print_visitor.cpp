@@ -11,6 +11,7 @@
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
+#include "BibblIR/ir/external_function.h"
 #include "BibblIR/ir/function.h"
 
 #include "BibblIR/optimizer/regalloc/allocator.h"
@@ -67,6 +68,19 @@ namespace bibblir {
             bb->accept(*this);
         }
         mStream << "}";
+    }
+
+    void PrintVisitor::visit(ExternalFunction& function) {
+        mStream << std::format("\n\nimport function \"{}\"::\"{}\" (", function.mModuleName, function.mName);
+        if (!function.getFunctionType()->getArgumentTypes().empty()) {
+            for (int i = 0; i < function.getFunctionType()->getArgumentTypes().size() - 1; i++) {
+                mStream << std::format("{}, ", function.getFunctionType()->getArgumentTypes()[i]->getName());
+            }
+            mStream << function.getFunctionType()->getArgumentTypes().back()->getName();
+        } else {
+            mStream << "void";
+        }
+        mStream << std::format(") -> {};", function.getFunctionType()->getReturnType()->getName());
     }
 
     void PrintVisitor::visit(BasicBlock& block) {

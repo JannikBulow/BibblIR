@@ -16,6 +16,8 @@ namespace bibblir {
 
         void visit(Function& function) override;
 
+        void visit(ExternalFunction& function) override;
+
         void visit(BasicBlock& block) override;
 
         void visit(Argument& arg) override;

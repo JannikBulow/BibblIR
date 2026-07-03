@@ -11,6 +11,7 @@ namespace bibblir {
     class Argument;
     class Function;
     class BasicBlock;
+    class ExternalFunction;
 
     class ConstantBoolean;
     class ConstantInt;
@@ -30,6 +31,8 @@ namespace bibblir {
         virtual void visit(Module& module) = 0;
 
         virtual void visit(Function& function) = 0;
+
+        virtual void visit(ExternalFunction& function) = 0;
 
         virtual void visit(BasicBlock& block) = 0;
 

@@ -25,6 +25,7 @@ set(SOURCES
 
     src/ir/basicblock.cpp
     src/ir/builder.cpp
+    src/ir/external_function.cpp
     src/ir/function.cpp
     src/ir/instruction.cpp
 
@@ -59,6 +60,7 @@ set(HEADERS
 
     include/BibblIR/ir/basicblock.h
     include/BibblIR/ir/builder.h
+    include/BibblIR/ir/external_function.h
     include/BibblIR/ir/function.h
     include/BibblIR/ir/global.h
     include/BibblIR/ir/instruction.h
