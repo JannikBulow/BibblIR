@@ -27,6 +27,8 @@ namespace bibblir {
         void insertValue(Value* insertAfter, ValuePtr value);
         void eraseValue(Value* value);
 
+        bool hasTerminator() const;
+
         std::vector<Value*>& liveIn();
         std::vector<BasicBlock*>& successors();
         std::vector<BasicBlock*>& predecessors();

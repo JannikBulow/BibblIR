@@ -1,7 +1,9 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
-#include "BibblIR/ir/basicblock.h"
+#include "BibblIR/ir/instruction/branch_instruction.h"
+#include "BibblIR/ir/instruction/return_instruction.h"
 
+#include "BibblIR/ir/basicblock.h"
 #include "BibblIR/ir/function.h"
 
 #include "BibblIR/visitor/visitor.h"
@@ -33,6 +35,12 @@ namespace bibblir {
     void BasicBlock::eraseValue(Value* value) {
         std::erase_if(mValueList, [value](ValuePtr& valuePtr) {
             return valuePtr.get() == value;
+        });
+    }
+
+    bool BasicBlock::hasTerminator() const {
+        return std::any_of(mValueList.rbegin(), mValueList.rend(), [](const ValuePtr& value) {
+            return dynamic_cast<BranchInstruction*>(value.get()) || dynamic_cast<ReturnInstruction*>(value.get());
         });
     }
 
