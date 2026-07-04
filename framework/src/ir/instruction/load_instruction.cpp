@@ -9,6 +9,10 @@
 #include "BibblIR/module.h"
 
 namespace bibblir {
+    Value* LoadInstruction::getVariable() const {
+        return mVariable;
+    }
+
     std::vector<std::reference_wrapper<Value*>> LoadInstruction::getOperands() {
         return {mVariable};
     }
