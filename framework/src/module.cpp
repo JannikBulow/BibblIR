@@ -1,5 +1,7 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/ir/instruction/load_instruction.h"
+
 #include "BibblIR/visitor/visitor.h"
 
 #include "BibblIR/module.h"
@@ -30,5 +32,12 @@ namespace bibblir {
 
     void Module::accept(Visitor& visitor) {
         visitor.visit(*this);
+    }
+
+    Value* GetVariableOperand(Value* value) {
+        if (auto load = dynamic_cast<LoadInstruction*>(value)) {
+            return load->getVariable();
+        }
+        return nullptr;
     }
 }

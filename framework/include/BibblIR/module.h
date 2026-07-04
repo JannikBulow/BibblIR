@@ -32,6 +32,8 @@ namespace bibblir {
 
         std::vector<GlobalPtr> mGlobals;
     };
+
+    BIBBLIR_EXPORT Value* GetVariableOperand(Value* value);
 }
 
 #endif // BIBBLIR_MODULE_H
