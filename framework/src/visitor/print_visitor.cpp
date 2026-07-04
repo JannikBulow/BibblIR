@@ -9,6 +9,7 @@
 #include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
+#include "BibblIR/ir/instruction/store_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/external_function.h"
@@ -211,6 +212,10 @@ namespace bibblir {
         } else {
             mStream << "void";
         }
+    }
+
+    void PrintVisitor::visit(StoreInstruction& instruction) {
+        mStream << std::format("store {} -> {}", instruction.mValue->identifier(), instruction.mVariable->identifier());
     }
 
     void PrintVisitor::visit(UnaryInstruction& instruction) {

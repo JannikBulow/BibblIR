@@ -11,6 +11,7 @@
 #include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
+#include "BibblIR/ir/instruction/store_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/external_function.h"
@@ -305,6 +306,10 @@ namespace bibblir {
                 mInstBuilder->return_(bibbleasm::Register(0));
             }
         }
+    }
+
+    void CodegenVisitor::visit(StoreInstruction& instruction) {
+        bytecode::Move(*mInstBuilder, *instruction.mVariable->mEmittedValue, *instruction.mValue->mEmittedValue);
     }
 
     void CodegenVisitor::visit(UnaryInstruction& instruction) {
