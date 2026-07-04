@@ -9,6 +9,7 @@
 #include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
+#include "BibblIR/ir/instruction/store_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/basicblock.h"
@@ -237,6 +238,14 @@ namespace bibblir {
 
     LoadInstruction* IRBuilder::createLoad(Value* variable) {
         LoadInstruction* instruction = new LoadInstruction(mInsertPoint, variable);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    StoreInstruction* IRBuilder::createStore(Value* variable, Value* value) {
+        StoreInstruction* instruction = new StoreInstruction(mInsertPoint, variable, value);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 

@@ -18,6 +18,7 @@ namespace bibblir {
     class LoadInstruction;
     class PhiInstruction;
     class ReturnInstruction;
+    class StoreInstruction;
     class UnaryInstruction;
 
     class BIBBLIR_EXPORT IRBuilder {
@@ -64,6 +65,7 @@ namespace bibblir {
 
 
         LoadInstruction* createLoad(Value* variable);
+        StoreInstruction* createStore(Value* variable, Value* value);
 
 
         PhiInstruction* createPhi(Type* type);
