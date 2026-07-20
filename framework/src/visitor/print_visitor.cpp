@@ -6,6 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
@@ -191,6 +192,10 @@ namespace bibblir {
             mStream << instruction.mParameters.back()->identifier();
         }
         mStream << ')';
+    }
+
+    void PrintVisitor::visit(IntCastInstruction& instruction) {
+        mStream << std::format("{} = intcast {} -> {}", instruction.identifier(), instruction.mValue->identifier(), instruction.mType->getName());
     }
 
     void PrintVisitor::visit(LoadInstruction& instruction) {

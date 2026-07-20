@@ -8,6 +8,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
@@ -269,6 +270,12 @@ namespace bibblir {
         bytecode::Call(*mInstBuilder, instruction.mVReg->toOperand(), *instruction.mCallee->mEmittedValue, instruction.mParameters.empty() ? bibbleasm::Register(0) : instruction.mVRegRange.front()->toOperand());
 
         instruction.mEmittedValue = instruction.mVReg->toOperand();
+    }
+
+    void CodegenVisitor::visit(IntCastInstruction& instruction) {
+        auto vreg = instruction.mVReg->toOperand();
+        bytecode::Move(*mInstBuilder, vreg, *instruction.mValue->mEmittedValue);
+        instruction.mEmittedValue = vreg;
     }
 
     void CodegenVisitor::visit(LoadInstruction& instruction) {
