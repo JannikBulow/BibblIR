@@ -261,7 +261,7 @@ namespace bibblir {
     }
 
     CallInstruction* IRBuilder::createCall(Value* callee, std::vector<Value*> parameters) {
-        CallInstruction* instruction = new CallInstruction(mInsertPoint, callee, parameters);
+        CallInstruction* instruction = new CallInstruction(mInsertPoint, callee, std::move(parameters));
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
