@@ -48,7 +48,7 @@ namespace bibblir {
         static Type* GetIntegerType(int bytes);
         static Type* GetBooleanType();
         static Type* GetFunctionType(Type* returnType, const std::vector<Type*>& argumentTypes);
-        static Type* GetClassType(const std::vector<Type*>& fieldTypes);
+        static Type* GetClassType();
 
     protected:
         Type(size_t sizeInBytes, std::string name)

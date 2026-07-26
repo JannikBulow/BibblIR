@@ -65,11 +65,7 @@ namespace bibblir {
         >(returnType, argumentTypes);
     }
 
-    Type* Type::GetClassType(const std::vector<Type*>& fieldTypes) {
-        return GetType<
-            ClassType,
-            [](ClassType* value, const std::vector<Type*>& fieldTypes) { return value->getFields() == fieldTypes; },
-            [](const std::vector<Type*>& fieldTypes) { return std::make_unique<ClassType>(fieldTypes); }
-        >(fieldTypes);
+    Type* Type::GetClassType() {
+        return GetType<ClassType>();
     }
 }
