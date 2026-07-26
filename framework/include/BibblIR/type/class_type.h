@@ -8,17 +8,11 @@
 namespace bibblir {
     class BIBBLIR_EXPORT ClassType : public Type {
     public:
-        explicit ClassType(std::vector<Type*> fields);
-
-        const std::vector<Type*>& getFields() const;
-        Type* getField(unsigned int index) const;
+        ClassType();
 
         ID getID() const override;
 
         bool isClassType() const override;
-
-    private:
-        std::vector<Type*> mFields;
     };
 }
 
