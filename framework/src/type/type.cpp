@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+#include "BibblIR/type/class_type.h"
+
 namespace bibblir {
     std::vector<std::unique_ptr<Type>> types;
 
@@ -62,5 +64,13 @@ namespace bibblir {
                 return std::make_unique<FunctionType>(returnType, argumentTypes);
             }
         >(returnType, argumentTypes);
+    }
+
+    Type* Type::GetClassType(const std::vector<Type*>& fieldTypes) {
+        return GetType<
+            ClassType,
+            [](ClassType* value, const std::vector<Type*>& fieldTypes) { return value->getFields() == fieldTypes; },
+            [](const std::vector<Type*>& fieldTypes) { return std::make_unique<ClassType>(fieldTypes); }
+        >(fieldTypes);
     }
 }
