@@ -10,6 +10,8 @@ namespace bibblir {
     public:
         BooleanType();
 
+        ID getID() const override;
+
         bool isBooleanType() const override;
     };
 }

@@ -10,6 +10,8 @@ namespace bibblir {
     public:
         VoidType();
 
+        ID getID() const override;
+
         bool isVoidType() const override;
     };
 }

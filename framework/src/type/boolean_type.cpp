@@ -6,6 +6,10 @@ namespace bibblir {
     BooleanType::BooleanType()
         : Type(1, "boolean") {}
 
+    Type::ID BooleanType::getID() const {
+        return ID::Byte;
+    }
+
     bool BooleanType::isBooleanType() const {
         return true;
     }

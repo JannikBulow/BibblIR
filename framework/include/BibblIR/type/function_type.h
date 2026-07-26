@@ -12,10 +12,12 @@ namespace bibblir {
     public:
         FunctionType(Type* returnType, std::vector<Type*> argumentTypes);
 
-        bool isFunctionType() const override;
-
         Type* getReturnType() const;
         const std::vector<Type*>& getArgumentTypes() const;
+
+        ID getID() const override;
+
+        bool isFunctionType() const override;
 
         static FunctionType* Create(Type* returnType, const std::vector<Type*>& argumentTypes);
 

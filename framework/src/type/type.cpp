@@ -1,6 +1,7 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
 #include "BibblIR/type/boolean_type.h"
+#include "BibblIR/type/class_type.h"
 #include "BibblIR/type/function_type.h"
 #include "BibblIR/type/integer_type.h"
 #include "BibblIR/type/type.h"
@@ -9,8 +10,6 @@
 #include <functional>
 #include <memory>
 #include <vector>
-
-#include "BibblIR/type/class_type.h"
 
 namespace bibblir {
     std::vector<std::unique_ptr<Type>> types;

@@ -10,6 +10,8 @@ namespace bibblir {
     public:
         IntegerType(int bytes);
 
+        ID getID() const override;
+
         bool isIntegerType() const override;
     };
 }

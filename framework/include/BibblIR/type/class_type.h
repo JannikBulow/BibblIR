@@ -10,10 +10,12 @@ namespace bibblir {
     public:
         explicit ClassType(std::vector<Type*> fields);
 
-        bool isClassType() const override;
-
         const std::vector<Type*>& getFields() const;
         Type* getField(unsigned int index) const;
+
+        ID getID() const override;
+
+        bool isClassType() const override;
 
     private:
         std::vector<Type*> mFields;

@@ -19,16 +19,20 @@ namespace bibblir {
         mName += ')';
     }
 
-    bool FunctionType::isFunctionType() const {
-        return true;
-    }
-
     Type* FunctionType::getReturnType() const {
         return mReturnType;
     }
 
     const std::vector<Type*>& FunctionType::getArgumentTypes() const {
         return mArgumentTypes;
+    }
+
+    Type::ID FunctionType::getID() const {
+        return ID::Handle; // i guess this is the best type id? just pray this isn't called
+    }
+
+    bool FunctionType::isFunctionType() const {
+        return true;
     }
 
     FunctionType* FunctionType::Create(Type* returnType, const std::vector<Type*>& argumentTypes) {

@@ -14,15 +14,19 @@ namespace bibblir {
         mName += '}';
     }
 
-    bool ClassType::isClassType() const {
-        return true;
-    }
-
     const std::vector<Type*>& ClassType::getFields() const {
         return mFields;
     }
 
     Type* ClassType::getField(unsigned int index) const {
         return mFields[index];
+    }
+
+    Type::ID ClassType::getID() const {
+        return ID::Reference;
+    }
+
+    bool ClassType::isClassType() const {
+        return true;
     }
 }
