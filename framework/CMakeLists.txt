@@ -27,9 +27,12 @@ set(SOURCES
 
     src/ir/basicblock.cpp
     src/ir/builder.cpp
+    src/ir/class.cpp
     src/ir/external_function.cpp
+    src/ir/field.cpp
     src/ir/function.cpp
     src/ir/instruction.cpp
+    src/ir/method.cpp
 
     src/optimizer/regalloc/allocator.cpp
     src/optimizer/regalloc/vreg.cpp
@@ -65,10 +68,13 @@ set(HEADERS
 
     include/BibblIR/ir/basicblock.h
     include/BibblIR/ir/builder.h
+    include/BibblIR/ir/class.h
     include/BibblIR/ir/external_function.h
+    include/BibblIR/ir/field.h
     include/BibblIR/ir/function.h
     include/BibblIR/ir/global.h
     include/BibblIR/ir/instruction.h
+    include/BibblIR/ir/method.h
     include/BibblIR/ir/value.h
 
     include/BibblIR/optimizer/regalloc/allocator.h

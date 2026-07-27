@@ -15,6 +15,7 @@
 #include "BibblIR/ir/instruction/store_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
+#include "BibblIR/ir/class.h"
 #include "BibblIR/ir/external_function.h"
 #include "BibblIR/ir/function.h"
 
@@ -26,6 +27,7 @@
 
 #include <cassert>
 
+
 namespace bibblir {
     bibbleasm::Module CodegenVisitor::buildModule() {
         bibbleasm::Module module = mBuilder.build();
@@ -34,6 +36,12 @@ namespace bibblir {
     }
 
     void CodegenVisitor::printDisassembly(std::ostream& stream) {
+        const auto& classes = mBuilder.classes();
+        for (const auto& clas : classes) {
+            stream << "class " << clas->getName() << ":\n";
+            stream << "field printing not yet added\nmethod printing not yet added\n\n";
+        }
+
         const auto& functions = mBuilder.functions();
         for (size_t i = 0; i < functions.size() - 1; i++) {
             stream << "function " << functions[i]->getName() << ":\n";
@@ -70,6 +78,44 @@ namespace bibblir {
         }
 
         mModuleName = nullptr;
+    }
+
+    void CodegenVisitor::visit(Class& clas) {
+        bibbleasm::ClassBuilder& classBuilder = mBuilder.addClass(getStringConstant(clas.mName));
+        mClassBuilder = &classBuilder;
+
+        for (const auto& field : clas.mFields) {
+            field->accept(*this);
+        }
+
+        for (const auto& method : clas.mMethods) {
+            method->accept(*this);
+        }
+
+        mClassBuilder = nullptr;
+    }
+
+    void CodegenVisitor::visit(Field& field) {
+        mClassBuilder->addField(field.getType()->getIDByte(), getStringConstant(field.mName));
+    }
+
+    void CodegenVisitor::visit(Method& method) {
+        if (method.mImpl != nullptr) {
+            const std::string* implModuleName = nullptr;
+            const std::string* implFunctionName = nullptr;
+
+            if (auto* function = dynamic_cast<Function*>(method.mImpl)) {
+                implModuleName = mModuleName;
+                implFunctionName = &function->mName;
+            } else if (auto* function = dynamic_cast<ExternalFunction*>(method.mImpl)) {
+                implModuleName = &function->mModuleName;
+                implFunctionName = &function->mName;
+            } else {
+                assert(false); // do NOT implement a method with a constant int...
+            }
+
+            mClassBuilder->addMethod(getStringConstant(method.mName), getFunctionInfoConstant(*implModuleName, *implFunctionName));
+        }
     }
 
     void CodegenVisitor::visit(Function& function) {
@@ -255,11 +301,11 @@ namespace bibblir {
     void CodegenVisitor::visit(CallInstruction& instruction) {
         if (!instruction.mCallee->mEmittedValue) { // we lazy emit call targets to save constpool space
             if (auto* function = dynamic_cast<Function*>(instruction.mCallee)) {
-                function->mEmittedValue = bibbleasm::ConstPoolIndex(mBuilder.constPool().addFunctionInfo(getModuleInfoConstant(*mModuleName), getStringConstant(function->mName)));
+                function->mEmittedValue = bibbleasm::ConstPoolIndex(getFunctionInfoConstant(*mModuleName, function->mName));
             } else if (auto* function = dynamic_cast<ExternalFunction*>(instruction.mCallee)) {
-                function->mEmittedValue = bibbleasm::ConstPoolIndex(mBuilder.constPool().addFunctionInfo(getModuleInfoConstant(function->mModuleName), getStringConstant(function->mName)));
+                function->mEmittedValue = bibbleasm::ConstPoolIndex(getFunctionInfoConstant(function->mModuleName, function->mName));
             } else {
-                assert(false); //TODO: revisit when extern functions
+                assert(false);
             }
         }
 
@@ -353,6 +399,54 @@ namespace bibblir {
         if (it == mModuleInfoConstants.end()) {
             bibbleasm::ConstantIndex idx = mBuilder.constPool().addModuleInfo(getStringConstant(name));
             mModuleInfoConstants[name] = idx;
+            return idx;
+        }
+        return it->second;
+    }
+
+    bibbleasm::ConstantIndex CodegenVisitor::getFunctionInfoConstant(const std::string& moduleName, const std::string& name) {
+        TwoString strings(moduleName, name);
+
+        auto it = mFunctionInfoConstants.find(strings);
+        if (it == mFunctionInfoConstants.end()) {
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addFunctionInfo(getStringConstant(moduleName), getStringConstant(name));
+            mFunctionInfoConstants[std::move(strings)] = idx;
+            return idx;
+        }
+        return it->second;
+    }
+
+    bibbleasm::ConstantIndex CodegenVisitor::getClassInfoConstant(const std::string& moduleName, const std::string& name) {
+        TwoString strings(moduleName, name);
+
+        auto it = mClassInfoConstants.find(strings);
+        if (it == mClassInfoConstants.end()) {
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addClassInfo(getStringConstant(moduleName), getStringConstant(name));
+            mClassInfoConstants[std::move(strings)] = idx;
+            return idx;
+        }
+        return it->second;
+    }
+
+    bibbleasm::ConstantIndex CodegenVisitor::getFieldInfoConstant(const std::string& moduleName, const std::string& name) {
+        TwoString strings(moduleName, name);
+
+        auto it = mFieldInfoConstants.find(strings);
+        if (it == mFieldInfoConstants.end()) {
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addFieldInfo(getStringConstant(moduleName), getStringConstant(name));
+            mFieldInfoConstants[std::move(strings)] = idx;
+            return idx;
+        }
+        return it->second;
+    }
+
+    bibbleasm::ConstantIndex CodegenVisitor::getMethodInfoConstant(const std::string& moduleName, const std::string& name) {
+        TwoString strings(moduleName, name);
+
+        auto it = mMethodInfoConstants.find(strings);
+        if (it == mMethodInfoConstants.end()) {
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addMethodInfo(getStringConstant(moduleName), getStringConstant(name));
+            mMethodInfoConstants[std::move(strings)] = idx;
             return idx;
         }
         return it->second;

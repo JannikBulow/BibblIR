@@ -53,6 +53,10 @@ namespace bibblir {
         }
     }
 
+    void PrintVisitor::visit(Class& clas) {}
+    void PrintVisitor::visit(Field& field) {}
+    void PrintVisitor::visit(Method& method) {}
+
     void PrintVisitor::visit(Function& function) {
         mStream << std::format("\n\nfunction \"{}\" (", function.mName);
         if (!function.mArguments.empty()) {

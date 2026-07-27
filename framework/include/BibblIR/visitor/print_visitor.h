@@ -14,6 +14,10 @@ namespace bibblir {
 
         void visit(Module& module) override;
 
+        void visit(Class& clas) override;
+        void visit(Field& field) override;
+        void visit(Method& method) override;
+
         void visit(Function& function) override;
 
         void visit(ExternalFunction& function) override;
