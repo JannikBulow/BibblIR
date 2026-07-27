@@ -4,9 +4,17 @@
 
 #include "BibblIR/visitor/visitor.h"
 
+#include "BibblIR/module.h"
+
 #include <cassert>
 
 namespace bibblir {
+    Class* Class::Create(Module& module, std::string name) {
+        Class* clas = new Class(module, std::move(name));
+        module.insertGlobal(GlobalPtr(clas));
+        return clas;
+    }
+
     Field* Class::getField(std::string_view name) const {
         for (const auto& field : mFields) {
             if (field->mName == name) {

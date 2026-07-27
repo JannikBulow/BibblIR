@@ -14,6 +14,8 @@ namespace bibblir {
         friend class Method;
         friend class PrintVisitor;
     public:
+        static Class* Create(Module& module, std::string name);
+
         Field* getField(std::string_view name) const;
         Field* addField(Type* type, std::string name);
 
