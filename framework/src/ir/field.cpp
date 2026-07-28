@@ -16,6 +16,7 @@ namespace bibblir {
 
     Field::Field(Class* parent, Type* type, std::string name)
         : Value(parent->getModule())
+        , mParent(parent)
         , mName(std::move(name)) {
         mType = type;
         mRequiresVReg = false;
