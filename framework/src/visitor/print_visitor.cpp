@@ -64,7 +64,7 @@ namespace bibblir {
             method->accept(*this);
         }
 
-        mStream << "}"
+        mStream << "}";
     }
 
     void PrintVisitor::visit(Field& field) {
