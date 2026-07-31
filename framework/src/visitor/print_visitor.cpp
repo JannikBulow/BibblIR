@@ -14,6 +14,7 @@
 #include "BibblIR/ir/instruction/store_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
+#include "BibblIR/ir/class.h"
 #include "BibblIR/ir/external_function.h"
 #include "BibblIR/ir/function.h"
 
@@ -52,9 +53,36 @@ namespace bibblir {
         }
     }
 
-    void PrintVisitor::visit(Class& clas) {}
-    void PrintVisitor::visit(Field& field) {}
-    void PrintVisitor::visit(Method& method) {}
+    void PrintVisitor::visit(Class& clas) {
+        mStream << std::format("\n\nclass \"{}\" {{\n", clas.mName);
+
+        for (const auto& field : clas.mFields) {
+            field->accept(*this);
+        }
+
+        for (const auto& method : clas.mMethods) {
+            method->accept(*this);
+        }
+
+        mStream << "}"
+    }
+
+    void PrintVisitor::visit(Field& field) {
+        mStream << std::format("    {} \"{}\"\n", field.getType()->getName(), field.mName);
+    }
+
+    void PrintVisitor::visit(Method& method) {
+        mStream << std::format("    virtual \"{}\" (", method.mName);
+        if (!method.getFunctionType()->getArgumentTypes().empty()) {
+            for (int i = 0; i < method.getFunctionType()->getArgumentTypes().size() - 1; i++) {
+                mStream << std::format("{}, ", method.getFunctionType()->getArgumentTypes()[i]->getName());
+            }
+            mStream << method.getFunctionType()->getArgumentTypes().back()->getName();
+        } else {
+            mStream << "void";
+        }
+        mStream << std::format(") . {} = {}\n", method.getFunctionType()->getReturnType()->getName(), method.mImpl ? method.mImpl->identifier() : "null");
+    }
 
     void PrintVisitor::visit(Function& function) {
         mStream << std::format("\n\nfunction \"{}\" (", function.mName);
