@@ -50,7 +50,7 @@ namespace bibblir {
             return method;
         }
 
-        mMethods.emplace_back(new Method(this, type, name, impl));
+        mMethods.emplace_back(new Method(this, type, std::move(name), impl));
         return mMethods.back().get();
     }
 
