@@ -39,6 +39,7 @@ namespace bibblir {
         void visit(BinaryInstruction& instruction) override;
         void visit(BranchInstruction& instruction) override;
         void visit(CallInstruction& instruction) override;
+        void visit(FieldInstruction& instruction) override;
         void visit(IntCastInstruction& instruction) override;
         void visit(LoadInstruction& instruction) override;
         void visit(PhiInstruction& instruction) override;
@@ -64,6 +65,30 @@ namespace bibblir {
             }
         };
 
+        struct ThreeString {
+            std::string first;
+            std::string second;
+            std::string third;
+
+            bool operator==(const ThreeString& other) const {
+                return first == other.first && second == other.second && third == other.third;
+            }
+        };
+
+        struct ThreeStringHash {
+            std::size_t operator()(const ThreeString& s) const {
+                auto h1 = std::hash<std::string>()(s.first);
+                auto h2 = std::hash<std::string>()(s.second);
+                auto h3 = std::hash<std::string>()(s.third);
+
+                std::size_t seed = h1;
+                seed ^= h2 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                seed ^= h3 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+
+                return seed;
+            }
+        };
+
         const std::string* mModuleName = nullptr;
 
         bibbleasm::ModuleBuilder mBuilder;
@@ -74,15 +99,15 @@ namespace bibblir {
         std::unordered_map<std::string, bibbleasm::ConstantIndex> mModuleInfoConstants;
         std::unordered_map<TwoString, bibbleasm::ConstantIndex, TwoStringHash> mFunctionInfoConstants;
         std::unordered_map<TwoString, bibbleasm::ConstantIndex, TwoStringHash> mClassInfoConstants;
-        std::unordered_map<TwoString, bibbleasm::ConstantIndex, TwoStringHash> mFieldInfoConstants;
-        std::unordered_map<TwoString, bibbleasm::ConstantIndex, TwoStringHash> mMethodInfoConstants;
+        std::unordered_map<ThreeString, bibbleasm::ConstantIndex, ThreeStringHash> mFieldInfoConstants;
+        std::unordered_map<ThreeString, bibbleasm::ConstantIndex, ThreeStringHash> mMethodInfoConstants;
 
         bibbleasm::ConstantIndex getStringConstant(const std::string& str);
         bibbleasm::ConstantIndex getModuleInfoConstant(const std::string& name);
         bibbleasm::ConstantIndex getFunctionInfoConstant(const std::string& moduleName, const std::string& name);
         bibbleasm::ConstantIndex getClassInfoConstant(const std::string& moduleName, const std::string& name);
-        bibbleasm::ConstantIndex getFieldInfoConstant(const std::string& moduleName, const std::string& name);
-        bibbleasm::ConstantIndex getMethodInfoConstant(const std::string& moduleName, const std::string& name);
+        bibbleasm::ConstantIndex getFieldInfoConstant(const std::string& moduleName, const std::string& className, const std::string& name);
+        bibbleasm::ConstantIndex getMethodInfoConstant(const std::string& moduleName, const std::string& className, const std::string& name);
     };
 }
 

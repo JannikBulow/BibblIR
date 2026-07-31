@@ -8,6 +8,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/field_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
@@ -21,12 +22,13 @@
 
 #include "BibblIR/optimizer/regalloc/allocator.h"
 
+#include "BibblIR/type/class_type.h"
+
 #include "BibblIR/visitor/codegen_visitor.h"
 
 #include "BibblIR/module.h"
 
 #include <cassert>
-
 
 namespace bibblir {
     bibbleasm::Module CodegenVisitor::buildModule() {
@@ -318,6 +320,10 @@ namespace bibblir {
         instruction.mEmittedValue = instruction.mVReg->toOperand();
     }
 
+    void CodegenVisitor::visit(FieldInstruction& instruction) {
+        // everything about this instruction is super shit. it's handled in load/store
+    }
+
     void CodegenVisitor::visit(IntCastInstruction& instruction) {
         auto vreg = instruction.mVReg->toOperand();
         bytecode::Move(*mInstBuilder, vreg, *instruction.mValue->mEmittedValue);
@@ -325,8 +331,19 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(LoadInstruction& instruction) {
-        bytecode::Move(*mInstBuilder, instruction.mVReg->toOperand(), *instruction.mVariable->mEmittedValue);
-        instruction.mEmittedValue = instruction.mVReg->toOperand();
+        auto vreg = instruction.mVReg->toOperand();
+
+        if (auto* fieldInstruction = dynamic_cast<FieldInstruction*>(instruction.mVariable)) {
+            if (auto* field = dynamic_cast<Field*>(fieldInstruction->mField)) {
+                if (auto* classType = dynamic_cast<ClassType*>(fieldInstruction->mObject)) {
+                    mInstBuilder->getfield(vreg, std::get<bibbleasm::Register>(*fieldInstruction->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName));
+                    // WHAT THE FUCK IS THIS
+                }
+            }
+        } else {
+            bytecode::Move(*mInstBuilder, vreg, *instruction.mVariable->mEmittedValue);
+            instruction.mEmittedValue = vreg;
+        }
     }
 
     void CodegenVisitor::visit(PhiInstruction& instruction) {
@@ -428,24 +445,24 @@ namespace bibblir {
         return it->second;
     }
 
-    bibbleasm::ConstantIndex CodegenVisitor::getFieldInfoConstant(const std::string& moduleName, const std::string& name) {
-        TwoString strings(moduleName, name);
+    bibbleasm::ConstantIndex CodegenVisitor::getFieldInfoConstant(const std::string& moduleName, const std::string& className, const std::string& name) {
+        ThreeString strings(moduleName, className, name);
 
         auto it = mFieldInfoConstants.find(strings);
         if (it == mFieldInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addFieldInfo(getStringConstant(moduleName), getStringConstant(name));
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addFieldInfo(getClassInfoConstant(moduleName, className), getStringConstant(name));
             mFieldInfoConstants[std::move(strings)] = idx;
             return idx;
         }
         return it->second;
     }
 
-    bibbleasm::ConstantIndex CodegenVisitor::getMethodInfoConstant(const std::string& moduleName, const std::string& name) {
-        TwoString strings(moduleName, name);
+    bibbleasm::ConstantIndex CodegenVisitor::getMethodInfoConstant(const std::string& moduleName, const std::string& className, const std::string& name) {
+        ThreeString strings(moduleName, className, name);
 
         auto it = mMethodInfoConstants.find(strings);
         if (it == mMethodInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addMethodInfo(getStringConstant(moduleName), getStringConstant(name));
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addMethodInfo(getClassInfoConstant(moduleName, className), getStringConstant(name));
             mMethodInfoConstants[std::move(strings)] = idx;
             return idx;
         }

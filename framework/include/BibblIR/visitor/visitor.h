@@ -23,6 +23,7 @@ namespace bibblir {
     class BinaryInstruction;
     class BranchInstruction;
     class CallInstruction;
+    class FieldInstruction;
     class IntCastInstruction;
     class LoadInstruction;
     class PhiInstruction;
@@ -54,6 +55,7 @@ namespace bibblir {
         virtual void visit(BinaryInstruction& instruction) = 0;
         virtual void visit(BranchInstruction& instruction) = 0;
         virtual void visit(CallInstruction& instruction) = 0;
+        virtual void visit(FieldInstruction& instruction) = 0;
         virtual void visit(IntCastInstruction& instruction) = 0;
         virtual void visit(LoadInstruction& instruction) = 0;
         virtual void visit(PhiInstruction& instruction) = 0;

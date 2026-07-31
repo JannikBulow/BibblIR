@@ -6,6 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/field_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
@@ -23,8 +24,6 @@
 #include "BibblIR/module.h"
 
 #include <format>
-
-#include "BibblIR/ir/instruction/call_instruction.h"
 
 namespace bibblir {
     PrintVisitor::PrintVisitor(std::ostream& stream)
@@ -196,6 +195,10 @@ namespace bibblir {
             mStream << instruction.mParameters.back()->identifier();
         }
         mStream << ')';
+    }
+
+    void PrintVisitor::visit(FieldInstruction& instruction) {
+        mStream << std::format("{} = getfieldid {}.{}", instruction.identifier(), instruction.mObject->identifier(), instruction.mField->identifier());
     }
 
     void PrintVisitor::visit(IntCastInstruction& instruction) {
