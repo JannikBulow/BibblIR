@@ -8,11 +8,18 @@
 namespace bibblir {
     class BIBBLIR_EXPORT ClassType : public Type {
     public:
-        ClassType();
+        ClassType(std::string moduleName, std::string name);
+
+        std::string_view getModuleName() const;
+        std::string_view getClassName() const;
 
         ID getID() const override;
 
         bool isClassType() const override;
+
+    private:
+        std::string mModuleName;
+        std::string mClassName;
     };
 }
 
