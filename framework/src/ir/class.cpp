@@ -65,6 +65,6 @@ namespace bibblir {
     Class::Class(Module& module, std::string name)
         : Global(module)
         , mName(std::move(name)) {
-        mType = Type::GetClassType(); // should it be this?
+        mType = Type::GetClassType(module.getName(), mName);
     }
 }
