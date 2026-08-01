@@ -342,8 +342,9 @@ namespace bibblir {
             }
         } else {
             bytecode::Move(*mInstBuilder, vreg, *instruction.mVariable->mEmittedValue);
-            instruction.mEmittedValue = vreg;
         }
+
+        instruction.mEmittedValue = vreg;
     }
 
     void CodegenVisitor::visit(PhiInstruction& instruction) {
