@@ -40,8 +40,9 @@ namespace bibblir {
     void CodegenVisitor::printDisassembly(std::ostream& stream) {
         const auto& constPool = mBuilder.constPool();
         for (uint16_t i = 1; i < constPool.getEntryCount(); i++) {
-            stream << constPool.stringifyEntry(i);
+            stream << constPool.stringifyEntry(i) << "\n";
         }
+        if (constPool.getEntryCount() > 1) stream << '\n';
 
         const auto& classes = mBuilder.classes();
         for (const auto& clas : classes) {
