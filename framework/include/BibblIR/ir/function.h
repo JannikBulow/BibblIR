@@ -14,14 +14,14 @@ namespace bibblir {
         friend class PrintVisitor;
         friend class RegAlloc;
     public:
-        Argument(Module& module, Type* type, std::string name, int index);
+        Argument(Module& module, Type* type, int index);
 
         std::string identifier() const override;
 
         void accept(Visitor& visitor) override;
 
     private:
-        std::string mName;
+        int mValueId;
         int mIndex;
     };
 

@@ -9,15 +9,15 @@
 #include <stack>
 
 namespace bibblir {
-    Argument::Argument(Module& module, Type* type, std::string name, int index)
+    Argument::Argument(Module& module, Type* type, int index)
         : Value(module)
-        , mName(std::move(name))
+        , mValueId(mModule.getNextValueId())
         , mIndex(index) {
         mType = type;
     }
 
     std::string Argument::identifier() const {
-        return "%" + mName;
+        return getName(mValueId);
     }
 
     void Argument::accept(Visitor& visitor) {
@@ -72,8 +72,7 @@ namespace bibblir {
 
         int index = 0;
         for (Type* type : getFunctionType()->getArgumentTypes()) {
-            std::string id = std::to_string(module.getNextValueId());
-            mArguments.push_back(std::make_unique<Argument>(module, type, std::move(id), index++));
+            mArguments.push_back(std::make_unique<Argument>(module, type, index++));
         }
     }
 
