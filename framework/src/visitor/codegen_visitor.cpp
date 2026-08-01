@@ -386,7 +386,16 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(StoreInstruction& instruction) {
-        bytecode::Move(*mInstBuilder, *instruction.mVariable->mEmittedValue, *instruction.mValue->mEmittedValue);
+        if (auto* fieldInstruction = dynamic_cast<FieldInstruction*>(instruction.mVariable)) {
+            if (auto* field = dynamic_cast<Field*>(fieldInstruction->mField)) {
+                if (auto* classType = dynamic_cast<ClassType*>(fieldInstruction->mObject->getType())) {
+                    mInstBuilder->setfield(std::get<bibbleasm::Register>(*fieldInstruction->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName), std::get<bibbleasm::Register>(*instruction.mValue->mEmittedValue));
+                    // WHAT THE FUCK IS THIS
+                }
+            }
+        } else {
+            bytecode::Move(*mInstBuilder, *instruction.mVariable->mEmittedValue, *instruction.mValue->mEmittedValue);
+        }
     }
 
     void CodegenVisitor::visit(UnaryInstruction& instruction) {
