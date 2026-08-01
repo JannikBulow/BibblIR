@@ -68,8 +68,8 @@ namespace bibblir {
     Type* Type::GetClassType(std::string moduleName, std::string name) {
         return GetType<
             ClassType,
-            [](ClassType* value, std::string moduleName, std::string name) {
-                return value->getModuleName() == moduleName && value->getName() == name;
+            [](ClassType* value, const std::string& moduleName, const std::string& name) {
+                return value->getModuleName() == moduleName && value->getClassName() == name;
             },
             [](std::string moduleName, std::string name) {
                 return std::make_unique<ClassType>(std::move(moduleName), std::move(name));
