@@ -15,6 +15,7 @@ namespace bibblir {
     class BinaryInstruction;
     class BranchInstruction;
     class CallInstruction;
+    class FieldInstruction;
     class IntCastInstruction;
     class LoadInstruction;
     class PhiInstruction;
@@ -67,6 +68,7 @@ namespace bibblir {
 
         LoadInstruction* createLoad(Value* variable);
         StoreInstruction* createStore(Value* variable, Value* value);
+        FieldInstruction* createGetField(Value* object, Value* field);
 
 
         PhiInstruction* createPhi(Type* type);

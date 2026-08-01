@@ -8,6 +8,7 @@
 namespace bibblir {
     class FieldInstruction : public Instruction {
         friend class CodegenVisitor;
+        friend class IRBuilder;
         friend class PrintVisitor;
     public:
         std::vector<std::reference_wrapper<Value*>> getOperands() override;
