@@ -335,7 +335,7 @@ namespace bibblir {
 
         if (auto* fieldInstruction = dynamic_cast<FieldInstruction*>(instruction.mVariable)) {
             if (auto* field = dynamic_cast<Field*>(fieldInstruction->mField)) {
-                if (auto* classType = dynamic_cast<ClassType*>(fieldInstruction->mObject)) {
+                if (auto* classType = dynamic_cast<ClassType*>(fieldInstruction->mObject->getType())) {
                     mInstBuilder->getfield(vreg, std::get<bibbleasm::Register>(*fieldInstruction->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName));
                     // WHAT THE FUCK IS THIS
                 }
