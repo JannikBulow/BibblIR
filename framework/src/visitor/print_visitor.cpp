@@ -88,9 +88,9 @@ namespace bibblir {
         mStream << std::format("\n\nfunction \"{}\" (", function.mName);
         if (!function.mArguments.empty()) {
             for (int i = 0; i < function.mArguments.size() - 1; i++) {
-                mStream << std::format("{} {}, ", function.mArguments[i]->mType->getName(), function.mArguments[i ]->mName);
+                mStream << std::format("{} {}, ", function.mArguments[i]->mType->getName(), function.mArguments[i ]->identifier());
             }
-            mStream << std::format("{} {}", function.mArguments.back()->mType->getName(), function.mArguments.back()->mName);
+            mStream << std::format("{} {}", function.mArguments.back()->mType->getName(), function.mArguments.back()->identifier());
         } else {
             mStream << "void";
         }
