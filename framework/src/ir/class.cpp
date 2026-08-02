@@ -55,7 +55,7 @@ namespace bibblir {
     }
 
     std::string Class::identifier() const {
-        return "%" + mName;
+        return mName;
     }
 
     void Class::accept(Visitor& visitor) {
