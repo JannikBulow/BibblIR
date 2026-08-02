@@ -24,5 +24,7 @@ namespace bibblir {
     NewInstruction::NewInstruction(BasicBlock* parent, Value* clas)
         : Instruction(parent->getModule(), parent)
         , mClass(clas)
-        , mValueId(mModule.getNextValueId()) {}
+        , mValueId(mModule.getNextValueId()) {
+        mType = mClass->getType();
+    }
 }
