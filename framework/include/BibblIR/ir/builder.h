@@ -18,6 +18,7 @@ namespace bibblir {
     class FieldInstruction;
     class IntCastInstruction;
     class LoadInstruction;
+    class NewInstruction;
     class PhiInstruction;
     class ReturnInstruction;
     class StoreInstruction;
@@ -64,6 +65,9 @@ namespace bibblir {
 
         BranchInstruction* createBr(BasicBlock* destination);
         BranchInstruction* createCondBr(Value* condition, BasicBlock* trueBranch, BasicBlock* falseBranch);
+
+
+        NewInstruction* createNew(Value* clas);
 
 
         LoadInstruction* createLoad(Value* variable);

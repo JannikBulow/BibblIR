@@ -9,6 +9,7 @@
 #include "BibblIR/ir/instruction/field_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
+#include "BibblIR/ir/instruction/new_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/store_instruction.h"
@@ -235,6 +236,10 @@ namespace bibblir {
 
     void PrintVisitor::visit(LoadInstruction& instruction) {
         mStream << std::format("{} = load {}", instruction.identifier(), instruction.mVariable->identifier());
+    }
+
+    void PrintVisitor::visit(NewInstruction& instruction) {
+        mStream << std::format("{} = new {}", instruction.identifier(), instruction.mClass->identifier());
     }
 
     void PrintVisitor::visit(PhiInstruction& instruction) {

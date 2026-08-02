@@ -11,6 +11,7 @@
 #include "BibblIR/ir/instruction/field_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
+#include "BibblIR/ir/instruction/new_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/store_instruction.h"
@@ -348,6 +349,16 @@ namespace bibblir {
             }
         } else {
             bytecode::Move(*mInstBuilder, vreg, *instruction.mVariable->mEmittedValue);
+        }
+
+        instruction.mEmittedValue = vreg;
+    }
+
+    void CodegenVisitor::visit(NewInstruction& instruction) {
+        auto vreg = instruction.mVReg->toOperand();
+
+        if (auto* clas = dynamic_cast<Class*>(instruction.mClass)) {
+            mInstBuilder->newinstance(vreg, getClassInfoConstant(*mModuleName, clas->mName));
         }
 
         instruction.mEmittedValue = vreg;

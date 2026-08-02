@@ -9,6 +9,7 @@
 #include "BibblIR/ir/instruction/field_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
+#include "BibblIR/ir/instruction/new_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/store_instruction.h"
@@ -232,6 +233,14 @@ namespace bibblir {
 
     BranchInstruction* IRBuilder::createCondBr(Value* condition, BasicBlock* trueBranch, BasicBlock* falseBranch) {
         BranchInstruction* instruction = new BranchInstruction(mInsertPoint, condition, trueBranch, falseBranch);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    NewInstruction* IRBuilder::createNew(Value* clas) {
+        NewInstruction* instruction = new NewInstruction(mInsertPoint, clas);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 

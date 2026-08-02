@@ -26,6 +26,7 @@ namespace bibblir {
     class FieldInstruction;
     class IntCastInstruction;
     class LoadInstruction;
+    class NewInstruction;
     class PhiInstruction;
     class ReturnInstruction;
     class StoreInstruction;
@@ -58,6 +59,7 @@ namespace bibblir {
         virtual void visit(FieldInstruction& instruction) = 0;
         virtual void visit(IntCastInstruction& instruction) = 0;
         virtual void visit(LoadInstruction& instruction) = 0;
+        virtual void visit(NewInstruction& instruction) = 0;
         virtual void visit(PhiInstruction& instruction) = 0;
         virtual void visit(ReturnInstruction& instruction) = 0;
         virtual void visit(StoreInstruction& instruction) = 0;

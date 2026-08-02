@@ -21,6 +21,7 @@ set(SOURCES
     src/ir/instruction/field_instruction.cpp
     src/ir/instruction/int_cast_instruction.cpp
     src/ir/instruction/load_instruction.cpp
+    src/ir/instruction/new_instruction.cpp
     src/ir/instruction/phi_instruction.cpp
     src/ir/instruction/return_instruction.cpp
     src/ir/instruction/store_instruction.cpp
@@ -63,6 +64,7 @@ set(HEADERS
     include/BibblIR/ir/instruction/field_instruction.h
     include/BibblIR/ir/instruction/int_cast_instruction.h
     include/BibblIR/ir/instruction/load_instruction.h
+    include/BibblIR/ir/instruction/new_instruction.h
     include/BibblIR/ir/instruction/phi_instruction.h
     include/BibblIR/ir/instruction/return_instruction.h
     include/BibblIR/ir/instruction/store_instruction.h
