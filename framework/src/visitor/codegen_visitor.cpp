@@ -453,7 +453,7 @@ namespace bibblir {
 
         auto it = mFunctionInfoConstants.find(strings);
         if (it == mFunctionInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addFunctionInfo(getStringConstant(moduleName), getStringConstant(name));
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addFunctionInfo(getModuleInfoConstant(moduleName), getStringConstant(name));
             mFunctionInfoConstants[std::move(strings)] = idx;
             return idx;
         }
@@ -465,7 +465,7 @@ namespace bibblir {
 
         auto it = mClassInfoConstants.find(strings);
         if (it == mClassInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addClassInfo(getStringConstant(moduleName), getStringConstant(name));
+            bibbleasm::ConstantIndex idx = mBuilder.constPool().addClassInfo(getModuleInfoConstant(moduleName), getStringConstant(name));
             mClassInfoConstants[std::move(strings)] = idx;
             return idx;
         }
