@@ -1,5 +1,6 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/ir/instruction/field_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 
 #include "BibblIR/optimizer/regalloc/allocator.h"
@@ -205,6 +206,17 @@ namespace bibblir {
                     operand->mInterval.first = std::min(operand->mInterval.first, bb->mInterval.first);
                     operand->mInterval.second = std::max(operand->mInterval.second, value->mId);
                     live.push_back(operand);
+
+                    // this is so dogshit and i hate it
+                    //TODO: one day remove the field instruction or make it able to act nicely and fit in with the rest of society
+                    if (dynamic_cast<FieldInstruction*>(operand)) {
+                        for (auto dependencyR : operand->getOperands()) {
+                            auto dependency = dependencyR.get();
+                            dependency->mInterval.first = std::min(dependency->mInterval.first, bb->mInterval.first);
+                            dependency->mInterval.second = std::max(dependency->mInterval.second, value->mId);
+                            live.push_back(dependency);
+                        }
+                    }
                 }
                 value->mInterval.first = value->mId;
 
