@@ -9,6 +9,11 @@
 #include <cassert>
 
 namespace bibblir {
+    void BranchInstruction::replaceDestinations(BasicBlock* from, BasicBlock* to) {
+        if (mTrueBranch == from) mTrueBranch = to;
+        if (mFalseBranch == from) mFalseBranch = to;
+    }
+
     std::vector<std::reference_wrapper<Value*>> BranchInstruction::getOperands() {
         if (mCondition) return {mCondition};
         else return {};

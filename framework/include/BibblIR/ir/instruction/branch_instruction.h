@@ -11,6 +11,8 @@ namespace bibblir {
         friend class IRBuilder;
         friend class PrintVisitor;
     public:
+        void replaceDestinations(BasicBlock* from, BasicBlock* to);
+
         std::vector<std::reference_wrapper<Value*>> getOperands() override;
 
         std::string identifier() const override;
