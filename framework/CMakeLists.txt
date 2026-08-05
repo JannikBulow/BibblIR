@@ -36,6 +36,8 @@ set(SOURCES
     src/ir/instruction.cpp
     src/ir/method.cpp
 
+    src/optimizer/ces/critical_edge_split.cpp
+
     src/optimizer/regalloc/allocator.cpp
     src/optimizer/regalloc/vreg.cpp
 
@@ -80,6 +82,8 @@ set(HEADERS
     include/BibblIR/ir/instruction.h
     include/BibblIR/ir/method.h
     include/BibblIR/ir/value.h
+
+    include/BibblIR/optimizer/ces/critical_edge_split.h
 
     include/BibblIR/optimizer/regalloc/allocator.h
     include/BibblIR/optimizer/regalloc/vreg.h

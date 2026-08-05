@@ -16,6 +16,7 @@ namespace bibblir {
 
     class BIBBLIR_EXPORT BasicBlock : public Value {
         friend class CodegenVisitor;
+        friend class CriticalEdgeSplitter;
         friend class Function;
         friend class PhiInstruction;
         friend class PrintVisitor;
