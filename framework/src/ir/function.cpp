@@ -57,6 +57,20 @@ namespace bibblir {
         return mBasicBlockList;
     }
 
+    void Function::replaceAllUsesWith(Value* oldValue, Value* newValue) {
+        std::vector<Value*> done;
+        for (auto& bb : mBasicBlockList) {
+            for (auto& value : bb->mValueList) {
+                done.push_back(value.get());
+                for (auto operand : value->getOperands()) {
+                    if (operand == oldValue) {
+                        operand.get() = newValue;
+                    }
+                }
+            }
+        }
+    }
+
     std::string Function::identifier() const {
         return mName;
     }

@@ -41,6 +41,8 @@ namespace bibblir {
         size_t getBasicBlockCount() const;
         std::vector<BasicBlockPtr>& basicBlocks();
 
+        void replaceAllUsesWith(Value* oldValue, Value* newValue);
+
         std::string identifier() const override;
 
         void accept(Visitor& visitor) override;
