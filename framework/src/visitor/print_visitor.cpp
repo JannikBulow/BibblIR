@@ -40,13 +40,6 @@ namespace bibblir {
             }
         }
 
-        RegAlloc regalloc;
-        for (const GlobalPtr& global : globals) {
-            if (auto func = dynamic_cast<Function*>(global.get())) {
-                regalloc.assignVRegs(func);
-            }
-        }
-
         mStream << std::format("module \"{}\"", module.getName());
 
         for (const GlobalPtr& global : globals) {
