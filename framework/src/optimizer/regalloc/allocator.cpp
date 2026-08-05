@@ -145,6 +145,10 @@ namespace bibblir {
                         break;
                     }
                 }
+
+                if (!phi->mVReg) {
+                    phi->mVReg = getNextFreeVReg(phi->mPreferredRegister);
+                }
             } else {
                 if (value->requiresVReg()) {
                     activeValues.push_back(value);
@@ -189,6 +193,7 @@ namespace bibblir {
         for (auto it = function->basicBlocks().rbegin(); it != function->basicBlocks().rend(); ++it) {
             auto& bb = *it;
             std::vector<Value*> live;
+            std::vector<Value*> phiLive;
 
             for (auto successor : bb->successors()) {
                 std::ranges::copy(successor->liveIn(), std::back_inserter(live));
@@ -199,7 +204,7 @@ namespace bibblir {
                     });
 
                     if (incomingIt != phi->mIncoming.end()) {
-                        live.push_back(incomingIt->first);
+                        phiLive.push_back(incomingIt->first);
                     }
                 }
             }
@@ -209,8 +214,14 @@ namespace bibblir {
                 value->mInterval.second = std::max(value->mInterval.second, bb->mInterval.second);
             }
 
+            for (Value* value : phiLive) {
+                value->mInterval.second = std::max(value->mInterval.second, bb->mInterval.second);
+            }
+
             for (auto valueIt = bb->mValueList.rbegin(); valueIt != bb->mValueList.rend(); ++valueIt) {
                 auto& value = *valueIt;
+
+                if (dynamic_cast<PhiInstruction*>(value.get())) continue;
 
                 for (auto operandR : value->getOperands()) {
                     auto operand = operandR.get();
