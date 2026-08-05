@@ -9,6 +9,10 @@
 #include "BibblIR/module.h"
 
 namespace bibblir {
+    std::vector<std::pair<Value*, BasicBlock*>>& PhiInstruction::incoming() {
+        return mIncoming;
+    }
+
     void PhiInstruction::addIncoming(Value* value, BasicBlock* basicBlock) {
         mIncoming.emplace_back(value, basicBlock);
     }

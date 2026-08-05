@@ -14,6 +14,7 @@ namespace bibblir {
         friend class PrintVisitor;
         friend class RegAlloc;
     public:
+        std::vector<std::pair<Value*, BasicBlock*>>& incoming();
         void addIncoming(Value* value, BasicBlock* basicBlock);
 
         void eraseFromParent() override;
