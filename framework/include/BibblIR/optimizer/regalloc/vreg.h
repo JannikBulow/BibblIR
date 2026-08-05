@@ -24,8 +24,6 @@ namespace bibblir {
         int mId;
         int mUses;
 
-        bool mArgument;
-
         uint16_t mActualRegister;
     };
 }
