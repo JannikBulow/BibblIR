@@ -21,6 +21,8 @@
 #include "BibblIR/ir/external_function.h"
 #include "BibblIR/ir/function.h"
 
+#include "BibblIR/optimizer/ces/critical_edge_split.h"
+
 #include "BibblIR/optimizer/regalloc/allocator.h"
 
 #include "BibblIR/type/class_type.h"
@@ -69,15 +71,12 @@ namespace bibblir {
 
         const std::vector<GlobalPtr>& globals = module.getGlobals();
 
-        for (const GlobalPtr& global : globals) {
-            if (auto func = dynamic_cast<Function*>(global.get())) {
-                func->orderBasicBlocks();
-            }
-        }
-
+        CriticalEdgeSplitter ces;
         RegAlloc regalloc;
         for (const GlobalPtr& global : globals) {
             if (auto func = dynamic_cast<Function*>(global.get())) {
+                ces.run(func);
+                func->orderBasicBlocks();
                 regalloc.assignVRegs(func);
             }
         }
