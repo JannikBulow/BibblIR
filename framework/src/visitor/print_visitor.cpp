@@ -108,6 +108,9 @@ namespace bibblir {
             for (const ValuePtr& value : block.mValueList) {
                 mStream << "    ";
                 value->accept(*this);
+                if (value->mInterval.first != -1 && value->mInterval.second != -1) {
+                    mStream << std::format("    [{}, {}]", value->mInterval.first, value->mInterval.second);
+                }
                 mStream << "\n";
             }
         }
