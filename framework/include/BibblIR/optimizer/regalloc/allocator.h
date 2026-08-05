@@ -7,8 +7,6 @@
 
 #include "BibblIR/optimizer/regalloc/vreg.h"
 
-#include <map>
-
 namespace bibblir {
     // I could easily make this a visitor, but regalloc without codegen is unnecessary and codegen without regalloc will result in a segfault
     class BIBBLIR_EXPORT RegAlloc {
