@@ -34,12 +34,6 @@ namespace bibblir {
     void PrintVisitor::visit(Module& module) {
         const std::vector<GlobalPtr>& globals = module.getGlobals();
 
-        for (const GlobalPtr& global : globals) {
-            if (auto func = dynamic_cast<Function*>(global.get())) {
-                func->orderBasicBlocks();
-            }
-        }
-
         mStream << std::format("module \"{}\"", module.getName());
 
         for (const GlobalPtr& global : globals) {
