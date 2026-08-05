@@ -19,8 +19,6 @@
 #include "BibblIR/ir/external_function.h"
 #include "BibblIR/ir/function.h"
 
-#include "BibblIR/optimizer/regalloc/allocator.h"
-
 #include "BibblIR/visitor/print_visitor.h"
 
 #include "BibblIR/module.h"
