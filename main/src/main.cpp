@@ -6,6 +6,7 @@
 
 #include <BibblIR/ir/instruction/binary_instruction.h>
 #include <BibblIR/ir/instruction/call_instruction.h>
+#include <BibblIR/ir/instruction/phi_instruction.h>
 
 #include <BibblIR/ir/builder.h>
 #include <BibblIR/ir/function.h>
@@ -27,29 +28,37 @@ int main() {
 
     Type* intType = Type::GetIntegerType(4);
 
-    Function* addFunc = Function::Create(module, FunctionType::Create(intType, {intType, intType}), "add");
-    BasicBlock* addEntryBB = addFunc->createBasicBlock("");
+    Function* mainFunc =
+        Function::Create(module,
+            FunctionType::Create(intType, {intType}),
+            ".main");
 
-    builder.setInsertPoint(addEntryBB);
+    BasicBlock* entry = mainFunc->createBasicBlock("");
+    BasicBlock* a = mainFunc->createBasicBlock("");
+    BasicBlock* b = mainFunc->createBasicBlock("");
+    BasicBlock* merge = mainFunc->createBasicBlock("");
 
-    builder.createReturn(
-        builder.createAdd(
-            addFunc->getArgument(0),
-            addFunc->getArgument(1)
-        )
+    builder.setInsertPoint(entry);
+    builder.createBr(a);
+
+    builder.setInsertPoint(a);
+    builder.createCondBr(
+        builder.createCmpNE(mainFunc->getArgument(0), builder.createConstantInt(0, intType)),
+        b,
+        merge
     );
 
-    Function* mainFunc = Function::Create(module, FunctionType::Create(intType, {}), ".main");
-    BasicBlock* mainEntryBB = mainFunc->createBasicBlock("");
+    builder.setInsertPoint(b);
+    builder.createBr(merge);
 
-    builder.setInsertPoint(mainEntryBB);
+    builder.setInsertPoint(merge);
 
-    builder.createReturn(
-        builder.createCall(addFunc, {
-            builder.createConstantInt(34, intType),
-            builder.createConstantInt(33, intType)
-        })
-    );
+    PhiInstruction* phi = builder.createPhi(intType);
+    phi->addIncoming(builder.createConstantInt(10, intType), a);
+    phi->addIncoming(builder.createConstantInt(20, intType), b);
+
+    builder.createReturn(phi);
+
 
     PrintVisitor printVisitor(std::cout);
     module.accept(printVisitor);
