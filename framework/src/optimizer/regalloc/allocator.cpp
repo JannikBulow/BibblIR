@@ -136,22 +136,33 @@ namespace bibblir {
         for (auto value : values) {
             expireOldIntervals(value->mId);
 
-            if (value->requiresVReg()) {
-                activeValues.push_back(value);
-                std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
-                    return lhs->mInterval.second < rhs->mInterval.second;
-                });
+            if (auto* phi = dynamic_cast<PhiInstruction*>(value)) {
+                for (auto it = phi->mIncoming.rbegin(); it != phi->mIncoming.rend(); ++it) {
+                    auto& incoming = *it;
+                    if (!incoming.first->isConstant() && incoming.first->mVReg) {
+                        phi->mVReg = incoming.first->mVReg;
+                        phi->mVReg->mUses++;
+                        break;
+                    }
+                }
+            } else {
+                if (value->requiresVReg()) {
+                    activeValues.push_back(value);
+                    std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
+                        return lhs->mInterval.second < rhs->mInterval.second;
+                    });
 
-                value->mVReg = getNextFreeVReg(value->mPreferredRegister);
-            }
+                    value->mVReg = getNextFreeVReg(value->mPreferredRegister);
+                }
 
-            if (value->requiresVRegRange()) {
-                activeValues.push_back(value);
-                std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
-                    return lhs->mInterval.second < rhs->mInterval.second;
-                });
+                if (value->requiresVRegRange()) {
+                    activeValues.push_back(value);
+                    std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
+                        return lhs->mInterval.second < rhs->mInterval.second;
+                    });
 
-                value->mVRegRange = getNextFreeVRegRange(value->mVRegRangeSize);
+                    value->mVRegRange = getNextFreeVRegRange(value->mVRegRangeSize);
+                }
             }
         }
 
