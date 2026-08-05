@@ -15,6 +15,10 @@ namespace bibblir {
         return mParent;
     }
 
+    std::string_view BasicBlock::getName() const {
+        return mName;
+    }
+
     void BasicBlock::insertValue(ValuePtr value) {
         mValueList.push_back(std::move(value));
     }

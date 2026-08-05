@@ -22,6 +22,7 @@ namespace bibblir {
         friend class RegAlloc;
     public:
         Function* getParent() const;
+        std::string_view getName() const;
 
         void insertValue(ValuePtr value);
         void insertValue(Value* insertAfter, ValuePtr value);
