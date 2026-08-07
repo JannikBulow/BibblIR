@@ -2,6 +2,8 @@
 
 #include "BibblIR/ir/instruction/load_instruction.h"
 
+#include "BibblIR/ir/function.h"
+
 #include "BibblIR/visitor/visitor.h"
 
 #include "BibblIR/module.h"
@@ -22,11 +24,17 @@ namespace bibblir {
         return mGlobals;
     }
 
+    const std::vector<Function*>& Module::getFunctions() const {
+        return mFunctions;
+    }
+
     void Module::insertGlobal(GlobalPtr global) {
+        if (auto* function = dynamic_cast<Function*>(global.get())) mFunctions.push_back(function);
         mGlobals.push_back(std::move(global));
     }
 
     void Module::insertGlobalAtFront(GlobalPtr global) {
+        if (auto* function = dynamic_cast<Function*>(global.get())) mFunctions.push_back(function);
         mGlobals.insert(mGlobals.begin(), std::move(global));
     }
 

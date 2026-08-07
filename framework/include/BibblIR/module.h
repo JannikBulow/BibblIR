@@ -20,6 +20,7 @@ namespace bibblir {
         int getNextValueId();
 
         const std::vector<GlobalPtr>& getGlobals() const;
+        const std::vector<Function*>& getFunctions() const;
         void insertGlobal(GlobalPtr global);
         void insertGlobalAtFront(GlobalPtr global);
 
@@ -31,6 +32,7 @@ namespace bibblir {
         int mNextValueId = 0;
 
         std::vector<GlobalPtr> mGlobals;
+        std::vector<Function*> mFunctions; // functions are needed so often that it's probably best to cache them
     };
 
     BIBBLIR_EXPORT Value* GetVariableOperand(Value* value);
