@@ -72,6 +72,10 @@ namespace bibblir {
         return mEndId;
     }
 
+    void BasicBlock::disable() {
+        mExists = false;
+    }
+
     std::string BasicBlock::identifier() const {
         return "label " + mName;
     }

@@ -1,6 +1,6 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
-#include "BibblIR/optimizer/regalloc/vreg.h"
+#include "BibblIR/pass/regalloc/vreg.h"
 
 namespace bibblir {
     VReg::VReg(int id, uint16_t actual)

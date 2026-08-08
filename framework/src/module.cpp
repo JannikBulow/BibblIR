@@ -42,6 +42,10 @@ namespace bibblir {
         visitor.visit(*this);
     }
 
+    std::optional<bibbleasm::Module>& Module::bytecodeModule() {
+        return mBytecodeModule;
+    }
+
     Value* GetVariableOperand(Value* value) {
         if (auto load = dynamic_cast<LoadInstruction*>(value)) {
             return load->getVariable();

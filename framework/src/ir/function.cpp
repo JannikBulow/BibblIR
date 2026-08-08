@@ -89,42 +89,4 @@ namespace bibblir {
             mArguments.push_back(std::make_unique<Argument>(module, type, index++));
         }
     }
-
-    static void Postorder(BasicBlock* head, std::vector<BasicBlock*>& visited, std::stack<BasicBlock*>& stack) {
-        if (std::ranges::find(visited, head) != visited.end()) return;
-
-        visited.push_back(head);
-        for (BasicBlock* successor : head->successors()) {
-            Postorder(successor, visited, stack);
-        }
-        stack.push(head);
-    }
-
-    void Function::orderBasicBlocks() {
-        if (mBasicBlockList.empty()) return;
-
-        std::vector<BasicBlock*> visited;
-        std::stack<BasicBlock*> stack;
-        Postorder(mBasicBlockList.front().get(), visited, stack);
-
-        std::vector<BasicBlock*> blocks;
-        for (auto& bb : mBasicBlockList) {
-            blocks.push_back(bb.release());
-        }
-
-        mBasicBlockList.clear();
-
-        while (!stack.empty()) {
-            BasicBlock* bb = stack.top();
-            stack.pop();
-
-            mBasicBlockList.push_back(BasicBlockPtr(bb));
-            std::erase(blocks, bb);
-        }
-
-        for (BasicBlock* bb : blocks) {
-            bb->mExists = false;
-            mBasicBlockList.push_back(BasicBlockPtr(bb));
-        }
-    }
 }

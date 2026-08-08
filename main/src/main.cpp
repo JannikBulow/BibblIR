@@ -11,6 +11,10 @@
 #include <BibblIR/ir/builder.h>
 #include <BibblIR/ir/function.h>
 
+#include <BibblIR/pass/codegen/codegen.h>
+
+#include <BibblIR/pass/pass_manager.h>
+
 #include <BibblIR/visitor/codegen_visitor.h>
 #include <BibblIR/visitor/print_visitor.h>
 
@@ -18,6 +22,8 @@
 
 #include <fstream>
 #include <iostream>
+
+#include "BibblIR/pass/regalloc/allocator.h"
 
 using namespace bibblir;
 
@@ -62,14 +68,17 @@ int main() {
 
     PrintVisitor printVisitor(std::cout);
     module.accept(printVisitor);
-
-    CodegenVisitor codegenVisitor;
-    module.accept(codegenVisitor);
-
     std::cout << "\n\n";
-    codegenVisitor.printDisassembly(std::cout);
 
-    bibbleasm::Module builtModule = codegenVisitor.buildModule();
+
+    PassRegistry passRegistry = PassRegistry::Default();
+    PassManager passManager(passRegistry);
+
+    passManager.addPass(passRegistry.create(GetPassID<CodegenPass>()));
+
+    passManager.buildPipeline().run(module);
+
+    bibbleasm::Module builtModule = std::move(module.bytecodeModule().value());
 
     bibblebytecode::WritableByteBuffer buf;
     if (!bibblebytecode::writer::WriteModule(buf, builtModule.module())) {

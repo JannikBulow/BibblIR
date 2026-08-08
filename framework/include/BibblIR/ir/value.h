@@ -3,7 +3,7 @@
 #ifndef BIBBLIR_IR_VALUE_H
 #define BIBBLIR_IR_VALUE_H
 
-#include "BibblIR/optimizer/regalloc/vreg.h"
+#include "BibblIR/pass/regalloc/vreg.h"
 
 #include "BibblIR/type/type.h"
 

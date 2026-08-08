@@ -57,8 +57,6 @@ namespace bibblir {
         uint16_t mRegisterCount = 1; // real registers
 
         Function(Module& module, FunctionType* type, std::string name);
-
-        void orderBasicBlocks();
     };
 }
 

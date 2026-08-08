@@ -7,9 +7,12 @@
 
 #include "BibblIR/api.h"
 
+#include <BibbleASM/codegen/builder/module_builder.h>
+
 #include <string>
 
 namespace bibblir {
+    class Function;
     class Visitor;
 
     class BIBBLIR_EXPORT Module {
@@ -26,6 +29,8 @@ namespace bibblir {
 
         void accept(Visitor& visitor);
 
+        std::optional<bibbleasm::Module>& bytecodeModule();
+
     private:
         std::string mName;
 
@@ -33,6 +38,8 @@ namespace bibblir {
 
         std::vector<GlobalPtr> mGlobals;
         std::vector<Function*> mFunctions; // functions are needed so often that it's probably best to cache them
+
+        std::optional<bibbleasm::Module> mBytecodeModule;
     };
 
     BIBBLIR_EXPORT Value* GetVariableOperand(Value* value);

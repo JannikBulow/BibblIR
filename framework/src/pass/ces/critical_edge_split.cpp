@@ -5,7 +5,11 @@
 
 #include "BibblIR/ir/builder.h"
 
-#include "BibblIR/optimizer/ces/critical_edge_split.h"
+#include "BibblIR/pass/ces/critical_edge_split.h"
+
+#include "BibblIR/pass/cfgc/cfg_canonicalize.h"
+
+#include "BibblIR/module.h"
 
 namespace bibblir {
     void CriticalEdgeSplitter::run(Function* function) {
@@ -60,6 +64,29 @@ namespace bibblir {
     void CriticalEdgeSplitter::replaceSuccessor(BasicBlock* block, BasicBlock* oldSucc, BasicBlock* newSucc) {
         for (auto& succ : block->successors()) {
             if (succ == oldSucc) succ = newSucc;
+        }
+    }
+
+    PassID CESPass::getId() const {
+        return GetPassID<CESPass>();
+    }
+
+    std::vector<IRProperty> CESPass::getProvidedProperties() const {
+        return {IRProperty::NoCriticalEdges};
+    }
+
+    std::vector<IRProperty> CESPass::getRequiredProperties() const {
+        return {};
+    }
+
+    std::vector<PassID> CESPass::runBefore() const {
+        return {GetPassID<CFGCanonicalizationPass>()};
+    }
+
+    void CESPass::run(Module& module) {
+        CriticalEdgeSplitter ces;
+        for (Function* function : module.getFunctions()) {
+            ces.run(function);
         }
     }
 }

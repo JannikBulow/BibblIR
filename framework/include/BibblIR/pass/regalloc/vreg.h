@@ -1,7 +1,7 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
-#ifndef BIBBLIR_OPTIMIZER_REGALLOC_VREG_H
-#define BIBBLIR_OPTIMIZER_REGALLOC_VREG_H
+#ifndef BIBBLIR_PASS_REGALLOC_VREG_H
+#define BIBBLIR_PASS_REGALLOC_VREG_H
 
 #include "BibblIR/api.h"
 
@@ -28,4 +28,4 @@ namespace bibblir {
     };
 }
 
-#endif //BIBBLIR_OPTIMIZER_REGALLOC_VREG_H
+#endif //BIBBLIR_PASS_REGALLOC_VREG_H

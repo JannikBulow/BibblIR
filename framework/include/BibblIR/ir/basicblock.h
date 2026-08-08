@@ -38,6 +38,8 @@ namespace bibblir {
         bool exists() const;
         bibbleasm::InstructionId& endId();
 
+        void disable();
+
         std::string identifier() const override;
 
         void accept(Visitor& visitor) override;

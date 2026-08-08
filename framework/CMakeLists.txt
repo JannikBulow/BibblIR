@@ -36,10 +36,17 @@ set(SOURCES
     src/ir/instruction.cpp
     src/ir/method.cpp
 
-    src/optimizer/ces/critical_edge_split.cpp
+    src/pass/ces/critical_edge_split.cpp
 
-    src/optimizer/regalloc/allocator.cpp
-    src/optimizer/regalloc/vreg.cpp
+    src/pass/cfgc/cfg_canonicalize.cpp
+
+    src/pass/codegen/codegen.cpp
+
+    src/pass/regalloc/allocator.cpp
+    src/pass/regalloc/vreg.cpp
+
+    src/pass/pass_manager.cpp
+    src/pass/pass_registry.cpp
 
     src/type/boolean_type.cpp
     src/type/class_type.cpp
@@ -83,10 +90,19 @@ set(HEADERS
     include/BibblIR/ir/method.h
     include/BibblIR/ir/value.h
 
-    include/BibblIR/optimizer/ces/critical_edge_split.h
+    include/BibblIR/pass/ces/critical_edge_split.h
 
-    include/BibblIR/optimizer/regalloc/allocator.h
-    include/BibblIR/optimizer/regalloc/vreg.h
+    include/BibblIR/pass/cfgc/cfg_canonicalize.h
+
+    include/BibblIR/pass/codegen/codegen.h
+
+    include/BibblIR/pass/regalloc/allocator.h
+    include/BibblIR/pass/regalloc/vreg.h
+
+    include/BibblIR/pass/pass.h
+    include/BibblIR/pass/pass_manager.h
+    include/BibblIR/pass/pass_registry.h
+    include/BibblIR/pass/property.h
 
     include/BibblIR/type/boolean_type.h
     include/BibblIR/type/class_type.h

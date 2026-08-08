@@ -3,7 +3,11 @@
 #include "BibblIR/ir/instruction/field_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 
-#include "BibblIR/optimizer/regalloc/allocator.h"
+#include "BibblIR/pass/cfgc/cfg_canonicalize.h"
+
+#include "BibblIR/pass/regalloc/allocator.h"
+
+#include "BibblIR/module.h"
 
 #include <algorithm>
 #include <cassert>
@@ -259,6 +263,25 @@ namespace bibblir {
             }
 
             bb->liveIn() = live;
+        }
+    }
+
+    PassID RegAllocPass::getId() const {
+        return GetPassID<RegAllocPass>();
+    }
+
+    std::vector<IRProperty> RegAllocPass::getProvidedProperties() const {
+        return {IRProperty::AllocatedRegisters};
+    }
+
+    std::vector<IRProperty> RegAllocPass::getRequiredProperties() const {
+        return {IRProperty::CanonicalCFG};
+    }
+
+    void RegAllocPass::run(Module& module) {
+        RegAlloc alloc;
+        for (Function* function : module.getFunctions()) {
+            alloc.assignVRegs(function);
         }
     }
 }
