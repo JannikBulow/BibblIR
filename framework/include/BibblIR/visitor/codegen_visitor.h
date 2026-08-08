@@ -15,7 +15,7 @@
 namespace bibblir {
     class BIBBLIR_EXPORT CodegenVisitor : public Visitor {
     public:
-        bibbleasm::Module buildModule();
+        bibbleasm::ModuleBuilder stealBuilder();
 
         void printDisassembly(std::ostream& stream);
 

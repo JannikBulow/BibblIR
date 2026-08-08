@@ -42,7 +42,7 @@ namespace bibblir {
         visitor.visit(*this);
     }
 
-    std::optional<bibbleasm::Module>& Module::bytecodeModule() {
+    bibbleasm::ModuleBuilder& Module::bytecodeModule() {
         return mBytecodeModule;
     }
 

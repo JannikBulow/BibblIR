@@ -78,7 +78,7 @@ int main() {
 
     passManager.buildPipeline().run(module);
 
-    bibbleasm::Module builtModule = std::move(module.bytecodeModule().value());
+    bibbleasm::Module builtModule = module.bytecodeModule().build();
 
     bibblebytecode::WritableByteBuffer buf;
     if (!bibblebytecode::writer::WriteModule(buf, builtModule.module())) {

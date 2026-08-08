@@ -30,10 +30,9 @@
 #include <cassert>
 
 namespace bibblir {
-    bibbleasm::Module CodegenVisitor::buildModule() {
-        bibbleasm::Module module = mBuilder.build();
-        mBuilder = {}; // reset
-        return module;
+    bibbleasm::ModuleBuilder CodegenVisitor::stealBuilder() {
+        //TODO: reset the whole visitor, i'm too lazy to rn
+        return std::move(mBuilder);
     }
 
     void CodegenVisitor::printDisassembly(std::ostream& stream) {

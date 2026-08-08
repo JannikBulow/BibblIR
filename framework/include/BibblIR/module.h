@@ -29,7 +29,7 @@ namespace bibblir {
 
         void accept(Visitor& visitor);
 
-        std::optional<bibbleasm::Module>& bytecodeModule();
+        bibbleasm::ModuleBuilder& bytecodeModule();
 
     private:
         std::string mName;
@@ -39,7 +39,7 @@ namespace bibblir {
         std::vector<GlobalPtr> mGlobals;
         std::vector<Function*> mFunctions; // functions are needed so often that it's probably best to cache them
 
-        std::optional<bibbleasm::Module> mBytecodeModule;
+        bibbleasm::ModuleBuilder mBytecodeModule;
     };
 
     BIBBLIR_EXPORT Value* GetVariableOperand(Value* value);
