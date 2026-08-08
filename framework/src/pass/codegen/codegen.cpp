@@ -24,7 +24,6 @@ namespace bibblir {
     void CodegenPass::run(Module& module) {
         CodegenVisitor visitor;
         module.accept(visitor);
-        visitor.printDisassembly(std::cout); // TODO: toggle for this
         module.bytecodeModule() = visitor.stealBuilder();
     }
 }
