@@ -14,6 +14,7 @@ namespace bibblir {
     PassRegistry PassRegistry::Default() {
         PassRegistry passRegistry;
 
+        // main providers. these are registered first so they're chosen first when a property is required
         passRegistry.registerPass<CESPass>();
         passRegistry.registerPass<CFGCanonicalizationPass>();
         passRegistry.registerPass<CodegenPass>();
@@ -25,6 +26,12 @@ namespace bibblir {
     PassID PassRegistry::getProvider(IRProperty property) const {
         auto it = mProviders.find(property);
         assert(it != mProviders.end() && "no pass provides requested IR property");
+        return it->second.front();
+    }
+
+    std::span<const PassID> PassRegistry::getProviders(IRProperty property) const {
+        auto it = mProviders.find(property);
+        assert(it != mProviders.end() && "no pass provides requested property");
         return it->second;
     }
 
