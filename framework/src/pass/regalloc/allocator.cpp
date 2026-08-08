@@ -153,6 +153,11 @@ namespace bibblir {
                 if (!phi->mVReg) {
                     phi->mVReg = getNextFreeVReg(phi->mPreferredRegister);
                 }
+
+                activeValues.push_back(phi);
+                std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
+                    return lhs->mInterval.second < rhs->mInterval.second;
+                });
             } else {
                 if (value->requiresVReg()) {
                     activeValues.push_back(value);
