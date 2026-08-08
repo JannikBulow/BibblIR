@@ -26,12 +26,35 @@ namespace bibblir {
     }
 
     PassPipeline PassManager::buildPipeline() {
-        std::vector<PassPtr> passes = std::move(mRequestedPasses);
-        std::unordered_map<PassID, PassNodePtr> nodes;
-        nodes.reserve(passes.size());
+        std::vector<PassPtr> requested = std::move(mRequestedPasses);
 
-        for (auto& pass : passes) {
-            ensurePass(nodes, passes, pass->getId());
+        std::vector<PassPtr> passes;
+        passes.reserve(requested.size());
+
+        std::unordered_map<PassID, PassNodePtr> nodes;
+        nodes.reserve(requested.size());
+
+        for (auto& pass : requested) {
+            PassID id = pass->getId();
+
+            if (nodes.contains(id)) continue;
+
+            size_t index = passes.size();
+            passes.push_back(std::move(pass));
+
+            auto [it, inserted] = nodes.emplace(id, std::make_unique<PassNode>(index));
+            assert(inserted);
+
+            Pass& currentPass = *passes[index];
+
+            for (IRProperty property : currentPass.getRequiredProperties()) {
+                PassID provider = mPassRegistry.getProvider(property);
+                assert(provider != id);
+
+                PassNode& dependency = ensurePass(nodes, passes, provider);
+
+                addDependency(nodes, passes[dependency.passIndex]->getId(), id);
+            }
         }
 
         for (auto& [id, node] : nodes) {
@@ -78,16 +101,19 @@ namespace bibblir {
     }
 
     void PassManager::addDependency(std::unordered_map<PassID, PassNodePtr>& nodes, PassID dependency, PassID dependent) {
+        assert(dependency != dependent);
+
         PassNode& dependencyNode = *nodes.at(dependency);
         PassNode& dependentNode = *nodes.at(dependent);
 
         dependencyNode.dependents.push_back(&dependentNode);
-        dependentNode.dependencyCount++;
+        ++dependentNode.dependencyCount;
     }
 
     PassManager::PassNode& PassManager::ensurePass(std::unordered_map<PassID, PassNodePtr>& nodes, std::vector<PassPtr>& passes, PassID id) {
         auto it = nodes.find(id);
-        if (it != nodes.end()) return *it->second;
+        if (it != nodes.end())
+            return *it->second;
 
         PassPtr pass = mPassRegistry.create(id);
         assert(pass);
@@ -96,7 +122,6 @@ namespace bibblir {
         passes.push_back(std::move(pass));
 
         auto [nodeIt, inserted] = nodes.emplace(id, std::make_unique<PassNode>(index));
-
         assert(inserted);
 
         PassNode& node = *nodeIt->second;
@@ -104,11 +129,11 @@ namespace bibblir {
 
         for (IRProperty property : currentPass.getRequiredProperties()) {
             PassID provider = mPassRegistry.getProvider(property);
+            assert(provider != id);
 
             PassNode& dependency = ensurePass(nodes, passes, provider);
 
-            dependency.dependents.push_back(&node);
-            node.dependencyCount++;
+            addDependency(nodes, passes[dependency.passIndex]->getId(), id);
         }
 
         return node;
