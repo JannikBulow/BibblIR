@@ -13,6 +13,8 @@
 
 #include <BibblIR/pass/codegen/codegen.h>
 
+#include <BibblIR/pass/optimizer/peephole.h>
+
 #include <BibblIR/pass/pass_manager.h>
 
 #include <BibblIR/visitor/codegen_visitor.h>
@@ -75,6 +77,7 @@ int main() {
     PassManager passManager(passRegistry);
 
     passManager.addPass(passRegistry.create(GetPassID<CodegenPass>()));
+    passManager.addPass(passRegistry.create(GetPassID<PeepholePass>()));
 
     passManager.buildPipeline().run(module);
 

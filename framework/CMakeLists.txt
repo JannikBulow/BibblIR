@@ -42,6 +42,8 @@ set(SOURCES
 
     src/pass/codegen/codegen.cpp
 
+    src/pass/optimizer/peephole.cpp
+
     src/pass/regalloc/allocator.cpp
     src/pass/regalloc/vreg.cpp
 
@@ -95,6 +97,8 @@ set(HEADERS
     include/BibblIR/pass/cfgc/cfg_canonicalize.h
 
     include/BibblIR/pass/codegen/codegen.h
+
+    include/BibblIR/pass/optimizer/peephole.h
 
     include/BibblIR/pass/regalloc/allocator.h
     include/BibblIR/pass/regalloc/vreg.h

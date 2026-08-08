@@ -6,6 +6,8 @@
 
 #include "BibblIR/pass/codegen/codegen.h"
 
+#include "BibblIR/pass/optimizer/peephole.h"
+
 #include "BibblIR/pass/regalloc/allocator.h"
 
 #include "BibblIR/pass/pass_registry.h"
@@ -19,6 +21,9 @@ namespace bibblir {
         passRegistry.registerPass<CFGCanonicalizationPass>();
         passRegistry.registerPass<CodegenPass>();
         passRegistry.registerPass<RegAllocPass>();
+
+        // optimizations
+        passRegistry.registerPass<PeepholePass>();
 
         return passRegistry;
     }
