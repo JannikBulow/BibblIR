@@ -135,6 +135,10 @@ namespace bibblir {
         }
 
         for (const BasicBlockPtr& bb : function.basicBlocks()) {
+            for (PhiInstruction* phi : bb->mPhis) {
+                phi->accept(*this);
+            }
+
             for (auto& [predecessor, moves] : bb->mPhiCopies) {
                 emitParallelMoves(predecessor, moves);
             }
