@@ -3,6 +3,8 @@
 #ifndef BIBBLIR_VISITOR_CODEGEN_VISITOR_H
 #define BIBBLIR_VISITOR_CODEGEN_VISITOR_H
 
+#include "BibblIR/ir/basicblock.h"
+
 #include "BibblIR/visitor/visitor.h"
 
 #include <BibbleASM/codegen/builder/module_builder.h>
