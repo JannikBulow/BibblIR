@@ -9,6 +9,7 @@
 
 namespace bibblir {
     class BIBBLIR_EXPORT VReg {
+        friend class Function;
         friend class RegAlloc;
     public:
         VReg() = default;

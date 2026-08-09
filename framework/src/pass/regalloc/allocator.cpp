@@ -179,6 +179,8 @@ namespace bibblir {
             }
         }
 
+        function->mScratchVReg = createVReg();
+        function->mScratchVReg->mUses = 0; // uses are done in Function::getScratchVReg
         function->mRegisterCount = std::max(1, regCount);
     }
 

@@ -89,4 +89,9 @@ namespace bibblir {
             mArguments.push_back(std::make_unique<Argument>(module, type, index++));
         }
     }
+
+    VReg* Function::getScratchVReg() const {
+        mScratchVReg->mUses++;
+        return mScratchVReg;
+    }
 }
