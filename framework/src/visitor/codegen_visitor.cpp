@@ -27,6 +27,7 @@
 
 #include "BibblIR/module.h"
 
+#include <algorithm>
 #include <cassert>
 
 namespace bibblir {
@@ -134,8 +135,8 @@ namespace bibblir {
         }
 
         for (const BasicBlockPtr& bb : function.basicBlocks()) {
-            for (auto phi : bb->mPhis) {
-                phi->accept(*this);
+            for (auto& [predecessor, moves] : bb->mPhiCopies) {
+                emitParallelMoves(predecessor, moves);
             }
         }
 
@@ -349,18 +350,11 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(PhiInstruction& instruction) {
-        std::vector<BasicBlock*> done;
-        for (auto& incoming : instruction.mIncoming) {
-            if (std::ranges::find(done, incoming.second) != done.end()) continue;
-            if (incoming.second->exists()) {
-                if (incoming.first == &instruction) continue;
+        for (auto& [value, predecessor] : instruction.mIncoming) {
+            if (!predecessor->exists()) continue;
+            if (value == &instruction) continue;
 
-                done.push_back(incoming.second);
-                std::optional<bibbleasm::Instruction> move = bytecode::BuildMove(*instruction.mEmittedValue, *incoming.first->mEmittedValue);
-                if (move) {
-                    incoming.second->endId() = mInstBuilder->assembler().emit(incoming.second->endId(), *move);
-                }
-            }
+            instruction.mParent->mPhiCopies[predecessor].emplace_back(*instruction.mEmittedValue, *value->mEmittedValue);
         }
     }
 
@@ -410,6 +404,52 @@ namespace bibblir {
         }
 
         instruction.mEmittedValue = dst;
+    }
+
+    void CodegenVisitor::emitParallelMoves(BasicBlock* bb, std::vector<BasicBlock::ParallelMove> moves) {
+        auto emitMove = [this](BasicBlock* bb, bibbleasm::Operand dst, bibbleasm::Operand src) {
+            auto move = bytecode::BuildMove(dst, src);
+            if (!move) return;
+
+            bb->endId() = mInstBuilder->assembler().emit(bb->endId(), *move);
+        };
+
+        std::erase_if(moves, [](const auto& move) {
+            return move.dst == move.src;
+        });
+
+        while (!moves.empty()) {
+            bool madeProgress = false;
+
+            for (size_t i = 0; i < moves.size(); i++) {
+                const auto& move = moves[i];
+
+                bool sourceIsNeeded = std::ranges::any_of(moves, [&move](const auto& other) {
+                    return other.dst != move.dst && other.src == move.dst;
+                });
+
+                if (!sourceIsNeeded) {
+                    emitMove(bb, move.dst, move.src);
+                    moves.erase(moves.begin() + i);
+                    madeProgress = true;
+                    break;
+                }
+            }
+
+            if (madeProgress) continue;
+
+            auto& move = moves.front();
+
+            VReg* scratch = bb->getParent()->getScratchVReg();
+
+            emitMove(bb, scratch->toOperand(), move.dst);
+
+            for (auto& pending : moves) {
+                if (pending.src == move.dst) {
+                    pending.src = scratch->toOperand();
+                }
+            }
+        }
     }
 
     bibbleasm::ConstantIndex CodegenVisitor::getStringConstant(const std::string& str) {

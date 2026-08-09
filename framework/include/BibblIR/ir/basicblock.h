@@ -8,6 +8,7 @@
 #include <BibbleASM/codegen/assembler.h>
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace bibblir {
@@ -45,6 +46,11 @@ namespace bibblir {
         void accept(Visitor& visitor) override;
 
     private:
+        struct ParallelMove {
+            bibbleasm::Operand dst;
+            bibbleasm::Operand src;
+        };
+
         std::string mName;
         Function* mParent;
 
@@ -55,6 +61,7 @@ namespace bibblir {
         std::vector<BasicBlock*> mPredecessors;
 
         std::vector<PhiInstruction*> mPhis;
+        std::unordered_map<BasicBlock*, std::vector<ParallelMove>> mPhiCopies;
         BasicBlock* mLoopEnd = nullptr;
 
         bool mExists = true;

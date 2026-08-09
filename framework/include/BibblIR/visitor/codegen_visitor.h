@@ -96,6 +96,11 @@ namespace bibblir {
         bibbleasm::ClassBuilder* mClassBuilder = nullptr;
         bibbleasm::InstructionBuilder* mInstBuilder = nullptr;
 
+        void emitParallelMoves(BasicBlock* bb, std::vector<BasicBlock::ParallelMove> moves);
+
+
+        // const-pool stuff
+
         std::unordered_map<std::string, bibbleasm::ConstantIndex> mStringConstants;
         std::unordered_map<std::string, bibbleasm::ConstantIndex> mModuleInfoConstants;
         std::unordered_map<TwoString, bibbleasm::ConstantIndex, TwoStringHash> mFunctionInfoConstants;
