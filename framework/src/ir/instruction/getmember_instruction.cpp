@@ -10,7 +10,7 @@
 
 namespace bibblir {
     std::vector<std::reference_wrapper<Value*>> GetMemberInstruction::getOperands() {
-        return {mObject, mField};
+        return {mObject, mMember};
     }
 
     std::string GetMemberInstruction::identifier() const {
@@ -24,9 +24,9 @@ namespace bibblir {
     GetMemberInstruction::GetMemberInstruction(BasicBlock* parent, Value* object, Value* field)
         : Instruction(parent->getModule(), parent)
         , mObject(object)
-        , mField(field)
+        , mMember(field)
         , mValueId(mModule.getNextValueId()) {
-        mType = mField->getType();
+        mType = mMember->getType();
         mRequiresVReg = false;
     }
 }

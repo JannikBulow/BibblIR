@@ -19,7 +19,7 @@ namespace bibblir {
 
     private:
         Value* mObject;
-        Value* mField;
+        Value* mMember;
 
         int mValueId;
 

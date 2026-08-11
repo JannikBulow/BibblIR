@@ -329,11 +329,15 @@ namespace bibblir {
     void CodegenVisitor::visit(LoadInstruction& instruction) {
         auto vreg = instruction.mVReg->toOperand();
 
-        if (auto* fieldInstruction = dynamic_cast<GetMemberInstruction*>(instruction.mVariable)) {
-            if (auto* field = dynamic_cast<Field*>(fieldInstruction->mField)) {
-                if (auto* classType = dynamic_cast<ClassType*>(fieldInstruction->mObject->getType())) {
-                    mInstBuilder->getfield(vreg, std::get<bibbleasm::Register>(*fieldInstruction->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName));
+        if (auto* getmember = dynamic_cast<GetMemberInstruction*>(instruction.mVariable)) {
+            if (auto* field = dynamic_cast<Field*>(getmember->mMember)) {
+                if (auto* classType = dynamic_cast<ClassType*>(getmember->mObject->getType())) {
+                    mInstBuilder->getfield(vreg, std::get<bibbleasm::Register>(*getmember->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName));
                     // WHAT THE FUCK IS THIS
+                }
+            } else if (auto* method = dynamic_cast<Method*>(getmember->mMember)) {
+                if (auto* classType = dynamic_cast<ClassType*>(getmember->mObject->getType())) {
+                    mInstBuilder->dispatchmethod(vreg, std::get<bibbleasm::Register>(*getmember->mObject->mEmittedValue), getMethodInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), method->mName));
                 }
             }
         } else {
@@ -380,7 +384,7 @@ namespace bibblir {
 
     void CodegenVisitor::visit(StoreInstruction& instruction) {
         if (auto* fieldInstruction = dynamic_cast<GetMemberInstruction*>(instruction.mVariable)) {
-            if (auto* field = dynamic_cast<Field*>(fieldInstruction->mField)) {
+            if (auto* field = dynamic_cast<Field*>(fieldInstruction->mMember)) {
                 if (auto* classType = dynamic_cast<ClassType*>(fieldInstruction->mObject->getType())) {
                     mInstBuilder->setfield(std::get<bibbleasm::Register>(*fieldInstruction->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName), std::get<bibbleasm::Register>(*instruction.mValue->mEmittedValue));
                     // WHAT THE FUCK IS THIS

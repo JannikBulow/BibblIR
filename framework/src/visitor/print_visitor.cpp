@@ -215,7 +215,7 @@ namespace bibblir {
     }
 
     void PrintVisitor::visit(GetMemberInstruction& instruction) {
-        mStream << std::format("{} = getmember {}.{}", instruction.identifier(), instruction.mObject->identifier(), instruction.mField->identifier());
+        mStream << std::format("{} = getmember {}.{}", instruction.identifier(), instruction.mObject->identifier(), instruction.mMember->identifier());
     }
 
     void PrintVisitor::visit(IntCastInstruction& instruction) {
