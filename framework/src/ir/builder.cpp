@@ -263,7 +263,7 @@ namespace bibblir {
         return instruction;
     }
 
-    GetMemberInstruction* IRBuilder::createGetField(Value* object, Value* field) {
+    GetMemberInstruction* IRBuilder::createGetMember(Value* object, Value* field) {
         GetMemberInstruction* instruction = new GetMemberInstruction(mInsertPoint, object, field);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));

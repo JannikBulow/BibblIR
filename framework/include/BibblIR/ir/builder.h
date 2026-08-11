@@ -72,7 +72,7 @@ namespace bibblir {
 
         LoadInstruction* createLoad(Value* variable);
         StoreInstruction* createStore(Value* variable, Value* value);
-        GetMemberInstruction* createGetField(Value* object, Value* field);
+        GetMemberInstruction* createGetMember(Value* object, Value* field);
 
 
         PhiInstruction* createPhi(Type* type);
