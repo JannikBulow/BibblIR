@@ -68,6 +68,7 @@ namespace bibblir {
 
 
         NewInstruction* createNew(Value* clas);
+        NewInstruction* createNew(Type* type);
 
 
         LoadInstruction* createLoad(Value* variable);

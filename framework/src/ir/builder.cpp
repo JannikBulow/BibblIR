@@ -240,7 +240,11 @@ namespace bibblir {
     }
 
     NewInstruction* IRBuilder::createNew(Value* clas) {
-        NewInstruction* instruction = new NewInstruction(mInsertPoint, clas);
+        return createNew(clas->getType());
+    }
+
+    NewInstruction* IRBuilder::createNew(Type* type) {
+        NewInstruction* instruction = new NewInstruction(mInsertPoint, type);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 

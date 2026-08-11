@@ -227,7 +227,7 @@ namespace bibblir {
     }
 
     void PrintVisitor::visit(NewInstruction& instruction) {
-        mStream << std::format("{} = new {}", instruction.identifier(), instruction.mClass->identifier());
+        mStream << std::format("{} = new {}", instruction.identifier(), instruction.getType()->getName());
     }
 
     void PrintVisitor::visit(PhiInstruction& instruction) {

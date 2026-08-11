@@ -11,17 +11,14 @@ namespace bibblir {
         friend class IRBuilder;
         friend class PrintVisitor;
     public:
-        std::vector<std::reference_wrapper<Value*>> getOperands() override;
-
         std::string identifier() const override;
 
         void accept(Visitor& visitor) override;
 
     private:
-        Value* mClass;
         int mValueId;
 
-        NewInstruction(BasicBlock* parent, Value* clas);
+        NewInstruction(BasicBlock* parent, Type* type);
     };
 }
 

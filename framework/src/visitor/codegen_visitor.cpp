@@ -350,8 +350,8 @@ namespace bibblir {
     void CodegenVisitor::visit(NewInstruction& instruction) {
         auto vreg = instruction.mVReg->toOperand();
 
-        if (auto* clas = dynamic_cast<Class*>(instruction.mClass)) {
-            mInstBuilder->newinstance(vreg, getClassInfoConstant(*mModuleName, clas->mName));
+        if (auto* clas = dynamic_cast<ClassType*>(instruction.getType())) {
+            mInstBuilder->newinstance(vreg, getClassInfoConstant(std::string(clas->getModuleName()), std::string(clas->getClassName())));
         }
 
         instruction.mEmittedValue = vreg;
