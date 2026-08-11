@@ -1,6 +1,6 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
-#include "BibblIR/ir/instruction/field_instruction.h"
+#include "BibblIR/ir/instruction/getmember_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 
 #include "BibblIR/pass/cfgc/cfg_canonicalize.h"
@@ -242,7 +242,7 @@ namespace bibblir {
 
                     // this is so dogshit and i hate it
                     //TODO: one day remove the field instruction or make it able to act nicely and fit in with the rest of society
-                    if (dynamic_cast<FieldInstruction*>(operand)) {
+                    if (dynamic_cast<GetMemberInstruction*>(operand)) {
                         for (auto dependencyR : operand->getOperands()) {
                             auto dependency = dependencyR.get();
                             dependency->mInterval.first = std::min(dependency->mInterval.first, bb->mInterval.first);

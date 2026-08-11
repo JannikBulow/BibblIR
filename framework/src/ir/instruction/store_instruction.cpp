@@ -1,6 +1,6 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
-#include "BibblIR/ir/instruction/field_instruction.h"
+#include "BibblIR/ir/instruction/getmember_instruction.h"
 #include "BibblIR/ir/instruction/store_instruction.h"
 
 #include "BibblIR/ir/basicblock.h"
@@ -26,7 +26,7 @@ namespace bibblir {
         , mValue(value) {
         mRequiresVReg = false;
 
-        if (auto* fieldInstruction = dynamic_cast<FieldInstruction*>(mVariable)) {
+        if (auto* fieldInstruction = dynamic_cast<GetMemberInstruction*>(mVariable)) {
             mValue->forceRegister();
         }
     }

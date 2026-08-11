@@ -18,7 +18,7 @@ set(SOURCES
     src/ir/instruction/binary_instruction.cpp
     src/ir/instruction/branch_instruction.cpp
     src/ir/instruction/call_instruction.cpp
-    src/ir/instruction/field_instruction.cpp
+    src/ir/instruction/getmember_instruction.cpp
     src/ir/instruction/int_cast_instruction.cpp
     src/ir/instruction/load_instruction.cpp
     src/ir/instruction/new_instruction.cpp
@@ -72,7 +72,7 @@ set(HEADERS
     include/BibblIR/ir/instruction/binary_instruction.h
     include/BibblIR/ir/instruction/branch_instruction.h
     include/BibblIR/ir/instruction/call_instruction.h
-    include/BibblIR/ir/instruction/field_instruction.h
+    include/BibblIR/ir/instruction/getmember_instruction.h
     include/BibblIR/ir/instruction/int_cast_instruction.h
     include/BibblIR/ir/instruction/load_instruction.h
     include/BibblIR/ir/instruction/new_instruction.h

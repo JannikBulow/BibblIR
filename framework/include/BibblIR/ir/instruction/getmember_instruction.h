@@ -6,7 +6,7 @@
 #include "BibblIR/ir/instruction.h"
 
 namespace bibblir {
-    class FieldInstruction : public Instruction {
+    class GetMemberInstruction : public Instruction {
         friend class CodegenVisitor;
         friend class IRBuilder;
         friend class PrintVisitor;
@@ -23,7 +23,7 @@ namespace bibblir {
 
         int mValueId;
 
-        FieldInstruction(BasicBlock* parent, Value* object, Value* field);
+        GetMemberInstruction(BasicBlock* parent, Value* object, Value* field);
     };
 }
 

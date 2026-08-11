@@ -6,7 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
-#include "BibblIR/ir/instruction/field_instruction.h"
+#include "BibblIR/ir/instruction/getmember_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
 #include "BibblIR/ir/instruction/new_instruction.h"
@@ -263,8 +263,8 @@ namespace bibblir {
         return instruction;
     }
 
-    FieldInstruction* IRBuilder::createGetField(Value* object, Value* field) {
-        FieldInstruction* instruction = new FieldInstruction(mInsertPoint, object, field);
+    GetMemberInstruction* IRBuilder::createGetField(Value* object, Value* field) {
+        GetMemberInstruction* instruction = new GetMemberInstruction(mInsertPoint, object, field);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
