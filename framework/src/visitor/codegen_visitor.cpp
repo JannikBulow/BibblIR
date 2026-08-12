@@ -8,6 +8,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/getelement_instruction.h"
 #include "BibblIR/ir/instruction/getmember_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
@@ -317,6 +318,10 @@ namespace bibblir {
         instruction.mEmittedValue = instruction.mVReg->toOperand();
     }
 
+    void CodegenVisitor::visit(GetElementInstruction& instruction) {
+        // everything about this instruction is super shit. it's handled in load/store
+    }
+
     void CodegenVisitor::visit(GetMemberInstruction& instruction) {
         // everything about this instruction is super shit. it's handled in load/store
     }
@@ -341,6 +346,8 @@ namespace bibblir {
                     mInstBuilder->dispatchmethod(vreg, std::get<bibbleasm::Register>(*getmember->mObject->mEmittedValue), getMethodInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), method->mName));
                 }
             }
+        } else if (auto* getelement = dynamic_cast<GetElementInstruction*>(instruction.mVariable)) {
+            mInstBuilder->arrayget(vreg, std::get<bibbleasm::Register>(*getelement->mArray->mEmittedValue), std::get<bibbleasm::Register>(*getelement->mIndex->mEmittedValue));
         } else {
             bytecode::Move(*mInstBuilder, vreg, *instruction.mVariable->mEmittedValue);
         }
@@ -386,13 +393,15 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(StoreInstruction& instruction) {
-        if (auto* fieldInstruction = dynamic_cast<GetMemberInstruction*>(instruction.mVariable)) {
-            if (auto* field = dynamic_cast<Field*>(fieldInstruction->mMember)) {
-                if (auto* classType = dynamic_cast<ClassType*>(fieldInstruction->mObject->getType())) {
-                    mInstBuilder->setfield(std::get<bibbleasm::Register>(*fieldInstruction->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName), std::get<bibbleasm::Register>(*instruction.mValue->mEmittedValue));
+        if (auto* getmember = dynamic_cast<GetMemberInstruction*>(instruction.mVariable)) {
+            if (auto* field = dynamic_cast<Field*>(getmember->mMember)) {
+                if (auto* classType = dynamic_cast<ClassType*>(getmember->mObject->getType())) {
+                    mInstBuilder->setfield(std::get<bibbleasm::Register>(*getmember->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName), std::get<bibbleasm::Register>(*instruction.mValue->mEmittedValue));
                     // WHAT THE FUCK IS THIS
                 }
             }
+        } else if (auto* getelement = dynamic_cast<GetElementInstruction*>(instruction.mVariable)) {
+            mInstBuilder->arrayset(std::get<bibbleasm::Register>(*getelement->mArray->mEmittedValue), std::get<bibbleasm::Register>(*getelement->mIndex->mEmittedValue), std::get<bibbleasm::Register>(*instruction.mValue->mEmittedValue));
         } else {
             bytecode::Move(*mInstBuilder, *instruction.mVariable->mEmittedValue, *instruction.mValue->mEmittedValue);
         }

@@ -32,6 +32,7 @@ namespace bibblir {
         void visit(BinaryInstruction& instruction) override;
         void visit(BranchInstruction& instruction) override;
         void visit(CallInstruction& instruction) override;
+        void visit(GetElementInstruction& instruction) override;
         void visit(GetMemberInstruction& instruction) override;
         void visit(IntCastInstruction& instruction) override;
         void visit(LoadInstruction& instruction) override;

@@ -6,6 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/getelement_instruction.h"
 #include "BibblIR/ir/instruction/getmember_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
@@ -212,6 +213,10 @@ namespace bibblir {
             mStream << instruction.mParameters.back()->identifier();
         }
         mStream << ')';
+    }
+
+    void PrintVisitor::visit(GetElementInstruction& instruction) {
+        mStream << std::format("{} = getelement {}[{}]", instruction.identifier(), instruction.mArray->identifier(), instruction.mIndex->identifier());
     }
 
     void PrintVisitor::visit(GetMemberInstruction& instruction) {
