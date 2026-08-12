@@ -6,6 +6,7 @@
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
+#include "BibblIR/ir/instruction/getelement_instruction.h"
 #include "BibblIR/ir/instruction/getmember_instruction.h"
 #include "BibblIR/ir/instruction/int_cast_instruction.h"
 #include "BibblIR/ir/instruction/load_instruction.h"
@@ -17,6 +18,7 @@
 
 #include "BibblIR/ir/basicblock.h"
 #include "BibblIR/ir/builder.h"
+
 
 namespace bibblir {
     BasicBlock* IRBuilder::getInsertPoint() const {
@@ -265,6 +267,14 @@ namespace bibblir {
 
     StoreInstruction* IRBuilder::createStore(Value* variable, Value* value) {
         StoreInstruction* instruction = new StoreInstruction(mInsertPoint, variable, value);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    GetElementInstruction* IRBuilder::createGetElement(Value* array, Value* index) {
+        GetElementInstruction* instruction = new GetElementInstruction(mInsertPoint, array, index);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 
