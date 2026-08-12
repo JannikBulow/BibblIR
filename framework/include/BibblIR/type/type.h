@@ -49,6 +49,7 @@ namespace bibblir {
         static Type* GetIntegerType(int bytes);
         static Type* GetBooleanType();
         static Type* GetFunctionType(Type* returnType, const std::vector<Type*>& argumentTypes);
+        static Type* GetArrayType(Type* elementType);
         static Type* GetClassType(std::string moduleName, std::string name);
 
     protected:
