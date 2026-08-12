@@ -68,7 +68,7 @@ namespace bibblir {
         } else {
             mStream << "void";
         }
-        mStream << std::format(") . {} = {}\n", method.getFunctionType()->getReturnType()->getName(), method.mImpl ? method.mImpl->identifier() : "null");
+        mStream << std::format(") -> {} = {}\n", method.getFunctionType()->getReturnType()->getName(), method.mImpl ? method.mImpl->identifier() : "null");
     }
 
     void PrintVisitor::visit(Function& function) {
