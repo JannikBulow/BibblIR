@@ -353,8 +353,8 @@ namespace bibblir {
 
         if (auto* clas = dynamic_cast<ClassType*>(instruction.getType())) {
             mInstBuilder->newinstance(vreg, getClassInfoConstant(std::string(clas->getModuleName()), std::string(clas->getClassName())));
-        } else if (instruction.getType()->isArrayType()) {
-            mInstBuilder->newarray(vreg, std::get<bibbleasm::Register>(*instruction.mParameter->mEmittedValue), instruction.getType()->getIDByte());
+        } else if (auto* array = dynamic_cast<ArrayType*>(instruction.getType())) {
+            mInstBuilder->newarray(vreg, std::get<bibbleasm::Register>(*instruction.mParameter->mEmittedValue), array->getElementType()->getIDByte());
         }
 
         instruction.mEmittedValue = vreg;
