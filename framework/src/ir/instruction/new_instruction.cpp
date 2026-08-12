@@ -8,6 +8,8 @@
 
 #include "BibblIR/module.h"
 
+#include <cassert>
+
 namespace bibblir {
     std::string NewInstruction::identifier() const {
         return getName(mValueId);
@@ -23,6 +25,9 @@ namespace bibblir {
         , mValueId(mModule.getNextValueId()) {
         mType = type;
 
-        if (type->isArrayType()) parameter->forceRegister();
+        if (type->isArrayType()) {
+            assert(parameter->getType()->isIntegerType());
+            parameter->forceRegister();
+        }
     }
 }
