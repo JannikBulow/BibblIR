@@ -401,7 +401,13 @@ namespace bibblir {
                 }
             }
         } else if (auto* getelement = dynamic_cast<GetElementInstruction*>(instruction.mVariable)) {
-            mInstBuilder->arrayset(std::get<bibbleasm::Register>(*getelement->mArray->mEmittedValue), std::get<bibbleasm::Register>(*getelement->mIndex->mEmittedValue), std::get<bibbleasm::Register>(*instruction.mValue->mEmittedValue));
+            bibbleasm::Operand value = *instruction.mValue->mEmittedValue;
+            if (!std::holds_alternative<bibbleasm::Register>(*instruction.mValue->mEmittedValue)) {
+                VReg* scratch = instruction.mParent->mParent->getScratchVReg();
+                bytecode::Move(*mInstBuilder, scratch->toOperand(), *instruction.mValue->mEmittedValue);
+                value = scratch->toOperand();
+            }
+            mInstBuilder->arrayset(std::get<bibbleasm::Register>(*getelement->mArray->mEmittedValue), std::get<bibbleasm::Register>(*getelement->mIndex->mEmittedValue), std::get<bibbleasm::Register>(value));
         } else {
             bytecode::Move(*mInstBuilder, *instruction.mVariable->mEmittedValue, *instruction.mValue->mEmittedValue);
         }
