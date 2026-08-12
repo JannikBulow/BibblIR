@@ -21,6 +21,7 @@
 #include "BibblIR/ir/external_function.h"
 #include "BibblIR/ir/function.h"
 
+#include "BibblIR/type/array_type.h"
 #include "BibblIR/type/class_type.h"
 
 #include "BibblIR/visitor/codegen_visitor.h"
@@ -352,6 +353,8 @@ namespace bibblir {
 
         if (auto* clas = dynamic_cast<ClassType*>(instruction.getType())) {
             mInstBuilder->newinstance(vreg, getClassInfoConstant(std::string(clas->getModuleName()), std::string(clas->getClassName())));
+        } else if (instruction.getType()->isArrayType()) {
+            mInstBuilder->newarray(vreg, std::get<bibbleasm::Register>(*instruction.mParameter->mEmittedValue), instruction.getType()->getIDByte());
         }
 
         instruction.mEmittedValue = vreg;

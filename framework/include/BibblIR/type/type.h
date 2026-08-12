@@ -42,6 +42,7 @@ namespace bibblir {
         virtual bool isIntegerType() const { return false; }
         virtual bool isBooleanType() const { return false; }
         virtual bool isFunctionType() const { return false; }
+        virtual bool isArrayType() const { return false; }
         virtual bool isClassType() const { return false; }
 
         static Type* GetVoidType();

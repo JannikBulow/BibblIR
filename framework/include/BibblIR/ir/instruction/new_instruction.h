@@ -16,9 +16,10 @@ namespace bibblir {
         void accept(Visitor& visitor) override;
 
     private:
+        Value* mParameter; // size for array, null for instance
         int mValueId;
 
-        NewInstruction(BasicBlock* parent, Type* type);
+        NewInstruction(BasicBlock* parent, Type* type, Value* parameter);
     };
 }
 

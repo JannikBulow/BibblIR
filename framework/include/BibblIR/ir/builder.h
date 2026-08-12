@@ -5,6 +5,9 @@
 
 #include "BibblIR/ir/value.h"
 
+#include "BibblIR/type/array_type.h"
+#include "BibblIR/type/class_type.h"
+
 namespace bibblir {
     class BasicBlock;
     class Function;
@@ -67,8 +70,8 @@ namespace bibblir {
         BranchInstruction* createCondBr(Value* condition, BasicBlock* trueBranch, BasicBlock* falseBranch);
 
 
-        NewInstruction* createNew(Value* clas);
-        NewInstruction* createNew(Type* type);
+        NewInstruction* createNew(ClassType* type);
+        NewInstruction* createNew(ArrayType* type, Value* length);
 
 
         LoadInstruction* createLoad(Value* variable);

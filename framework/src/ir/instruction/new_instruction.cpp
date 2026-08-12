@@ -17,9 +17,12 @@ namespace bibblir {
         visitor.visit(*this);
     }
 
-    NewInstruction::NewInstruction(BasicBlock* parent, Type* type)
+    NewInstruction::NewInstruction(BasicBlock* parent, Type* type, Value* parameter)
         : Instruction(parent->getModule(), parent)
+        , mParameter(parameter)
         , mValueId(mModule.getNextValueId()) {
         mType = type;
+
+        if (type->isArrayType()) parameter->forceRegister();
     }
 }
