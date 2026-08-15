@@ -3,6 +3,7 @@
 #include "BibblIR/type/array_type.h"
 #include "BibblIR/type/boolean_type.h"
 #include "BibblIR/type/class_type.h"
+#include "BibblIR/type/float_type.h"
 #include "BibblIR/type/function_type.h"
 #include "BibblIR/type/integer_type.h"
 #include "BibblIR/type/type.h"
@@ -47,6 +48,14 @@ namespace bibblir {
             IntegerType,
             [](IntegerType* value, int bytes) { return value->getSizeInBytes() == bytes; },
             [](int bytes) { return std::make_unique<IntegerType>(bytes); }
+        >(bytes);
+    }
+
+    Type* Type::GetFloatType(int bytes) {
+        return GetType<
+            FloatType,
+            [](FloatType* value, int bytes) { return value->getSizeInBytes() == bytes; },
+            [](int bytes) { return std::make_unique<FloatType>(bytes); }
         >(bytes);
     }
 

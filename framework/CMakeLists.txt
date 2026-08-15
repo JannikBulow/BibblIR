@@ -54,6 +54,7 @@ set(SOURCES
     src/type/array_type.cpp
     src/type/boolean_type.cpp
     src/type/class_type.cpp
+    src/type/float_type.cpp
     src/type/function_type.cpp
     src/type/integer_type.cpp
     src/type/type.cpp
@@ -114,6 +115,7 @@ set(HEADERS
     include/BibblIR/type/array_type.h
     include/BibblIR/type/boolean_type.h
     include/BibblIR/type/class_type.h
+    include/BibblIR/type/float_type.h
     include/BibblIR/type/function_type.h
     include/BibblIR/type/integer_type.h
     include/BibblIR/type/type.h
