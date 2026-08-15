@@ -8,7 +8,7 @@
 #include "BibblIR/pass/pass.h"
 
 namespace bibblir {
-    class CriticalEdgeSplitter {
+    class BIBBLIR_EXPORT CriticalEdgeSplitter {
     public:
         void run(Function* function);
 
