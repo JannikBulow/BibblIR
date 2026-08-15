@@ -9,6 +9,18 @@
 #include <cassert>
 
 namespace bibblir {
+    Value* BranchInstruction::getCondition() const {
+        return mCondition;
+    }
+
+    BasicBlock*& BranchInstruction::trueBranch() {
+        return mTrueBranch;
+    }
+
+    BasicBlock*& BranchInstruction::falseBranch() {
+        return mFalseBranch;
+    }
+
     void BranchInstruction::replaceDestinations(BasicBlock* from, BasicBlock* to) {
         if (mTrueBranch == from) mTrueBranch = to;
         if (mFalseBranch == from) mFalseBranch = to;

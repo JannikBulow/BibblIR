@@ -19,6 +19,10 @@ namespace bibblir {
         return mName;
     }
 
+    const std::vector<ValuePtr>& BasicBlock::getValues() const {
+        return mValueList;
+    }
+
     void BasicBlock::insertValue(ValuePtr value) {
         mValueList.push_back(std::move(value));
     }

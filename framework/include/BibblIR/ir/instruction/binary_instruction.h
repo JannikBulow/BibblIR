@@ -26,6 +26,8 @@ namespace bibblir {
         };
 
         Operator getOperator() const;
+        Value* getLeft() const;
+        Value* getRight() const;
 
         std::vector<std::reference_wrapper<Value*>> getOperands() override;
 

@@ -191,6 +191,18 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(BinaryInstruction& instruction) {
+        if (instruction.isConstantFolded()) {
+            instruction.mEmittedValue = bibbleasm::Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
+
+            if (instruction.mForceRegister) {
+                bibbleasm::Register reg = instruction.mVReg->toOperand();
+                bytecode::Move(*mInstBuilder, reg, *instruction.mEmittedValue);
+                instruction.mEmittedValue = reg;
+            }
+
+            return;
+        }
+
         bibbleasm::Register leftReg = std::get<bibbleasm::Register>(*instruction.mLeft->mEmittedValue);
         bibbleasm::Register rightReg = std::get<bibbleasm::Register>(*instruction.mRight->mEmittedValue);
 
@@ -289,6 +301,10 @@ namespace bibblir {
     void CodegenVisitor::visit(BranchInstruction& instruction) {
         assert(instruction.mParent->endId() == static_cast<bibbleasm::InstructionId>(-1));
         instruction.mParent->endId() = mInstBuilder->assembler().getLastInstructionId();
+
+        if (instruction.isConstantFolded() && !instruction.mTrueBranch) {
+            bytecode::Jump(*mInstBuilder, *instruction.mFalseBranch->mEmittedValue);
+        }
 
         if (!instruction.mFalseBranch) {
             bytecode::Jump(*mInstBuilder, *instruction.mTrueBranch->mEmittedValue);
@@ -449,6 +465,18 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(UnaryInstruction& instruction) {
+        if (instruction.isConstantFolded()) {
+            instruction.mEmittedValue = bibbleasm::Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
+
+            if (instruction.mForceRegister) {
+                bibbleasm::Register reg = instruction.mVReg->toOperand();
+                bytecode::Move(*mInstBuilder, reg, *instruction.mEmittedValue);
+                instruction.mEmittedValue = reg;
+            }
+
+            return;
+        }
+
         bibbleasm::Register operandReg = std::get<bibbleasm::Register>(*instruction.mOperand->mEmittedValue);
         bibbleasm::Register dst = instruction.mVReg->toOperand();
 

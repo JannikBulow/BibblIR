@@ -26,6 +26,7 @@ namespace bibblir {
         Function* getParent() const;
         std::string_view getName() const;
 
+        const std::vector<ValuePtr>& getValues() const;
         void insertValue(ValuePtr value);
         void insertValue(Value* insertAfter, ValuePtr value);
         void eraseValue(Value* value);

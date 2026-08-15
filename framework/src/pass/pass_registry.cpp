@@ -6,6 +6,7 @@
 
 #include "BibblIR/pass/codegen/codegen.h"
 
+#include "BibblIR/pass/optimizer/constant_folding.h"
 #include "BibblIR/pass/optimizer/peephole.h"
 
 #include "BibblIR/pass/regalloc/allocator.h"
@@ -23,6 +24,7 @@ namespace bibblir {
         passRegistry.registerPass<RegAllocPass>();
 
         // optimizations
+        passRegistry.registerPass<ConstantFoldingPass>();
         passRegistry.registerPass<PeepholePass>();
 
         return passRegistry;

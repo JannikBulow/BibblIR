@@ -9,6 +9,10 @@
 #include <format>
 
 namespace bibblir {
+    bool ConstantBoolean::getValue() const {
+        return mValue;
+    }
+
     bool ConstantBoolean::isConstant() const {
         return true;
     }

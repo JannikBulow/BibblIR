@@ -13,6 +13,7 @@
 
 #include <BibblIR/pass/codegen/codegen.h>
 
+#include <BibblIR/pass/optimizer/constant_folding.h>
 #include <BibblIR/pass/optimizer/peephole.h>
 
 #include <BibblIR/pass/pass_manager.h>
@@ -42,30 +43,14 @@ int main() {
             ".main");
 
     BasicBlock* entry = mainFunc->createBasicBlock("");
-    BasicBlock* a = mainFunc->createBasicBlock("");
-    BasicBlock* b = mainFunc->createBasicBlock("");
-    BasicBlock* merge = mainFunc->createBasicBlock("");
-
     builder.setInsertPoint(entry);
-    builder.createBr(a);
 
-    builder.setInsertPoint(a);
-    builder.createCondBr(
-        builder.createCmpNE(mainFunc->getArgument(0), builder.createConstantInt(0, intType)),
-        b,
-        merge
+    builder.createReturn(
+        builder.createAdd(
+            builder.createConstantInt(34, intType),
+            builder.createConstantInt(35, intType)
+        )
     );
-
-    builder.setInsertPoint(b);
-    builder.createBr(merge);
-
-    builder.setInsertPoint(merge);
-
-    PhiInstruction* phi = builder.createPhi(intType);
-    phi->addIncoming(builder.createConstantInt(10, intType), a);
-    phi->addIncoming(builder.createConstantInt(20, intType), b);
-
-    builder.createReturn(phi);
 
 
     PrintVisitor printVisitor(std::cout);
@@ -76,6 +61,7 @@ int main() {
     PassRegistry passRegistry = PassRegistry::Default();
     PassManager passManager(passRegistry);
 
+    passManager.addPass(passRegistry.create(GetPassID<ConstantFoldingPass>()));
     passManager.addPass(passRegistry.create(GetPassID<CodegenPass>()));
     passManager.addPass(passRegistry.create(GetPassID<PeepholePass>()));
 

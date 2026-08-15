@@ -12,6 +12,8 @@ namespace bibblir {
     public:
         Instruction(Module& module, BasicBlock* parent) : Value(module), mParent(parent) {}
 
+        BasicBlock* getParent() const { return mParent; }
+
         virtual void eraseFromParent();
 
     protected:

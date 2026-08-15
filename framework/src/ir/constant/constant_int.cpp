@@ -9,6 +9,10 @@
 #include <format>
 
 namespace bibblir {
+    intmax_t ConstantInt::getValue() const {
+        return mValue;
+    }
+
     bool ConstantInt::isConstant() const {
         return true;
     }

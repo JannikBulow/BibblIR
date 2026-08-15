@@ -16,9 +16,11 @@ namespace bibblir {
     public:
         static Class* Create(Module& module, std::string name);
 
+        const std::vector<FieldPtr>& getFields() const;
         Field* getField(std::string_view name) const;
         Field* addField(Type* type, std::string name);
 
+        const std::vector<MethodPtr>& getMethods() const;
         Method* getMethod(std::string_view name) const;
         Method* addMethod(FunctionType* type, std::string name, Value* impl);
 

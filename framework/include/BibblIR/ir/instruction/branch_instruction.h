@@ -11,6 +11,10 @@ namespace bibblir {
         friend class IRBuilder;
         friend class PrintVisitor;
     public:
+        Value* getCondition() const;
+        BasicBlock*& trueBranch();
+        BasicBlock*& falseBranch();
+
         void replaceDestinations(BasicBlock* from, BasicBlock* to);
 
         std::vector<std::reference_wrapper<Value*>> getOperands() override;

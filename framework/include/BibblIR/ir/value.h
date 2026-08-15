@@ -47,12 +47,25 @@ namespace bibblir {
             mForceRegister = true;
         }
 
+        void removeForceRegister() {
+            mRequiresVReg = false;
+            mForceRegister = false;
+        }
+
         std::string getName(int valueId) const {
             if (mVReg) {
                 return std::format("v{}", mVReg->getId());
             } else {
                 return std::format("%{}", valueId);
             }
+        }
+
+        bool isConstantFolded() const { return mConstantFolded; }
+        uintmax_t getConstantFoldedValue() const { return mConstantFoldedValue; }
+        void setConstantFoldedValue(uintmax_t value) {
+            mConstantFolded = true;
+            mConstantFoldedValue = value;
+            if (!mForceRegister) mRequiresVReg = false;
         }
 
         virtual std::string identifier() const = 0;
@@ -75,6 +88,9 @@ namespace bibblir {
 
         std::vector<VReg*> mVRegRange; // a vreg range is a range of vregs where the first element is the lowest actual register id, and each following element is incrementing it by one
         uint16_t mVRegRangeSize = 0; // 0 means it doesn't need a vreg range
+
+        bool mConstantFolded = false;
+        uintmax_t mConstantFoldedValue = 0;
     };
 
     using ValuePtr = std::unique_ptr<Value>;

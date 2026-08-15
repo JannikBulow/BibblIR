@@ -39,6 +39,10 @@ namespace bibblir {
         return nullptr;
     }
 
+    const std::vector<ArgumentPtr>& Function::getArguments() const {
+        return mArguments;
+    }
+
     BasicBlock* Function::createBasicBlock(std::string name) {
         if (name.empty()) {
             name = std::to_string(mModule.getNextValueId());

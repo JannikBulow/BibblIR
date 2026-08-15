@@ -16,6 +16,14 @@ namespace bibblir {
         return mOperator;
     }
 
+    Value* BinaryInstruction::getLeft() const {
+        return mLeft;
+    }
+
+    Value* BinaryInstruction::getRight() const {
+        return mRight;
+    }
+
     std::vector<std::reference_wrapper<Value*>> BinaryInstruction::getOperands() {
         return {mLeft, mRight};
     }

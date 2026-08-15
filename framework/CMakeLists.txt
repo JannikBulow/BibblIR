@@ -43,6 +43,7 @@ set(SOURCES
 
     src/pass/codegen/codegen.cpp
 
+    src/pass/optimizer/constant_folding.cpp
     src/pass/optimizer/peephole.cpp
 
     src/pass/regalloc/allocator.cpp
@@ -102,6 +103,7 @@ set(HEADERS
 
     include/BibblIR/pass/codegen/codegen.h
 
+    include/BibblIR/pass/optimizer/constant_folding.h
     include/BibblIR/pass/optimizer/peephole.h
 
     include/BibblIR/pass/regalloc/allocator.h

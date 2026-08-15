@@ -18,6 +18,7 @@ namespace bibblir {
         };
 
         Operator getOperator() const;
+        Value* getOperand() const;
 
         std::vector<std::reference_wrapper<Value*>> getOperands() override;
 

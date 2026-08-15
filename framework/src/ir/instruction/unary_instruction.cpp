@@ -13,6 +13,10 @@ namespace bibblir {
         return mOperator;
     }
 
+    Value* UnaryInstruction::getOperand() const {
+        return mOperand;
+    }
+
     std::vector<std::reference_wrapper<Value*>> UnaryInstruction::getOperands() {
         return {mOperand};
     }

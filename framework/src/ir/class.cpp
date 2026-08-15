@@ -15,6 +15,10 @@ namespace bibblir {
         return clas;
     }
 
+    const std::vector<FieldPtr>& Class::getFields() const {
+        return mFields;
+    }
+
     Field* Class::getField(std::string_view name) const {
         for (const auto& field : mFields) {
             if (field->mName == name) {
@@ -32,6 +36,10 @@ namespace bibblir {
 
         mFields.emplace_back(new Field(this, type, std::move(name)));
         return mFields.back().get();
+    }
+
+    const std::vector<MethodPtr>& Class::getMethods() const {
+        return mMethods;
     }
 
     Method* Class::getMethod(std::string_view name) const {

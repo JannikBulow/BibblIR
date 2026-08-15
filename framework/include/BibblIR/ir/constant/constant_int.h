@@ -14,6 +14,8 @@ namespace bibblir {
         friend class IRBuilder;
         friend class PrintVisitor;
     public:
+        intmax_t getValue() const;
+
         bool isConstant() const override;
 
         std::string identifier() const override;

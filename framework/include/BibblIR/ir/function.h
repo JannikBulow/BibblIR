@@ -36,6 +36,7 @@ namespace bibblir {
 
         FunctionType* getFunctionType() const;
         Argument* getArgument(int index) const;
+        const std::vector<ArgumentPtr>& getArguments() const;
 
         BasicBlock* createBasicBlock(std::string name);
         size_t getBasicBlockCount() const;
