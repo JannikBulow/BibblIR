@@ -246,7 +246,42 @@ namespace bibblir {
                     mInstBuilder->icmp(dst, leftReg, rightReg);
                     break;
             }
+        } else if (instruction.mLeft->getType()->isFloatType()) {
+            switch (instruction.mOperator) {
+                case BinaryInstruction::ADD:
+                    mInstBuilder->fadd(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::SUB:
+                    mInstBuilder->fsub(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::MUL:
+                    mInstBuilder->mul(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::SDIV:
+                    mInstBuilder->fdiv(dst, leftReg, rightReg);
+                    break;
+                case BinaryInstruction::UDIV:
+                case BinaryInstruction::SMOD:
+                case BinaryInstruction::UMOD:
+                case BinaryInstruction::AND:
+                case BinaryInstruction::OR:
+                case BinaryInstruction::XOR:
+                case BinaryInstruction::SHL:
+                case BinaryInstruction::SHR:
+                case BinaryInstruction::SAR:
+                    assert(false);
+                    break;
+                case BinaryInstruction::EQ:
+                case BinaryInstruction::NE:
+                case BinaryInstruction::LT:
+                case BinaryInstruction::GT:
+                case BinaryInstruction::LE:
+                case BinaryInstruction::GE:
+                    mInstBuilder->fcmp(dst, leftReg, rightReg);
+                    break;
+            }
         }
+
 
         instruction.mEmittedValue = dst; // the conditional branch codegen could simply check if its condition is a BinaryInstruction, then check the operator
     }
@@ -417,16 +452,30 @@ namespace bibblir {
         bibbleasm::Register operandReg = std::get<bibbleasm::Register>(*instruction.mOperand->mEmittedValue);
         bibbleasm::Register dst = instruction.mVReg->toOperand();
 
-        switch (instruction.getOperator()) {
-            case UnaryInstruction::NEG:
-                mInstBuilder->neg(dst, operandReg);
-                break;
-            case UnaryInstruction::ABS:
-                mInstBuilder->abs(dst, operandReg);
-                break;
-            case UnaryInstruction::NOT:
-                mInstBuilder->not_(dst, operandReg);
-                break;
+        if (instruction.mOperand->getType()->isIntegerType()) {
+            switch (instruction.getOperator()) {
+                case UnaryInstruction::NEG:
+                    mInstBuilder->neg(dst, operandReg);
+                    break;
+                case UnaryInstruction::ABS:
+                    mInstBuilder->abs(dst, operandReg);
+                    break;
+                case UnaryInstruction::NOT:
+                    mInstBuilder->not_(dst, operandReg);
+                    break;
+            }
+        } else if (instruction.mOperand->getType()->isFloatType()) {
+            switch (instruction.getOperator()) {
+                case UnaryInstruction::NEG:
+                    mInstBuilder->fneg(dst, operandReg);
+                    break;
+                case UnaryInstruction::ABS:
+                    mInstBuilder->fabs(dst, operandReg);
+                    break;
+                case UnaryInstruction::NOT:
+                    assert(false);
+                    break;
+            }
         }
 
         instruction.mEmittedValue = dst;
