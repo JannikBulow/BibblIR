@@ -33,7 +33,21 @@
 #include <cassert>
 
 namespace bibblir {
-    bibbleasm::ModuleBuilder CodegenVisitor::stealBuilder() {
+    using namespace bibbleasm;
+
+    template<class T>
+    static bool IsAlternative(const std::optional<Operand>& operand) {
+        if (!operand.has_value()) return false;
+        return std::holds_alternative<T>(*operand);
+    }
+
+    template<class T>
+    static const T& GetAlternative(const std::optional<Operand>& operand) {
+        assert(operand.has_value());
+        return std::get<T>(*operand);
+    }
+
+    ModuleBuilder CodegenVisitor::stealBuilder() {
         //TODO: reset the whole visitor, i'm too lazy to rn
         return std::move(mBuilder);
     }
@@ -77,7 +91,7 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(Class& clas) {
-        bibbleasm::ClassBuilder& classBuilder = mBuilder.addClass(getStringConstant(clas.mName));
+        ClassBuilder& classBuilder = mBuilder.addClass(getStringConstant(clas.mName));
         mClassBuilder = &classBuilder;
 
         for (const auto& field : clas.mFields) {
@@ -120,12 +134,12 @@ namespace bibblir {
             flags |= bibblebytecode::FUNC_NATIVE; // i might make a dedicated flag system for the Function class in the future, but rn an empty function is native
         }
 
-        bibbleasm::FunctionBuilder& functionBuilder = mBuilder.addFunction(getStringConstant(function.mName), flags, function.mRegisterCount, function.mArguments.size());
-        bibbleasm::InstructionBuilder instructionBuilder(functionBuilder.assembler());
+        FunctionBuilder& functionBuilder = mBuilder.addFunction(getStringConstant(function.mName), flags, function.mRegisterCount, function.mArguments.size());
+        InstructionBuilder instructionBuilder(functionBuilder.assembler());
         mInstBuilder = &instructionBuilder;
 
         for (const BasicBlockPtr& bb : function.basicBlocks()) {
-            bb->mEmittedValue = bibbleasm::Label(bb->mName);
+            bb->mEmittedValue = Label(bb->mName);
         }
 
         for (const ArgumentPtr& argument : function.mArguments) {
@@ -171,42 +185,39 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(ConstantBoolean& constant) {
-        constant.mEmittedValue = bibbleasm::Immediate(bibbleasm::OperandSize::Byte, constant.mValue);
-
-        if (constant.mForceRegister) {
-            bibbleasm::Register reg = constant.mVReg->toOperand();
-            bytecode::Move(*mInstBuilder, reg, *constant.mEmittedValue);
-            constant.mEmittedValue = reg;
-        }
+        constant.mEmittedValue = Immediate(OperandSize::Byte, constant.mValue);
     }
 
     void CodegenVisitor::visit(ConstantInt& constant) {
-        constant.mEmittedValue = bibbleasm::Immediate(constant.mValue);
-
-        if (constant.mForceRegister) {
-            bibbleasm::Register reg = constant.mVReg->toOperand();
-            bytecode::Move(*mInstBuilder, reg, *constant.mEmittedValue);
-            constant.mEmittedValue = reg;
-        }
+        constant.mEmittedValue = Immediate(constant.mValue);
     }
 
     void CodegenVisitor::visit(BinaryInstruction& instruction) {
         if (instruction.isConstantFolded()) {
-            instruction.mEmittedValue = bibbleasm::Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
-
-            if (instruction.mForceRegister) {
-                bibbleasm::Register reg = instruction.mVReg->toOperand();
-                bytecode::Move(*mInstBuilder, reg, *instruction.mEmittedValue);
-                instruction.mEmittedValue = reg;
-            }
-
+            instruction.mEmittedValue = Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
             return;
         }
 
-        bibbleasm::Register leftReg = std::get<bibbleasm::Register>(*instruction.mLeft->mEmittedValue);
-        bibbleasm::Register rightReg = std::get<bibbleasm::Register>(*instruction.mRight->mEmittedValue);
+        ScratchManager scratchManager(instruction);
 
-        bibbleasm::Register dst = instruction.mVReg->toOperand();
+        Register leftReg(-1);
+        Register rightReg(-1);
+
+        if (IsAlternative<Register>(instruction.getLeft()->getEmittedValue())) {
+            leftReg = GetAlternative<Register>(instruction.getLeft()->getEmittedValue());
+        } else {
+            leftReg = scratchManager.get()->toOperand();
+            bytecode::Move(*mInstBuilder, leftReg, *instruction.getLeft()->getEmittedValue());
+        }
+
+        if (IsAlternative<Register>(instruction.getRight()->getEmittedValue())) {
+            rightReg = GetAlternative<Register>(instruction.getRight()->getEmittedValue());
+        } else {
+            rightReg = scratchManager.get()->toOperand();
+            bytecode::Move(*mInstBuilder, rightReg, *instruction.getRight()->getEmittedValue());
+        }
+
+        Register dst = instruction.mVReg->toOperand();
 
         if (instruction.mLeft->getType()->isIntegerType()) {
             switch (instruction.mOperator) {
@@ -294,24 +305,23 @@ namespace bibblir {
             }
         }
 
-
         instruction.mEmittedValue = dst; // the conditional branch codegen could simply check if its condition is a BinaryInstruction, then check the operator
     }
 
     void CodegenVisitor::visit(BranchInstruction& instruction) {
-        assert(instruction.mParent->endId() == static_cast<bibbleasm::InstructionId>(-1));
-        instruction.mParent->endId() = mInstBuilder->assembler().getLastInstructionId();
+        assert(instruction.getParent()->endId() == static_cast<InstructionId>(-1));
+        instruction.getParent()->endId() = mInstBuilder->assembler().getLastInstructionId();
 
-        if (instruction.isConstantFolded() && !instruction.mTrueBranch) {
-            bytecode::Jump(*mInstBuilder, *instruction.mFalseBranch->mEmittedValue);
+        if (instruction.isConstantFolded() && !instruction.trueBranch()) {
+            bytecode::Jump(*mInstBuilder, *instruction.falseBranch()->getEmittedValue());
         }
 
-        if (!instruction.mFalseBranch) {
-            bytecode::Jump(*mInstBuilder, *instruction.mTrueBranch->mEmittedValue);
+        if (!instruction.falseBranch()) {
+            bytecode::Jump(*mInstBuilder, *instruction.trueBranch()->getEmittedValue());
         } else {
-            if (auto binary = dynamic_cast<BinaryInstruction*>(instruction.mCondition)) {
+            if (auto binary = dynamic_cast<BinaryInstruction*>(instruction.getCondition())) {
                 bytecode::CondType condType;
-                switch (binary->mOperator) {
+                switch (binary->getOperator()) {
                     case BinaryInstruction::EQ:
                         condType = bytecode::CondType::EQ;
                         break;
@@ -336,37 +346,40 @@ namespace bibblir {
                         break;
                 }
 
-                bytecode::CondJump(*mInstBuilder, condType, *instruction.mCondition->mEmittedValue,  *instruction.mTrueBranch->mEmittedValue);
-                bytecode::Jump(*mInstBuilder, *instruction.mFalseBranch->mEmittedValue);
-            } else if (std::holds_alternative<bibbleasm::Immediate>(*instruction.mCondition->mEmittedValue)) {
-                bibbleasm::Immediate imm = std::get<bibbleasm::Immediate>(*instruction.mCondition->mEmittedValue);
+                bytecode::CondJump(*mInstBuilder, condType, *instruction.getCondition()->getEmittedValue(),  *instruction.trueBranch()->getEmittedValue());
+                bytecode::Jump(*mInstBuilder, *instruction.falseBranch()->getEmittedValue());
+            } else if (IsAlternative<Immediate>(instruction.getCondition()->getEmittedValue())) {
+                Immediate imm = GetAlternative<Immediate>(instruction.getCondition()->getEmittedValue());
                 if (imm.value) {
-                    bytecode::Jump(*mInstBuilder, *instruction.mTrueBranch->mEmittedValue);
+                    bytecode::Jump(*mInstBuilder, *instruction.trueBranch()->getEmittedValue());
                 } else {
-                    bytecode::Jump(*mInstBuilder, *instruction.mFalseBranch->mEmittedValue);
+                    bytecode::Jump(*mInstBuilder, *instruction.falseBranch()->getEmittedValue());
                 }
             }
         }
     }
 
     void CodegenVisitor::visit(CallInstruction& instruction) {
-        if (!instruction.mCallee->mEmittedValue) { // we lazy emit call targets to save constpool space
-            if (auto* function = dynamic_cast<Function*>(instruction.mCallee)) {
-                function->mEmittedValue = bibbleasm::ConstPoolIndex(getFunctionInfoConstant(*mModuleName, function->mName));
-            } else if (auto* function = dynamic_cast<ExternalFunction*>(instruction.mCallee)) {
-                function->mEmittedValue = bibbleasm::ConstPoolIndex(getFunctionInfoConstant(function->mModuleName, function->mName));
+        if (!instruction.getCallee()->getEmittedValue()) { // we lazy emit call targets to save constpool space
+            if (auto* function = dynamic_cast<Function*>(instruction.getCallee())) {
+                function->mEmittedValue = ConstPoolIndex(getFunctionInfoConstant(*mModuleName, function->mName));
+            } else if (auto* function = dynamic_cast<ExternalFunction*>(instruction.getCallee())) {
+                function->mEmittedValue = ConstPoolIndex(getFunctionInfoConstant(function->mModuleName, function->mName));
             } else {
                 assert(false);
             }
         }
 
         int index = 0;
-        for (Value* parameter : instruction.mParameters) {
-            bytecode::Move(*mInstBuilder, instruction.mVRegRange[index++]->toOperand(), *parameter->mEmittedValue);
+        for (Value* parameter : instruction.getParameters()) {
+            bytecode::Move(*mInstBuilder, instruction.mVRegRange[index++]->toOperand(), *parameter->getEmittedValue());
         }
-        bytecode::Call(*mInstBuilder, instruction.mVReg->toOperand(), *instruction.mCallee->mEmittedValue, instruction.mParameters.empty() ? bibbleasm::Register(0) : instruction.mVRegRange.front()->toOperand());
 
-        instruction.mEmittedValue = instruction.mVReg->toOperand();
+        Register reg = instruction.mVReg->toOperand();
+
+        bytecode::Call(*mInstBuilder, reg, *instruction.getCallee()->getEmittedValue(), instruction.getParameters().empty() ? Register(0) : instruction.mVRegRange.front()->toOperand());
+
+        instruction.mEmittedValue = reg;
     }
 
     void CodegenVisitor::visit(GetElementInstruction& instruction) {
@@ -378,107 +391,122 @@ namespace bibblir {
     }
 
     void CodegenVisitor::visit(IntCastInstruction& instruction) {
-        auto vreg = instruction.mVReg->toOperand();
-        bytecode::Move(*mInstBuilder, vreg, *instruction.mValue->mEmittedValue);
-        instruction.mEmittedValue = vreg;
+        Register reg = instruction.mVReg->toOperand();
+        bytecode::Move(*mInstBuilder, reg, *instruction.getValue()->getEmittedValue());
+        instruction.mEmittedValue = reg;
     }
 
     void CodegenVisitor::visit(LoadInstruction& instruction) {
-        auto vreg = instruction.mVReg->toOperand();
+        Register reg = instruction.mVReg->toOperand();
 
-        if (auto* getmember = dynamic_cast<GetMemberInstruction*>(instruction.mVariable)) {
-            if (auto* field = dynamic_cast<Field*>(getmember->mMember)) {
-                if (auto* classType = dynamic_cast<ClassType*>(getmember->mObject->getType())) {
-                    mInstBuilder->getfield(vreg, std::get<bibbleasm::Register>(*getmember->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName));
+        if (auto* getmember = dynamic_cast<GetMemberInstruction*>(instruction.getVariable())) {
+            if (auto* field = dynamic_cast<Field*>(getmember->getMember())) {
+                if (auto* classType = dynamic_cast<ClassType*>(getmember->getObject()->getType())) {
+                    mInstBuilder->getfield(reg, GetAlternative<Register>(getmember->getObject()->getEmittedValue()), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName));
                     // WHAT THE FUCK IS THIS
                 }
-            } else if (auto* method = dynamic_cast<Method*>(getmember->mMember)) {
-                if (auto* classType = dynamic_cast<ClassType*>(getmember->mObject->getType())) {
-                    mInstBuilder->dispatchmethod(vreg, std::get<bibbleasm::Register>(*getmember->mObject->mEmittedValue), getMethodInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), method->mName));
+            } else if (auto* method = dynamic_cast<Method*>(getmember->getMember())) {
+                if (auto* classType = dynamic_cast<ClassType*>(getmember->getObject()->getType())) {
+                    mInstBuilder->dispatchmethod(reg, GetAlternative<Register>(getmember->getObject()->getEmittedValue()), getMethodInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), method->mName));
                 }
             }
-        } else if (auto* getelement = dynamic_cast<GetElementInstruction*>(instruction.mVariable)) {
-            mInstBuilder->arrayget(vreg, std::get<bibbleasm::Register>(*getelement->mArray->mEmittedValue), std::get<bibbleasm::Register>(*getelement->mIndex->mEmittedValue));
+        } else if (auto* getelement = dynamic_cast<GetElementInstruction*>(instruction.getVariable())) {
+            mInstBuilder->arrayget(reg, GetAlternative<Register>(getelement->getArray()->getEmittedValue()), GetAlternative<Register>(getelement->getIndex()->getEmittedValue()));
         } else {
-            bytecode::Move(*mInstBuilder, vreg, *instruction.mVariable->mEmittedValue);
+            bytecode::Move(*mInstBuilder, reg, *instruction.getVariable()->getEmittedValue());
         }
 
-        instruction.mEmittedValue = vreg;
+        instruction.mEmittedValue = reg;
     }
 
     void CodegenVisitor::visit(NewInstruction& instruction) {
-        auto vreg = instruction.mVReg->toOperand();
+        Register reg = instruction.mVReg->toOperand();
 
         if (auto* clas = dynamic_cast<ClassType*>(instruction.getType())) {
-            mInstBuilder->newinstance(vreg, getClassInfoConstant(std::string(clas->getModuleName()), std::string(clas->getClassName())));
+            mInstBuilder->newinstance(reg, getClassInfoConstant(std::string(clas->getModuleName()), std::string(clas->getClassName())));
         } else if (auto* array = dynamic_cast<ArrayType*>(instruction.getType())) {
-            mInstBuilder->newarray(vreg, std::get<bibbleasm::Register>(*instruction.mParameter->mEmittedValue), array->getElementType()->getIDByte());
+            mInstBuilder->newarray(reg, std::get<Register>(*instruction.getParameter()->getEmittedValue()), array->getElementType()->getIDByte());
         }
 
-        instruction.mEmittedValue = vreg;
+        instruction.mEmittedValue = reg;
     }
 
     void CodegenVisitor::visit(PhiInstruction& instruction) {
-        for (auto& [value, predecessor] : instruction.mIncoming) {
+        for (auto& [value, predecessor] : instruction.incoming()) {
             if (!predecessor->exists()) continue;
             if (value == &instruction) continue;
 
-            instruction.mParent->mPhiCopies[predecessor].emplace_back(*instruction.mEmittedValue, *value->mEmittedValue);
+            instruction.getParent()->mPhiCopies[predecessor].emplace_back(*instruction.getEmittedValue(), *value->getEmittedValue());
         }
     }
 
     void CodegenVisitor::visit(ReturnInstruction& instruction) {
-        instruction.mParent->endId() = mInstBuilder->assembler().getLastInstructionId();
+        instruction.getParent()->endId() = mInstBuilder->assembler().getLastInstructionId();
 
-        if (!instruction.mReturnValue) {
-            mInstBuilder->load_imm(bibbleasm::Register(0), bibbleasm::Immediate(67));
-            mInstBuilder->return_(bibbleasm::Register(0)); // if the regalloc always makes sure there's 1 register available on void functions, we can do this safely
+        if (!instruction.getReturnValue()) {
+            //mInstBuilder->load_imm(Register(0), Immediate(67));
+            mInstBuilder->return_(Register(0)); // if the regalloc always makes sure there's 1 register available on void functions, we can do this safely
         } else {
-            if (std::holds_alternative<bibbleasm::Register>(*instruction.mReturnValue->mEmittedValue)) { // in this case, the return value uses a register and that can be directly returned
-                mInstBuilder->return_(std::get<bibbleasm::Register>(*instruction.mReturnValue->mEmittedValue));
+            if (IsAlternative<Register>(*instruction.getReturnValue()->getEmittedValue())) { // in this case, the return value uses a register and that can be directly returned
+                mInstBuilder->return_(std::get<Register>(*instruction.getReturnValue()->getEmittedValue()));
             } else {
-                bytecode::Move(*mInstBuilder, bibbleasm::Register(0), instruction.mReturnValue->mEmittedValue.value());
-                mInstBuilder->return_(bibbleasm::Register(0));
+                bytecode::Move(*mInstBuilder, Register(0), *instruction.getReturnValue()->getEmittedValue());
+                mInstBuilder->return_(Register(0));
             }
         }
     }
 
     void CodegenVisitor::visit(StoreInstruction& instruction) {
-        if (auto* getmember = dynamic_cast<GetMemberInstruction*>(instruction.mVariable)) {
-            if (auto* field = dynamic_cast<Field*>(getmember->mMember)) {
-                if (auto* classType = dynamic_cast<ClassType*>(getmember->mObject->getType())) {
-                    mInstBuilder->setfield(std::get<bibbleasm::Register>(*getmember->mObject->mEmittedValue), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName), std::get<bibbleasm::Register>(*instruction.mValue->mEmittedValue));
+        ScratchManager scratchManager(instruction);
+        Register valueReg(0xFFFF);
+
+        if (IsAlternative<Register>(instruction.getValue()->getEmittedValue())) {
+            valueReg = GetAlternative<Register>(instruction.getValue()->getEmittedValue());
+        } else {
+            valueReg = scratchManager.get()->toOperand();
+            bytecode::Move(*mInstBuilder, valueReg, *instruction.getValue()->getEmittedValue());
+        }
+
+        if (auto* getmember = dynamic_cast<GetMemberInstruction*>(instruction.getVariable())) {
+            if (auto* field = dynamic_cast<Field*>(getmember->getMember())) {
+                if (auto* classType = dynamic_cast<ClassType*>(getmember->getObject()->getType())) {
+                    mInstBuilder->setfield(GetAlternative<Register>(getmember->getObject()->getEmittedValue()), getFieldInfoConstant(std::string(classType->getModuleName()), std::string(classType->getClassName()), field->mName), valueReg);
                     // WHAT THE FUCK IS THIS
                 }
             }
         } else if (auto* getelement = dynamic_cast<GetElementInstruction*>(instruction.mVariable)) {
-            bibbleasm::Operand value = *instruction.mValue->mEmittedValue;
-            if (!std::holds_alternative<bibbleasm::Register>(*instruction.mValue->mEmittedValue)) {
-                VReg* scratch = instruction.mParent->mParent->getScratchVReg();
-                bytecode::Move(*mInstBuilder, scratch->toOperand(), *instruction.mValue->mEmittedValue);
-                value = scratch->toOperand();
+            Register indexReg(0xFFFF);
+
+            if (IsAlternative<Register>(getelement->getIndex()->getEmittedValue())) {
+                indexReg = GetAlternative<Register>(getelement->getIndex()->getEmittedValue());
+            } else {
+                indexReg = scratchManager.get()->toOperand();
+                bytecode::Move(*mInstBuilder, indexReg, *getelement->getIndex()->getEmittedValue());
             }
-            mInstBuilder->arrayset(std::get<bibbleasm::Register>(*getelement->mArray->mEmittedValue), std::get<bibbleasm::Register>(*getelement->mIndex->mEmittedValue), std::get<bibbleasm::Register>(value));
+
+            mInstBuilder->arrayset(GetAlternative<Register>(getelement->getArray()->getEmittedValue()), indexReg, valueReg);
         } else {
-            bytecode::Move(*mInstBuilder, *instruction.mVariable->mEmittedValue, *instruction.mValue->mEmittedValue);
+            bytecode::Move(*mInstBuilder, *instruction.getVariable()->getEmittedValue(), *instruction.getValue()->getEmittedValue());
         }
     }
 
     void CodegenVisitor::visit(UnaryInstruction& instruction) {
         if (instruction.isConstantFolded()) {
-            instruction.mEmittedValue = bibbleasm::Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
-
-            if (instruction.mForceRegister) {
-                bibbleasm::Register reg = instruction.mVReg->toOperand();
-                bytecode::Move(*mInstBuilder, reg, *instruction.mEmittedValue);
-                instruction.mEmittedValue = reg;
-            }
-
+            instruction.mEmittedValue = Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
             return;
         }
 
-        bibbleasm::Register operandReg = std::get<bibbleasm::Register>(*instruction.mOperand->mEmittedValue);
-        bibbleasm::Register dst = instruction.mVReg->toOperand();
+        ScratchManager scratchManager(instruction);
+        Register operandReg(0xFFFF);
+
+        if (IsAlternative<Register>(instruction.getOperand()->getEmittedValue())) {
+            operandReg = GetAlternative<Register>(instruction.getOperand()->getEmittedValue());
+        } else {
+            operandReg = scratchManager.get()->toOperand();
+            bytecode::Move(*mInstBuilder, operandReg, *instruction.getOperand()->getEmittedValue());
+        }
+
+        Register dst = instruction.mVReg->toOperand();
 
         if (instruction.mOperand->getType()->isIntegerType()) {
             switch (instruction.getOperator()) {
@@ -509,8 +537,21 @@ namespace bibblir {
         instruction.mEmittedValue = dst;
     }
 
+    CodegenVisitor::ScratchManager::~ScratchManager() {
+        value.getParent()->getParent()->resetScratches();
+    }
+
+    VReg* CodegenVisitor::ScratchManager::get() {
+        if (!valueVRegUsed && value.mVReg) {
+            valueVRegUsed = true;
+            return value.mVReg;
+        }
+
+        return value.getParent()->getParent()->getScratchVReg();
+    }
+
     void CodegenVisitor::emitParallelMoves(BasicBlock* bb, std::vector<BasicBlock::ParallelMove> moves) {
-        auto emitMove = [this](BasicBlock* bb, bibbleasm::Operand dst, bibbleasm::Operand src) {
+        auto emitMove = [this](BasicBlock* bb, Operand dst, Operand src) {
             auto move = bytecode::BuildMove(dst, src);
             if (!move) return;
 
@@ -555,68 +596,68 @@ namespace bibblir {
         }
     }
 
-    bibbleasm::ConstantIndex CodegenVisitor::getStringConstant(const std::string& str) {
+    ConstantIndex CodegenVisitor::getStringConstant(const std::string& str) {
         auto it = mStringConstants.find(str);
         if (it == mStringConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addString(str);
+            ConstantIndex idx = mBuilder.constPool().addString(str);
             mStringConstants[str] = idx;
             return idx;
         }
         return it->second;
     }
 
-    bibbleasm::ConstantIndex CodegenVisitor::getModuleInfoConstant(const std::string& name) {
+    ConstantIndex CodegenVisitor::getModuleInfoConstant(const std::string& name) {
         auto it = mModuleInfoConstants.find(name);
         if (it == mModuleInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addModuleInfo(getStringConstant(name));
+            ConstantIndex idx = mBuilder.constPool().addModuleInfo(getStringConstant(name));
             mModuleInfoConstants[name] = idx;
             return idx;
         }
         return it->second;
     }
 
-    bibbleasm::ConstantIndex CodegenVisitor::getFunctionInfoConstant(const std::string& moduleName, const std::string& name) {
+    ConstantIndex CodegenVisitor::getFunctionInfoConstant(const std::string& moduleName, const std::string& name) {
         TwoString strings(moduleName, name);
 
         auto it = mFunctionInfoConstants.find(strings);
         if (it == mFunctionInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addFunctionInfo(getModuleInfoConstant(moduleName), getStringConstant(name));
+            ConstantIndex idx = mBuilder.constPool().addFunctionInfo(getModuleInfoConstant(moduleName), getStringConstant(name));
             mFunctionInfoConstants[std::move(strings)] = idx;
             return idx;
         }
         return it->second;
     }
 
-    bibbleasm::ConstantIndex CodegenVisitor::getClassInfoConstant(const std::string& moduleName, const std::string& name) {
+    ConstantIndex CodegenVisitor::getClassInfoConstant(const std::string& moduleName, const std::string& name) {
         TwoString strings(moduleName, name);
 
         auto it = mClassInfoConstants.find(strings);
         if (it == mClassInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addClassInfo(getModuleInfoConstant(moduleName), getStringConstant(name));
+            ConstantIndex idx = mBuilder.constPool().addClassInfo(getModuleInfoConstant(moduleName), getStringConstant(name));
             mClassInfoConstants[std::move(strings)] = idx;
             return idx;
         }
         return it->second;
     }
 
-    bibbleasm::ConstantIndex CodegenVisitor::getFieldInfoConstant(const std::string& moduleName, const std::string& className, const std::string& name) {
+    ConstantIndex CodegenVisitor::getFieldInfoConstant(const std::string& moduleName, const std::string& className, const std::string& name) {
         ThreeString strings(moduleName, className, name);
 
         auto it = mFieldInfoConstants.find(strings);
         if (it == mFieldInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addFieldInfo(getClassInfoConstant(moduleName, className), getStringConstant(name));
+            ConstantIndex idx = mBuilder.constPool().addFieldInfo(getClassInfoConstant(moduleName, className), getStringConstant(name));
             mFieldInfoConstants[std::move(strings)] = idx;
             return idx;
         }
         return it->second;
     }
 
-    bibbleasm::ConstantIndex CodegenVisitor::getMethodInfoConstant(const std::string& moduleName, const std::string& className, const std::string& name) {
+    ConstantIndex CodegenVisitor::getMethodInfoConstant(const std::string& moduleName, const std::string& className, const std::string& name) {
         ThreeString strings(moduleName, className, name);
 
         auto it = mMethodInfoConstants.find(strings);
         if (it == mMethodInfoConstants.end()) {
-            bibbleasm::ConstantIndex idx = mBuilder.constPool().addMethodInfo(getClassInfoConstant(moduleName, className), getStringConstant(name));
+            ConstantIndex idx = mBuilder.constPool().addMethodInfo(getClassInfoConstant(moduleName, className), getStringConstant(name));
             mMethodInfoConstants[std::move(strings)] = idx;
             return idx;
         }

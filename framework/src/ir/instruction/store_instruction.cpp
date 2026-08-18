@@ -8,6 +8,14 @@
 #include "BibblIR/visitor/visitor.h"
 
 namespace bibblir {
+    Value* StoreInstruction::getVariable() const {
+        return mVariable;
+    }
+
+    Value* StoreInstruction::getValue() const {
+        return mValue;
+    }
+
     std::vector<std::reference_wrapper<Value*>> StoreInstruction::getOperands() {
         return {mVariable, mValue};
     }
@@ -25,9 +33,5 @@ namespace bibblir {
         , mVariable(variable)
         , mValue(value) {
         mRequiresVReg = false;
-
-        if (auto* fieldInstruction = dynamic_cast<GetMemberInstruction*>(mVariable)) {
-            mValue->forceRegister();
-        }
     }
 }

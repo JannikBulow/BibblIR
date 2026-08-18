@@ -117,18 +117,16 @@ namespace bibblir {
         }
     }
 
-    void PrintVisitor::visit(Argument& arg) {}
+    void PrintVisitor::visit(Argument& arg) {
+
+    }
 
     void PrintVisitor::visit(ConstantBoolean& constant) {
-        if (constant.mForceRegister) {
-            mStream << std::format("{} = {} {}", constant.identifier(), constant.mType->getName(), constant.mValue);
-        }
+
     }
 
     void PrintVisitor::visit(ConstantInt& constant) {
-        if (constant.mForceRegister) {
-            mStream << std::format("{} = {} {}", constant.identifier(), constant.mType->getName(), constant.mValue);
-        }
+
     }
 
     void PrintVisitor::visit(BinaryInstruction& instruction) {

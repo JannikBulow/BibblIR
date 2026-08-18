@@ -4,6 +4,7 @@
 #define BIBBLIR_VISITOR_CODEGEN_VISITOR_H
 
 #include "BibblIR/ir/basicblock.h"
+#include "BibblIR/ir/instruction.h"
 
 #include "BibblIR/visitor/visitor.h"
 
@@ -52,6 +53,16 @@ namespace bibblir {
         void visit(UnaryInstruction& instruction) override;
 
     private:
+        struct ScratchManager {
+            Instruction& value;
+            bool valueVRegUsed = false;
+
+            explicit ScratchManager(Instruction& value) : value(value) {}
+            ~ScratchManager();
+
+            VReg* get();
+        };
+
         struct TwoString {
             std::string first;
             std::string second;

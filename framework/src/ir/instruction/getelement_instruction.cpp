@@ -13,6 +13,14 @@
 #include <cassert>
 
 namespace bibblir {
+    Value* GetElementInstruction::getArray() const {
+        return mArray;
+    }
+
+    Value* GetElementInstruction::getIndex() const {
+        return mIndex;
+    }
+
     std::vector<std::reference_wrapper<Value*>> GetElementInstruction::getOperands() {
         return {mArray, mIndex};
     }
@@ -33,7 +41,5 @@ namespace bibblir {
         assert(mArray->getType()->isArrayType());
         mType = static_cast<ArrayType*>(mArray->getType())->getElementType();
         mRequiresVReg = false;
-
-        mIndex->forceRegister();
     }
 }

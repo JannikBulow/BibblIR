@@ -11,6 +11,8 @@ namespace bibblir {
         friend class IRBuilder;
         friend class PrintVisitor;
     public:
+        Value* getParameter() const;
+
         std::string identifier() const override;
 
         void accept(Visitor& visitor) override;

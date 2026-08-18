@@ -11,6 +11,10 @@
 #include <cassert>
 
 namespace bibblir {
+    Value* NewInstruction::getParameter() const {
+        return mParameter;
+    }
+
     std::string NewInstruction::identifier() const {
         return getName(mValueId);
     }
@@ -27,7 +31,6 @@ namespace bibblir {
 
         if (type->isArrayType()) {
             assert(parameter->getType()->isIntegerType());
-            parameter->forceRegister();
         }
     }
 }

@@ -94,8 +94,25 @@ namespace bibblir {
         }
     }
 
-    VReg* Function::getScratchVReg() const {
-        mScratchVReg->mUses++;
-        return mScratchVReg;
+    VReg* Function::getScratchVReg() {
+        for (auto& scratch : mScratches) {
+            if (!scratch.inUse) {
+                scratch.inUse = true;
+                scratch.vreg->mUses++;
+                return scratch.vreg;
+            }
+        }
+
+        uint16_t index = mRegisterCount++;
+        mVRegs.push_back(std::make_unique<VReg>(index, index));
+        mScratches.emplace_back(mVRegs.back().get(), true);
+        mScratches.back().vreg->mUses++;
+        return mScratches.back().vreg;
+    }
+
+    void Function::resetScratches() {
+        for (auto& scratch : mScratches) {
+            scratch.inUse = false;
+        }
     }
 }

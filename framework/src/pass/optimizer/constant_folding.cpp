@@ -101,9 +101,6 @@ namespace bibblir {
 
     void ConstantFoldingPass::visit(BinaryInstruction& instruction) {
         if (instruction.getLeft()->isConstantFolded() && instruction.getRight()->isConstantFolded()) {
-            instruction.getLeft()->removeForceRegister();
-            instruction.getRight()->removeForceRegister();
-
             if (instruction.getLeft()->getType()->isIntegerType()) {
                 uintmax_t left = instruction.getLeft()->getConstantFoldedValue();
                 uintmax_t right = instruction.getRight()->getConstantFoldedValue();
@@ -234,8 +231,6 @@ namespace bibblir {
 
     void ConstantFoldingPass::visit(BranchInstruction& instruction) {
         if (instruction.getCondition() && instruction.getCondition()->isConstantFolded()) {
-            instruction.getCondition()->removeForceRegister();
-
             uintmax_t value = instruction.getCondition()->getConstantFoldedValue();
             if (value) {
                 std::erase(instruction.falseBranch()->predecessors(), instruction.getParent());
@@ -288,8 +283,6 @@ namespace bibblir {
 
     void ConstantFoldingPass::visit(UnaryInstruction& instruction) {
         if (instruction.getOperand()->isConstantFolded()) {
-            instruction.getOperand()->removeForceRegister();
-
             if (instruction.getOperand()->getType()->isIntegerType()) {
                 uintmax_t operand = instruction.getOperand()->getConstantFoldedValue();
                 uintmax_t value = 0;

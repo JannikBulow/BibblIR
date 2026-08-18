@@ -9,6 +9,14 @@
 #include "BibblIR/module.h"
 
 namespace bibblir {
+    Value* GetMemberInstruction::getObject() const {
+        return mObject;
+    }
+
+    Value* GetMemberInstruction::getMember() const {
+        return mMember;
+    }
+
     std::vector<std::reference_wrapper<Value*>> GetMemberInstruction::getOperands() {
         return {mObject, mMember};
     }

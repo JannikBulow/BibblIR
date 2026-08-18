@@ -11,6 +11,10 @@
 #include <cassert>
 
 namespace bibblir {
+    Value* IntCastInstruction::getValue() const {
+        return mValue;
+    }
+
     std::vector<std::reference_wrapper<Value*>> IntCastInstruction::getOperands() {
         return Instruction::getOperands();
     }

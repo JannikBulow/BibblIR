@@ -10,6 +10,10 @@
 #include <cassert>
 
 namespace bibblir {
+    Value* ReturnInstruction::getReturnValue() const {
+        return mReturnValue;
+    }
+
     std::vector<std::reference_wrapper<Value*>> ReturnInstruction::getOperands() {
         if (mReturnValue) return {mReturnValue};
         else return {};

@@ -49,18 +49,24 @@ namespace bibblir {
         void accept(Visitor& visitor) override;
 
     private:
+        struct Scratch {
+            VReg* vreg;
+            bool inUse;
+        };
+
         std::string mName;
         std::vector<ArgumentPtr> mArguments;
 
         std::vector<BasicBlockPtr> mBasicBlockList;
 
         std::vector<std::unique_ptr<VReg>> mVRegs;
-        VReg* mScratchVReg = nullptr;
+        std::vector<Scratch> mScratches;
         uint16_t mRegisterCount = 1; // real registers
 
         Function(Module& module, FunctionType* type, std::string name);
 
-        VReg* getScratchVReg() const;
+        VReg* getScratchVReg();
+        void resetScratches();
     };
 }
 

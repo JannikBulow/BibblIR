@@ -11,6 +11,9 @@ namespace bibblir {
         friend class IRBuilder;
         friend class PrintVisitor;
     public:
+        Value* getArray() const;
+        Value* getIndex() const;
+
         std::vector<std::reference_wrapper<Value*>> getOperands() override;
 
         std::string identifier() const override;

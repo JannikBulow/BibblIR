@@ -34,8 +34,6 @@ namespace bibblir {
         , mOperand(operand)
         , mOperator(op)
         , mValueId(mModule.getNextValueId()) {
-        mOperand->forceRegister();
-
         switch (mOperator) {
             case NEG:
             case ABS:

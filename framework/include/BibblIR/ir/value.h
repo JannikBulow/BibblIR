@@ -34,6 +34,7 @@ namespace bibblir {
 
         Module& getModule() const { return mModule; }
         Type* getType() const { return mType; }
+        const std::optional<bibbleasm::Operand>& getEmittedValue() const { return mEmittedValue; }
         virtual std::vector<std::reference_wrapper<Value*>> getOperands() { return {}; }
         virtual bool isConstant() const { return false; }
 
@@ -41,16 +42,6 @@ namespace bibblir {
         void setPreferredRegister(int id) { mPreferredRegister = id; }
 
         bool requiresVRegRange() const { return mVRegRangeSize > 0; }
-
-        void forceRegister() {
-            mRequiresVReg = true;
-            mForceRegister = true;
-        }
-
-        void removeForceRegister() {
-            mRequiresVReg = false;
-            mForceRegister = false;
-        }
 
         std::string getName(int valueId) const {
             if (mVReg) {
@@ -65,7 +56,7 @@ namespace bibblir {
         void setConstantFoldedValue(uintmax_t value) {
             mConstantFolded = true;
             mConstantFoldedValue = value;
-            if (!mForceRegister) mRequiresVReg = false;
+            mRequiresVReg = false;
         }
 
         virtual std::string identifier() const = 0;
@@ -84,7 +75,6 @@ namespace bibblir {
         VReg* mVReg = nullptr;
         bool mRequiresVReg = true;
         int mPreferredRegister = -1; // real register
-        bool mForceRegister = false; // some instructions which needs its operands in a register, can force them in a register during construction
 
         std::vector<VReg*> mVRegRange; // a vreg range is a range of vregs where the first element is the lowest actual register id, and each following element is incrementing it by one
         uint16_t mVRegRangeSize = 0; // 0 means it doesn't need a vreg range

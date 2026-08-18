@@ -14,6 +14,14 @@
 #include <cassert>
 
 namespace bibblir {
+    Value* CallInstruction::getCallee() const {
+        return mCallee;
+    }
+
+    const std::vector<Value*>& CallInstruction::getParameters() const {
+        return mParameters;
+    }
+
     std::vector<std::reference_wrapper<Value*>> CallInstruction::getOperands() {
         std::vector<std::reference_wrapper<Value*>> operands;
         operands.reserve(mParameters.size());

@@ -44,9 +44,6 @@ namespace bibblir {
         , mValueId(mModule.getNextValueId()) {
         assert(mLeft->getType() == mRight->getType());
 
-        mLeft->forceRegister();
-        mRight->forceRegister();
-
         switch (mOperator) {
             case ADD:
             case SUB:
