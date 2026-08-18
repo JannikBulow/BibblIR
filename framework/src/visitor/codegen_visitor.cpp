@@ -363,10 +363,8 @@ namespace bibblir {
 
     void CodegenVisitor::visit(CallInstruction& instruction) {
         if (!instruction.getCallee()->getEmittedValue()) { // we lazy emit call targets to save constpool space
-            if (auto* function = dynamic_cast<Function*>(instruction.getCallee())) {
-                function->mEmittedValue = ConstPoolIndex(getFunctionInfoConstant(*mModuleName, function->mName));
-            } else if (auto* function = dynamic_cast<ExternalFunction*>(instruction.getCallee())) {
-                function->mEmittedValue = ConstPoolIndex(getFunctionInfoConstant(function->mModuleName, function->mName));
+            if (auto* function = dynamic_cast<AbstractFunction*>(instruction.getCallee())) {
+                function->mEmittedValue = ConstPoolIndex(getFunctionInfoConstant(std::string(function->getModuleName()), std::string(function->getName())));
             } else {
                 assert(false);
             }

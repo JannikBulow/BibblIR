@@ -75,6 +75,14 @@ namespace bibblir {
         }
     }
 
+    std::string_view Function::getModuleName() const {
+        return mModule.getName();
+    }
+
+    std::string_view Function::getName() const {
+        return mName;
+    }
+
     std::string Function::identifier() const {
         return mName;
     }
@@ -84,7 +92,7 @@ namespace bibblir {
     }
 
     Function::Function(Module& module, FunctionType* type, std::string name)
-        : Global(module)
+        : AbstractFunction(module)
         , mName(std::move(name)) {
         mType = type;
 

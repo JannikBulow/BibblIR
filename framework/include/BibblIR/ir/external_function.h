@@ -3,12 +3,12 @@
 #ifndef BIBBLIR_IR_EXTERNAL_FUNCTION_H
 #define BIBBLIR_IR_EXTERNAL_FUNCTION_H
 
-#include "BibblIR/ir/global.h"
+#include "BibblIR/ir/abstract_function.h"
 
 #include "BibblIR/type/function_type.h"
 
 namespace bibblir {
-    class BIBBLIR_EXPORT ExternalFunction : public Global {
+    class BIBBLIR_EXPORT ExternalFunction : public AbstractFunction {
         friend class CodegenVisitor;
         friend class PrintVisitor;
         friend class RegAlloc;
@@ -16,6 +16,9 @@ namespace bibblir {
         static ExternalFunction* Create(Module& module, FunctionType* type, std::string moduleName, std::string name);
 
         FunctionType* getFunctionType() const;
+
+        std::string_view getModuleName() const override;
+        std::string_view getName() const override;
 
         std::string identifier() const override;
 

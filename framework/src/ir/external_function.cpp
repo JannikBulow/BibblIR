@@ -17,6 +17,14 @@ namespace bibblir {
         return static_cast<FunctionType*>(mType);
     }
 
+    std::string_view ExternalFunction::getModuleName() const {
+        return mModuleName;
+    }
+
+    std::string_view ExternalFunction::getName() const {
+        return mName;
+    }
+
     std::string ExternalFunction::identifier() const {
         return mModuleName + "::" + mName;
     }
@@ -26,7 +34,7 @@ namespace bibblir {
     }
 
     ExternalFunction::ExternalFunction(Module& module, FunctionType* type, std::string moduleName, std::string name)
-        : Global(module)
+        : AbstractFunction(module)
         , mModuleName(std::move(moduleName))
         , mName(std::move(name)) {
         mType = type;

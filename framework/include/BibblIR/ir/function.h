@@ -3,8 +3,8 @@
 #ifndef BIBBLIR_IR_FUNCTION_H
 #define BIBBLIR_IR_FUNCTION_H
 
+#include "BibblIR/ir/abstract_function.h"
 #include "BibblIR/ir/basicblock.h"
-#include "BibblIR/ir/global.h"
 
 #include "BibblIR/type/function_type.h"
 
@@ -27,7 +27,7 @@ namespace bibblir {
 
     using ArgumentPtr = std::unique_ptr<Argument>;
 
-    class BIBBLIR_EXPORT Function : public Global {
+    class BIBBLIR_EXPORT Function : public AbstractFunction {
         friend class CodegenVisitor;
         friend class PrintVisitor;
         friend class RegAlloc;
@@ -43,6 +43,9 @@ namespace bibblir {
         std::vector<BasicBlockPtr>& basicBlocks();
 
         void replaceAllUsesWith(Value* oldValue, Value* newValue);
+
+        std::string_view getModuleName() const override;
+        std::string_view getName() const override;
 
         std::string identifier() const override;
 

@@ -86,6 +86,7 @@ set(HEADERS
     include/BibblIR/ir/instruction/store_instruction.h
     include/BibblIR/ir/instruction/unary_instruction.h
 
+    include/BibblIR/ir/abstract_function.h
     include/BibblIR/ir/basicblock.h
     include/BibblIR/ir/builder.h
     include/BibblIR/ir/class.h
