@@ -22,6 +22,9 @@ namespace bibblir {
         const std::string& getName() const;
         int getNextValueId();
 
+        const std::vector<ValuePtr>& getConstants() const;
+        void insertConstant(ValuePtr value);
+
         const std::vector<GlobalPtr>& getGlobals() const;
         const std::vector<Function*>& getFunctions() const;
         void insertGlobal(GlobalPtr global);
@@ -36,6 +39,7 @@ namespace bibblir {
 
         int mNextValueId = 0;
 
+        std::vector<ValuePtr> mConstants;
         std::vector<GlobalPtr> mGlobals;
         std::vector<Function*> mFunctions; // functions are needed so often that it's probably best to cache them
 

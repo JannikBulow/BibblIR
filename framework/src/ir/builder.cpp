@@ -19,6 +19,8 @@
 #include "BibblIR/ir/basicblock.h"
 #include "BibblIR/ir/builder.h"
 
+#include "BibblIR/module.h"
+
 
 namespace bibblir {
     BasicBlock* IRBuilder::getInsertPoint() const {
@@ -36,7 +38,7 @@ namespace bibblir {
     ConstantBoolean* IRBuilder::createConstantBoolean(bool value) {
         ConstantBoolean* constant = new ConstantBoolean(mInsertPoint, value);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(constant));
+        mInsertPoint->getModule().insertConstant(ValuePtr(constant));
 
         return constant;
     }
@@ -44,7 +46,7 @@ namespace bibblir {
     ConstantInt* IRBuilder::createConstantInt(intmax_t value, Type* type) {
         ConstantInt* constant = new ConstantInt(mInsertPoint, value, type);
 
-        mInsertPoint->insertValue(mInsertAfter, ValuePtr(constant));
+        mInsertPoint->getModule().insertConstant(ValuePtr(constant));
 
         return constant;
     }

@@ -31,11 +31,13 @@ namespace bibblir {
         : mStream(stream) {}
 
     void PrintVisitor::visit(Module& module) {
-        const std::vector<GlobalPtr>& globals = module.getGlobals();
-
         mStream << std::format("module \"{}\"", module.getName());
 
-        for (const GlobalPtr& global : globals) {
+        for (const ValuePtr& constant : module.getConstants()) {
+            constant->accept(*this);
+        }
+
+        for (const GlobalPtr& global : module.getGlobals()) {
             global->accept(*this);
         }
     }

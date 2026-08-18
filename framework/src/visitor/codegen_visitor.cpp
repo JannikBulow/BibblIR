@@ -81,9 +81,11 @@ namespace bibblir {
         mBuilder.setVersion(1);
         mBuilder.setName(getStringConstant(module.getName()));
 
-        const std::vector<GlobalPtr>& globals = module.getGlobals();
+        for (const ValuePtr& constant : module.getConstants()) {
+            constant->accept(*this);
+        }
 
-        for (const GlobalPtr& global : globals) {
+        for (const GlobalPtr& global : module.getGlobals()) {
             global->accept(*this);
         }
 

@@ -61,7 +61,7 @@ int main() {
     PassRegistry passRegistry = PassRegistry::Default();
     PassManager passManager(passRegistry);
 
-    passManager.addPass(passRegistry.create(GetPassID<ConstantFoldingPass>()));
+    //passManager.addPass(passRegistry.create(GetPassID<ConstantFoldingPass>()));
     passManager.addPass(passRegistry.create(GetPassID<CodegenPass>()));
     passManager.addPass(passRegistry.create(GetPassID<PeepholePass>()));
 

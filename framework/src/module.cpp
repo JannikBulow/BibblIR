@@ -20,6 +20,14 @@ namespace bibblir {
         return ++mNextValueId;
     }
 
+    const std::vector<ValuePtr>& Module::getConstants() const {
+        return mConstants;
+    }
+
+    void Module::insertConstant(ValuePtr value) {
+        mConstants.push_back(std::move(value));
+    }
+
     const std::vector<GlobalPtr>& Module::getGlobals() const {
         return mGlobals;
     }
