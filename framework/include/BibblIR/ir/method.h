@@ -8,11 +8,12 @@
 #include "BibblIR/type/function_type.h"
 
 namespace bibblir {
-    class Class;
+    class AbstractClass;
 
     class Method : public Value {
         friend class Class;
         friend class CodegenVisitor;
+        friend class ExternalClass;
         friend class PrintVisitor;
     public:
         FunctionType* getFunctionType() const;
@@ -24,11 +25,11 @@ namespace bibblir {
         void accept(Visitor& visitor) override;
 
     private:
-        Class* mParent;
+        AbstractClass* mParent;
         std::string mName;
         Value* mImpl;
 
-        Method(Class* parent, FunctionType* type, std::string name, Value* impl);
+        Method(AbstractClass* parent, FunctionType* type, std::string name, Value* impl);
     };
 
     using MethodPtr = std::unique_ptr<Method>;

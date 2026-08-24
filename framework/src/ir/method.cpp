@@ -5,6 +5,8 @@
 
 #include "BibblIR/visitor/visitor.h"
 
+#include <format>
+
 namespace bibblir {
     FunctionType* Method::getFunctionType() const {
         return static_cast<FunctionType*>(mType);
@@ -15,14 +17,14 @@ namespace bibblir {
     }
 
     std::string Method::identifier() const {
-        return "method %" + mParent->mName + "::" + mName;
+        return std::format("method %{}::{}", mParent->getName(), mName);
     }
 
     void Method::accept(Visitor& visitor) {
         visitor.visit(*this);
     }
 
-    Method::Method(Class* parent, FunctionType* type, std::string name, Value* impl)
+    Method::Method(AbstractClass* parent, FunctionType* type, std::string name, Value* impl)
         : Value(parent->getModule())
         , mParent(parent)
         , mName(std::move(name))
