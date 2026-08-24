@@ -6,7 +6,7 @@
 #include "BibblIR/ir/value.h"
 
 namespace bibblir {
-    class Class;
+    class AbstractClass;
 
     class Field : public Value {
         friend class Class;
@@ -18,10 +18,10 @@ namespace bibblir {
         void accept(Visitor& visitor) override;
 
     private:
-        Class* mParent;
+        AbstractClass* mParent;
         std::string mName;
 
-        Field(Class* parent, Type* type, std::string name);
+        Field(AbstractClass* parent, Type* type, std::string name);
     };
 
     using FieldPtr = std::unique_ptr<Field>;
