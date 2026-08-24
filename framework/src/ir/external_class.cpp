@@ -6,10 +6,18 @@
 
 #include "BibblIR/type/class_type.h"
 
+#include "BibblIR/module.h"
+
 #include <cassert>
 #include <format>
 
 namespace bibblir {
+    ExternalClass* ExternalClass::Create(Module& module, std::string moduleName, std::string name) {
+        ExternalClass* clas = new ExternalClass(module, std::move(moduleName), std::move(name));
+        module.insertGlobal(GlobalPtr(clas));
+        return clas;
+    }
+
     std::string_view ExternalClass::getModuleName() const {
         return mModuleName;
     }
