@@ -24,7 +24,7 @@ namespace bibblir {
     private:
         intmax_t mValue;
 
-        ConstantInt(BasicBlock* parent, intmax_t value, Type* type);
+        ConstantInt(Module& module, intmax_t value, Type* type);
     };
 }
 

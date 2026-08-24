@@ -22,7 +22,7 @@ namespace bibblir {
     private:
         bool mValue;
 
-        ConstantBoolean(BasicBlock* parent, bool value);
+        ConstantBoolean(Module& module, bool value);
     };
 }
 

@@ -39,7 +39,7 @@ namespace bibblir {
     }
 
     ConstantBoolean* IRBuilder::createConstantBoolean(bool value) {
-        ConstantBoolean* constant = new ConstantBoolean(mInsertPoint, value);
+        ConstantBoolean* constant = new ConstantBoolean(mModule, value);
 
         mModule.insertConstant(ValuePtr(constant));
 
@@ -47,7 +47,7 @@ namespace bibblir {
     }
 
     ConstantInt* IRBuilder::createConstantInt(intmax_t value, Type* type) {
-        ConstantInt* constant = new ConstantInt(mInsertPoint, value, type);
+        ConstantInt* constant = new ConstantInt(mModule, value, type);
 
         mModule.insertConstant(ValuePtr(constant));
 

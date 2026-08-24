@@ -25,8 +25,8 @@ namespace bibblir {
         visitor.visit(*this);
     }
 
-    ConstantInt::ConstantInt(BasicBlock* parent, intmax_t value, Type* type)
-        : Value(parent->getModule())
+    ConstantInt::ConstantInt(Module& module, intmax_t value, Type* type)
+        : Value(module)
         , mValue(value) {
         mType = type;
         mRequiresVReg = false;

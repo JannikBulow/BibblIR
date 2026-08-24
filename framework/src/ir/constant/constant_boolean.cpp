@@ -25,8 +25,8 @@ namespace bibblir {
         visitor.visit(*this);
     }
 
-    ConstantBoolean::ConstantBoolean(BasicBlock* parent, bool value)
-        : Value(parent->getModule())
+    ConstantBoolean::ConstantBoolean(Module& module, bool value)
+        : Value(module)
         , mValue(value) {
         mType = Type::GetBooleanType();
         mRequiresVReg = false;
