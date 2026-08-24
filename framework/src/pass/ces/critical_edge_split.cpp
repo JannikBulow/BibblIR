@@ -33,7 +33,7 @@ namespace bibblir {
 
     void CriticalEdgeSplitter::handleCriticalEdge(BasicBlock* from, BasicBlock* to) {
         Function* function = from->getParent();
-        IRBuilder builder;
+        IRBuilder builder(function->getModule());
         BasicBlock* split = function->createBasicBlock(std::format("{}_to_{}_split", from->getName(), to->getName()));
 
         builder.setInsertPoint(split);

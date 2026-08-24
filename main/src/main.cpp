@@ -33,7 +33,7 @@ using namespace bibblir;
 int main() {
     Module module("Main");
 
-    IRBuilder builder;
+    IRBuilder builder(module);
 
     Type* intType = Type::GetIntegerType(4);
 
