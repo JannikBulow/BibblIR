@@ -62,6 +62,14 @@ namespace bibblir {
         return mMethods.back().get();
     }
 
+    std::string_view Class::getModuleName() const {
+        return mModule.getName();
+    }
+
+    std::string_view Class::getName() const {
+        return mName;
+    }
+
     std::string Class::identifier() const {
         return mName;
     }
@@ -71,7 +79,7 @@ namespace bibblir {
     }
 
     Class::Class(Module& module, std::string name)
-        : Global(module)
+        : AbstractClass(module)
         , mName(std::move(name)) {
         mType = Type::GetClassType(module.getName(), mName);
     }

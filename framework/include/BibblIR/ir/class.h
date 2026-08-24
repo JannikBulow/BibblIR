@@ -3,12 +3,12 @@
 #ifndef BIBBLIR_IR_CLASS_H
 #define BIBBLIR_IR_CLASS_H
 
+#include "BibblIR/ir/abstract_class.h"
 #include "BibblIR/ir/field.h"
-#include "BibblIR/ir/global.h"
 #include "BibblIR/ir/method.h"
 
 namespace bibblir {
-    class Class : public Global {
+    class Class : public AbstractClass {
         friend class CodegenVisitor;
         friend class Field;
         friend class Method;
@@ -16,13 +16,16 @@ namespace bibblir {
     public:
         static Class* Create(Module& module, std::string name);
 
-        const std::vector<FieldPtr>& getFields() const;
-        Field* getField(std::string_view name) const;
-        Field* addField(Type* type, std::string name);
+        const std::vector<FieldPtr>& getFields() const override;
+        Field* getField(std::string_view name) const override;
+        Field* addField(Type* type, std::string name) override;
 
-        const std::vector<MethodPtr>& getMethods() const;
-        Method* getMethod(std::string_view name) const;
-        Method* addMethod(FunctionType* type, std::string name, Value* impl);
+        const std::vector<MethodPtr>& getMethods() const override;
+        Method* getMethod(std::string_view name) const override;
+        Method* addMethod(FunctionType* type, std::string name, Value* impl) override;
+
+        std::string_view getModuleName() const override;
+        std::string_view getName() const override;
 
         std::string identifier() const override;
 
