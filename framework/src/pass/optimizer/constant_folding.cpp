@@ -44,6 +44,10 @@ namespace bibblir {
     }
 
     void ConstantFoldingPass::visit(Module& module) {
+        for (auto& constant : module.getConstants()) {
+            constant->accept(*this);
+        }
+
         for (auto& global : module.getGlobals()) {
             global->accept(*this);
         }
