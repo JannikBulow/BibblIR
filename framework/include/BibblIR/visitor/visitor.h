@@ -9,6 +9,7 @@ namespace bibblir {
     class Module;
 
     class Class;
+    class ExternalClass;
     class Field;
     class Method;
 
@@ -40,6 +41,7 @@ namespace bibblir {
         virtual void visit(Module& module) = 0;
 
         virtual void visit(Class& clas) = 0;
+        virtual void visit(ExternalClass& clas) = 0;
         virtual void visit(Field& field) = 0;
         virtual void visit(Method& method) = 0;
 

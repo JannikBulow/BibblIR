@@ -63,6 +63,10 @@ namespace bibblir {
         }
     }
 
+    void ConstantFoldingPass::visit(ExternalClass& clas) {
+
+    }
+
     void ConstantFoldingPass::visit(Field& field) {
 
     }

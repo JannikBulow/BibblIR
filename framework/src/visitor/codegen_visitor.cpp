@@ -107,26 +107,20 @@ namespace bibblir {
         mClassBuilder = nullptr;
     }
 
+    void CodegenVisitor::visit(ExternalClass& clas) {
+
+    }
+
     void CodegenVisitor::visit(Field& field) {
         mClassBuilder->addField(field.getType()->getIDByte(), getStringConstant(field.mName));
     }
 
     void CodegenVisitor::visit(Method& method) {
-        if (method.mImpl != nullptr) {
-            const std::string* implModuleName = nullptr;
-            const std::string* implFunctionName = nullptr;
+        if (method.mImpl) {
+            auto* function = dynamic_cast<AbstractFunction*>(method.mImpl);
+            assert(function);
 
-            if (auto* function = dynamic_cast<Function*>(method.mImpl)) {
-                implModuleName = mModuleName;
-                implFunctionName = &function->mName;
-            } else if (auto* function = dynamic_cast<ExternalFunction*>(method.mImpl)) {
-                implModuleName = &function->mModuleName;
-                implFunctionName = &function->mName;
-            } else {
-                assert(false); // do NOT implement a method with a constant int...
-            }
-
-            mClassBuilder->addMethod(getStringConstant(method.mName), getFunctionInfoConstant(*implModuleName, *implFunctionName));
+            mClassBuilder->addMethod(getStringConstant(method.mName), getFunctionInfoConstant(std::string(function->getModuleName()), std::string(function->getName())));
         }
     }
 

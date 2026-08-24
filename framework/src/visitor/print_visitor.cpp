@@ -26,6 +26,8 @@
 
 #include <format>
 
+#include "BibblIR/ir/external_class.h"
+
 namespace bibblir {
     PrintVisitor::PrintVisitor(std::ostream& stream)
         : mStream(stream) {}
@@ -54,6 +56,10 @@ namespace bibblir {
         }
 
         mStream << "}";
+    }
+
+    void PrintVisitor::visit(ExternalClass& clas) {
+        mStream << std::format("\n\nimport class \"{}\"::\"{}\";", clas.getModuleName(), clas.getName());
     }
 
     void PrintVisitor::visit(Field& field) {

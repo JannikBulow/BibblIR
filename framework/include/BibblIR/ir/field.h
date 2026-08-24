@@ -11,6 +11,7 @@ namespace bibblir {
     class Field : public Value {
         friend class Class;
         friend class CodegenVisitor;
+        friend class ExternalClass;
         friend class PrintVisitor;
     public:
         std::string identifier() const override;
