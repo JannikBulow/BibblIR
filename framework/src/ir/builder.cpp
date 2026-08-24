@@ -23,6 +23,9 @@
 
 
 namespace bibblir {
+    IRBuilder::IRBuilder(Module& module)
+        : mModule(module) {}
+
     BasicBlock* IRBuilder::getInsertPoint() const {
         return mInsertPoint;
     }
@@ -38,7 +41,7 @@ namespace bibblir {
     ConstantBoolean* IRBuilder::createConstantBoolean(bool value) {
         ConstantBoolean* constant = new ConstantBoolean(mInsertPoint, value);
 
-        mInsertPoint->getModule().insertConstant(ValuePtr(constant));
+        mModule.insertConstant(ValuePtr(constant));
 
         return constant;
     }
@@ -46,7 +49,7 @@ namespace bibblir {
     ConstantInt* IRBuilder::createConstantInt(intmax_t value, Type* type) {
         ConstantInt* constant = new ConstantInt(mInsertPoint, value, type);
 
-        mInsertPoint->getModule().insertConstant(ValuePtr(constant));
+        mModule.insertConstant(ValuePtr(constant));
 
         return constant;
     }

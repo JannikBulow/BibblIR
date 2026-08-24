@@ -30,6 +30,8 @@ namespace bibblir {
 
     class BIBBLIR_EXPORT IRBuilder {
     public:
+        explicit IRBuilder(Module& module);
+
         BasicBlock* getInsertPoint() const;
         void setInsertPoint(BasicBlock* newInsertPoint);
 
@@ -92,6 +94,7 @@ namespace bibblir {
         ReturnInstruction* createReturn(Value* returnValue);
 
     private:
+        Module& mModule;
         BasicBlock* mInsertPoint = nullptr;
         Value* mInsertAfter = nullptr;
     };
