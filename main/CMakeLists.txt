@@ -19,6 +19,13 @@ target_link_libraries(BibblIR-main PRIVATE BibblIR-framework-shared)
 
 set_target_properties(BibblIR-main PROPERTIES OUTPUT_NAME "bibblir")
 
+install(
+    TARGETS BibblIR-main
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)
+
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     add_custom_command(TARGET BibblIR-main PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different

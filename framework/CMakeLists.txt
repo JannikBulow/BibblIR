@@ -164,5 +164,24 @@ target_compile_features(BibblIR-framework-static PUBLIC cxx_std_20)
 target_link_libraries(BibblIR-framework-shared BibbleASM-framework-shared)
 target_link_libraries(BibblIR-framework-static BibbleASM-framework-static)
 
-set_target_properties(BibblIR-framework-shared PROPERTIES OUTPUT_NAME "bibblir")
-set_target_properties(BibblIR-framework-static PROPERTIES OUTPUT_NAME "bibblir-aio")
+set_target_properties(BibblIR-framework-shared PROPERTIES
+    OUTPUT_NAME "bibblir"
+    VERSION 0.1.0
+    SOVERSION 0
+)
+set_target_properties(BibblIR-framework-static PROPERTIES
+    OUTPUT_NAME "bibblir-aio"
+    VERSION 0.1.0
+)
+
+install(
+    TARGETS BibblIR-framework-shared BibblIR-framework-static
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)
+
+install(
+    DIRECTORY include/
+    DESTINATION include
+)
