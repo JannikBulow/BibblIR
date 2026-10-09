@@ -165,17 +165,20 @@ target_link_libraries(BibblIR-framework-shared BibbleASM-framework-shared)
 target_link_libraries(BibblIR-framework-static BibbleASM-framework-static)
 
 set_target_properties(BibblIR-framework-shared PROPERTIES
+    EXPORT_NAME IR
     OUTPUT_NAME "bibblir"
     VERSION 0.1.0
     SOVERSION 0
 )
 set_target_properties(BibblIR-framework-static PROPERTIES
+    EXPORT_NAME IR
     OUTPUT_NAME "bibblir-aio"
     VERSION 0.1.0
 )
 
 install(
     TARGETS BibblIR-framework-shared BibblIR-framework-static
+    EXPORT BibblIRTargets
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
@@ -184,4 +187,11 @@ install(
 install(
     DIRECTORY include/
     DESTINATION include
+)
+
+install(
+    EXPORT BibblIRTargets
+    FILE BibblIRTargets.cmake
+    NAMESPACE Bibble::
+    DESTINATION lib/cmake/BibblIR
 )
