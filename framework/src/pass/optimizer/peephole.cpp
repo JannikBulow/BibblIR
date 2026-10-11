@@ -35,31 +35,33 @@ namespace bibblir {
         bool hasOptimized = false;
         auto& instructions = assembler.instructions();
 
-        for (auto it = instructions.begin() + 1; it != instructions.end();) {
-            bool iterate = true;
-            UnreachableLabelLevel unreachableLabel = checkUnreachableLabel(assembler, *it);
+        if (!instructions.empty()) {
+            for (auto it = instructions.begin() + 1; it != instructions.end();) {
+                bool iterate = true;
+                UnreachableLabelLevel unreachableLabel = checkUnreachableLabel(assembler, *it);
 
-            if (unreachableLabel != UnreachableLabelLevel::References) {
-                it = eraseNode(instructions, it);
-                if (unreachableLabel == UnreachableLabelLevel::Unreachable) {
-                    while (it->type != bibbleasm::AssemblerNode::Label) {
-                        it = eraseNode(instructions, it);
-                    }
-                }
-
-                iterate = false;
-                hasOptimized = true;
-            }
-
-            if (it - 1 < instructions.end()) {
-                if (checkJmpLabel(*it, *(it + 1))) {
+                if (unreachableLabel != UnreachableLabelLevel::References) {
                     it = eraseNode(instructions, it);
+                    if (unreachableLabel == UnreachableLabelLevel::Unreachable) {
+                        while (it->type != bibbleasm::AssemblerNode::Label) {
+                            it = eraseNode(instructions, it);
+                        }
+                    }
+
                     iterate = false;
                     hasOptimized = true;
                 }
-            }
 
-            if (iterate) ++it;
+                if (it - 1 < instructions.end()) {
+                    if (checkJmpLabel(*it, *(it + 1))) {
+                        it = eraseNode(instructions, it);
+                        iterate = false;
+                        hasOptimized = true;
+                    }
+                }
+
+                if (iterate) ++it;
+            }
         }
 
         if (hasOptimized) {
