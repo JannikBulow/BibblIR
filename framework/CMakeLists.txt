@@ -171,7 +171,7 @@ set_target_properties(BibblIR-framework-shared PROPERTIES
     SOVERSION 0
 )
 set_target_properties(BibblIR-framework-static PROPERTIES
-    EXPORT_NAME IR
+    EXPORT_NAME IRStatic
     OUTPUT_NAME "bibblir-aio"
     VERSION 0.1.0
 )
