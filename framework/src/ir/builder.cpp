@@ -15,6 +15,7 @@
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/store_instruction.h"
+#include "BibblIR/ir/instruction/string_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/basicblock.h"
@@ -232,6 +233,14 @@ namespace bibblir {
 
     UnaryInstruction* IRBuilder::createNot(Value* value) {
         UnaryInstruction* instruction = new UnaryInstruction(mInsertPoint, value, UnaryInstruction::NOT);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    StringInstruction* IRBuilder::createStrlen(Value* value) {
+        StringInstruction* instruction = new StringInstruction(mInsertPoint, StringInstruction::Length, value);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 

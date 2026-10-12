@@ -27,6 +27,7 @@ namespace bibblir {
     class PhiInstruction;
     class ReturnInstruction;
     class StoreInstruction;
+    class StringInstruction;
     class UnaryInstruction;
 
     class BIBBLIR_EXPORT IRBuilder {
@@ -69,6 +70,9 @@ namespace bibblir {
         UnaryInstruction* createNeg(Value* value);
         UnaryInstruction* createAbs(Value* value);
         UnaryInstruction* createNot(Value* value);
+
+
+        StringInstruction* createStrlen(Value* value);
 
 
         BranchInstruction* createBr(BasicBlock* destination);
