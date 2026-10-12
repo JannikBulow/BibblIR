@@ -5,6 +5,7 @@
 #include "BibblIR/type/class_type.h"
 #include "BibblIR/type/float_type.h"
 #include "BibblIR/type/function_type.h"
+#include "BibblIR/type/handle_type.h"
 #include "BibblIR/type/integer_type.h"
 #include "BibblIR/type/string_type.h"
 #include "BibblIR/type/type.h"
@@ -42,6 +43,10 @@ namespace bibblir {
 
     Type* Type::GetVoidType() {
         return GetType<VoidType>();
+    }
+
+    Type* Type::GetHandleType() {
+        return GetType<HandleType>();
     }
 
     Type* Type::GetIntegerType(int bytes) {

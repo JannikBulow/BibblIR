@@ -39,6 +39,7 @@ namespace bibblir {
         uint8_t getIDByte() const { return static_cast<uint8_t>(getID()); }
 
         virtual bool isVoidType() const { return false; }
+        virtual bool isHandleType() const { return false; }
         virtual bool isIntegerType() const { return false; }
         virtual bool isFloatType() const { return false; }
         virtual bool isBooleanType() const { return false; }
@@ -48,6 +49,7 @@ namespace bibblir {
         virtual bool isStringType() const { return false; }
 
         static Type* GetVoidType();
+        static Type* GetHandleType();
         static Type* GetIntegerType(int bytes);
         static Type* GetFloatType(int bytes);
         static Type* GetBooleanType();
