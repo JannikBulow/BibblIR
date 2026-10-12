@@ -47,6 +47,7 @@ namespace bibblir {
         void visit(PhiInstruction& instruction) override;
         void visit(ReturnInstruction& instruction) override;
         void visit(StoreInstruction& instruction) override;
+        void visit(StringInstruction& instruction) override;
         void visit(UnaryInstruction& instruction) override;
     };
 }

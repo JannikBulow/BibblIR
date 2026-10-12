@@ -17,6 +17,7 @@
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/store_instruction.h"
+#include "BibblIR/ir/instruction/string_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/class.h"
@@ -436,7 +437,22 @@ namespace bibblir {
                 }
             }
         } else if (auto* getelement = dynamic_cast<GetElementInstruction*>(instruction.getVariable())) {
-            mInstBuilder->arrayget(reg, GetAlternative<Register>(getelement->getArray()->getEmittedValue()), GetAlternative<Register>(getelement->getIndex()->getEmittedValue()));
+            ScratchManager scratchManager(instruction);
+
+            Register arrayReg(-1);
+
+            if (IsAlternative<Register>(getelement->getArray()->getEmittedValue())) {
+                arrayReg = GetAlternative<Register>(getelement->getArray()->getEmittedValue());
+            } else {
+                arrayReg = scratchManager.get()->toOperand();
+                bytecode::Move(*mInstBuilder, arrayReg, *getelement->getArray()->getEmittedValue());
+            }
+
+            if (getelement->getArray()->getType()->isArrayType()) {
+                mInstBuilder->arrayget(reg, arrayReg, GetAlternative<Register>(getelement->getIndex()->getEmittedValue()));
+            } else if (getelement->getArray()->getType()->isStringType()) {
+                mInstBuilder->strget(reg, arrayReg, GetAlternative<Register>(getelement->getIndex()->getEmittedValue()));
+            }
         } else {
             bytecode::Move(*mInstBuilder, reg, *instruction.getVariable()->getEmittedValue());
         }
@@ -512,6 +528,42 @@ namespace bibblir {
             mInstBuilder->arrayset(GetAlternative<Register>(getelement->getArray()->getEmittedValue()), indexReg, valueReg);
         } else {
             bytecode::Move(*mInstBuilder, *instruction.getVariable()->getEmittedValue(), *instruction.getValue()->getEmittedValue());
+        }
+    }
+
+    void CodegenVisitor::visit(StringInstruction& instruction) {
+        if (instruction.isConstantFolded()) {
+            instruction.mEmittedValue = Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
+            return;
+        }
+
+        ScratchManager scratchManager(instruction);
+
+        Register stringReg(-1);
+        Register otherReg(-1);
+
+        if (IsAlternative<Register>(instruction.getStringOperand()->getEmittedValue())) {
+            stringReg = GetAlternative<Register>(instruction.getStringOperand()->getEmittedValue());
+        } else {
+            stringReg = scratchManager.get()->toOperand();
+            bytecode::Move(*mInstBuilder, stringReg, *instruction.getStringOperand()->getEmittedValue());
+        }
+
+        if (instruction.getOtherOperand()) {
+            if (IsAlternative<Register>(instruction.getOtherOperand()->getEmittedValue())) {
+                otherReg = GetAlternative<Register>(instruction.getOtherOperand()->getEmittedValue());
+            } else {
+                otherReg = scratchManager.get()->toOperand();
+                bytecode::Move(*mInstBuilder, otherReg, *instruction.getOtherOperand()->getEmittedValue());
+            }
+        }
+
+        Register dst = instruction.mVReg->toOperand();
+
+        switch (instruction.getOperator()) {
+            case StringInstruction::Length:
+                mInstBuilder->strlength(dst, stringReg);
+                break;
         }
     }
 

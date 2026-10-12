@@ -14,6 +14,7 @@
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/store_instruction.h"
+#include "BibblIR/ir/instruction/string_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/class.h"
@@ -264,6 +265,17 @@ namespace bibblir {
 
     void PrintVisitor::visit(StoreInstruction& instruction) {
         mStream << std::format("store {} -> {}", instruction.mValue->identifier(), instruction.mVariable->identifier());
+    }
+
+    void PrintVisitor::visit(StringInstruction& instruction) {
+        std::string operation;
+        switch (instruction.getOperator()) {
+            case StringInstruction::Length:
+                operation = std::format("strlen {}", instruction.getStringOperand()->identifier());
+                break;
+        }
+
+        mStream << std::format("{} = {}", instruction.getName(instruction.mValueId), operation);
     }
 
     void PrintVisitor::visit(UnaryInstruction& instruction) {

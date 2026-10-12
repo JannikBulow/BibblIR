@@ -33,6 +33,7 @@ namespace bibblir {
     class PhiInstruction;
     class ReturnInstruction;
     class StoreInstruction;
+    class StringInstruction;
     class UnaryInstruction;
 
     class BIBBLIR_EXPORT Visitor {
@@ -69,6 +70,7 @@ namespace bibblir {
         virtual void visit(PhiInstruction& instruction) = 0;
         virtual void visit(ReturnInstruction& instruction) = 0;
         virtual void visit(StoreInstruction& instruction) = 0;
+        virtual void visit(StringInstruction& instruction) = 0;
         virtual void visit(UnaryInstruction& instruction) = 0;
     };
 }

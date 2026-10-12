@@ -27,6 +27,7 @@ set(SOURCES
     src/ir/instruction/phi_instruction.cpp
     src/ir/instruction/return_instruction.cpp
     src/ir/instruction/store_instruction.cpp
+    src/ir/instruction/string_instruction.cpp
     src/ir/instruction/unary_instruction.cpp
 
     src/ir/basicblock.cpp
@@ -88,6 +89,7 @@ set(HEADERS
     include/BibblIR/ir/instruction/phi_instruction.h
     include/BibblIR/ir/instruction/return_instruction.h
     include/BibblIR/ir/instruction/store_instruction.h
+    include/BibblIR/ir/instruction/string_instruction.h
     include/BibblIR/ir/instruction/unary_instruction.h
 
     include/BibblIR/ir/abstract_class.h

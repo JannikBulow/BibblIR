@@ -2,6 +2,7 @@
 
 #include "BibblIR/ir/constant/constant_boolean.h"
 #include "BibblIR/ir/constant/constant_int.h"
+#include "BibblIR/ir/constant/constant_string.h"
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
@@ -14,6 +15,7 @@
 #include "BibblIR/ir/instruction/phi_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 #include "BibblIR/ir/instruction/store_instruction.h"
+#include "BibblIR/ir/instruction/string_instruction.h"
 #include "BibblIR/ir/instruction/unary_instruction.h"
 
 #include "BibblIR/ir/class.h"
@@ -291,6 +293,16 @@ namespace bibblir {
 
     void ConstantFoldingPass::visit(StoreInstruction& instruction) {
 
+    }
+
+    void ConstantFoldingPass::visit(StringInstruction& instruction) {
+        if (auto* constant = dynamic_cast<ConstantString*>(instruction.getStringOperand()); constant && (!instruction.getOtherOperand() || instruction.getOtherOperand()->isConstantFolded())) {
+            switch (instruction.getOperator()) {
+                case StringInstruction::Length:
+                    instruction.setConstantFoldedValue(constant->getValue().length());
+                    break;
+            }
+        }
     }
 
     void ConstantFoldingPass::visit(UnaryInstruction& instruction) {
