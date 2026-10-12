@@ -14,6 +14,7 @@ namespace bibblir {
 
     class ConstantBoolean;
     class ConstantInt;
+    class ConstantString;
 
     class BinaryInstruction;
     class BranchInstruction;
@@ -40,6 +41,7 @@ namespace bibblir {
 
         ConstantBoolean* createConstantBoolean(bool value);
         ConstantInt* createConstantInt(intmax_t value, Type* type);
+        ConstantString* createConstantString(std::string value);
 
         BinaryInstruction* createAdd(Value* left, Value* right);
         BinaryInstruction* createSub(Value* left, Value* right);

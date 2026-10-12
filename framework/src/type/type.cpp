@@ -6,6 +6,7 @@
 #include "BibblIR/type/float_type.h"
 #include "BibblIR/type/function_type.h"
 #include "BibblIR/type/integer_type.h"
+#include "BibblIR/type/string_type.h"
 #include "BibblIR/type/type.h"
 #include "BibblIR/type/void_type.h"
 
@@ -93,5 +94,9 @@ namespace bibblir {
                 return std::make_unique<ClassType>(std::move(moduleName), std::move(name));
             }
         >(std::move(moduleName), std::move(name));
+    }
+
+    Type* Type::GetStringType() {
+        return GetType<StringType>();
     }
 }

@@ -107,6 +107,10 @@ namespace bibblir {
         constant.setConstantFoldedValue(constant.getValue());
     }
 
+    void ConstantFoldingPass::visit(ConstantString& constant) {
+
+    }
+
     void ConstantFoldingPass::visit(BinaryInstruction& instruction) {
         if (instruction.getLeft()->isConstantFolded() && instruction.getRight()->isConstantFolded()) {
             if (instruction.getLeft()->getType()->isIntegerType()) {

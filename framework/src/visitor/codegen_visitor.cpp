@@ -4,6 +4,7 @@
 
 #include "BibblIR/ir/constant/constant_boolean.h"
 #include "BibblIR/ir/constant/constant_int.h"
+#include "BibblIR/ir/constant/constant_string.h"
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
@@ -188,6 +189,10 @@ namespace bibblir {
         constant.mEmittedValue = Immediate(constant.mValue);
     }
 
+    void CodegenVisitor::visit(ConstantString& constant) {
+        constant.mEmittedValue = ConstPoolIndex(getStringConstant(constant.mValue));
+    }
+
     void CodegenVisitor::visit(BinaryInstruction& instruction) {
         if (instruction.isConstantFolded()) {
             instruction.mEmittedValue = Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
@@ -297,6 +302,32 @@ namespace bibblir {
                 case BinaryInstruction::LE:
                 case BinaryInstruction::GE:
                     mInstBuilder->fcmp(dst, leftReg, rightReg);
+                    break;
+            }
+        } else if (instruction.mLeft->getType()->isStringType()) {
+            switch (instruction.mOperator) {
+                case BinaryInstruction::ADD:
+                case BinaryInstruction::SUB:
+                case BinaryInstruction::MUL:
+                case BinaryInstruction::SDIV:
+                case BinaryInstruction::UDIV:
+                case BinaryInstruction::SMOD:
+                case BinaryInstruction::UMOD:
+                case BinaryInstruction::AND:
+                case BinaryInstruction::OR:
+                case BinaryInstruction::XOR:
+                case BinaryInstruction::SHL:
+                case BinaryInstruction::SHR:
+                case BinaryInstruction::SAR:
+                    assert(false);
+                    break;
+                case BinaryInstruction::EQ:
+                case BinaryInstruction::NE:
+                case BinaryInstruction::LT:
+                case BinaryInstruction::GT:
+                case BinaryInstruction::LE:
+                case BinaryInstruction::GE:
+                    mInstBuilder->strcmp_(dst, leftReg, rightReg);
                     break;
             }
         }

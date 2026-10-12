@@ -45,6 +45,7 @@ namespace bibblir {
         virtual bool isFunctionType() const { return false; }
         virtual bool isArrayType() const { return false; }
         virtual bool isClassType() const { return false; }
+        virtual bool isStringType() const { return false; }
 
         static Type* GetVoidType();
         static Type* GetIntegerType(int bytes);
@@ -53,6 +54,7 @@ namespace bibblir {
         static Type* GetFunctionType(Type* returnType, const std::vector<Type*>& argumentTypes);
         static Type* GetArrayType(Type* elementType);
         static Type* GetClassType(std::string moduleName, std::string name);
+        static Type* GetStringType();
 
     protected:
         Type(size_t sizeInBytes, std::string name)

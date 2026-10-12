@@ -137,6 +137,10 @@ namespace bibblir {
 
     }
 
+    void PrintVisitor::visit(ConstantString& constant) {
+        
+    }
+
     void PrintVisitor::visit(BinaryInstruction& instruction) {
         std::string operatorSymbol;
         switch (instruction.getOperator()) {

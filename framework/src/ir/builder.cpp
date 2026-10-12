@@ -2,6 +2,7 @@
 
 #include "BibblIR/ir/constant/constant_boolean.h"
 #include "BibblIR/ir/constant/constant_int.h"
+#include "BibblIR/ir/constant/constant_string.h"
 
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
@@ -20,7 +21,6 @@
 #include "BibblIR/ir/builder.h"
 
 #include "BibblIR/module.h"
-
 
 namespace bibblir {
     IRBuilder::IRBuilder(Module& module)
@@ -48,6 +48,14 @@ namespace bibblir {
 
     ConstantInt* IRBuilder::createConstantInt(intmax_t value, Type* type) {
         ConstantInt* constant = new ConstantInt(mModule, value, type);
+
+        mModule.insertConstant(ValuePtr(constant));
+
+        return constant;
+    }
+
+    ConstantString* IRBuilder::createConstantString(std::string value) {
+        ConstantString* constant = new ConstantString(mModule, std::move(value));
 
         mModule.insertConstant(ValuePtr(constant));
 

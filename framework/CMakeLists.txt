@@ -14,6 +14,7 @@ set(SOURCES
 
     src/ir/constant/constant_boolean.cpp
     src/ir/constant/constant_int.cpp
+    src/ir/constant/constant_string.cpp
 
     src/ir/instruction/binary_instruction.cpp
     src/ir/instruction/branch_instruction.cpp
@@ -59,6 +60,7 @@ set(SOURCES
     src/type/float_type.cpp
     src/type/function_type.cpp
     src/type/integer_type.cpp
+    src/type/string_type.cpp
     src/type/type.cpp
     src/type/void_type.cpp
 
@@ -73,6 +75,7 @@ set(HEADERS
 
     include/BibblIR/ir/constant/constant_boolean.h
     include/BibblIR/ir/constant/constant_int.h
+    include/BibblIR/ir/constant/constant_string.h
 
     include/BibblIR/ir/instruction/binary_instruction.h
     include/BibblIR/ir/instruction/branch_instruction.h
@@ -124,6 +127,7 @@ set(HEADERS
     include/BibblIR/type/float_type.h
     include/BibblIR/type/function_type.h
     include/BibblIR/type/integer_type.h
+    include/BibblIR/type/string_type.h
     include/BibblIR/type/type.h
     include/BibblIR/type/void_type.h
 

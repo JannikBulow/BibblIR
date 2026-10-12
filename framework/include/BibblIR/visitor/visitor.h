@@ -20,6 +20,7 @@ namespace bibblir {
 
     class ConstantBoolean;
     class ConstantInt;
+    class ConstantString;
 
     class BinaryInstruction;
     class BranchInstruction;
@@ -55,6 +56,7 @@ namespace bibblir {
 
         virtual void visit(ConstantBoolean& constant) = 0;
         virtual void visit(ConstantInt& constant) = 0;
+        virtual void visit(ConstantString& constant) = 0;
 
         virtual void visit(BinaryInstruction& instruction) = 0;
         virtual void visit(BranchInstruction& instruction) = 0;
