@@ -565,6 +565,8 @@ namespace bibblir {
                 mInstBuilder->strlength(dst, stringReg);
                 break;
         }
+
+        instruction.mEmittedValue = dst;
     }
 
     void CodegenVisitor::visit(UnaryInstruction& instruction) {
