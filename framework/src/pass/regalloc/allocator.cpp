@@ -91,7 +91,6 @@ namespace bibblir {
                             result.push_back(v);
                             availableVRegs.erase(availableVRegs.begin() + idx);
                         }
-                        std::ranges::reverse(result);
                         return result;
                     }
                 }
