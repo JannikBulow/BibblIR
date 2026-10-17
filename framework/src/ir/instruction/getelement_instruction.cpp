@@ -39,7 +39,11 @@ namespace bibblir {
         , mIndex(index)
         , mValueId(mModule.getNextValueId()) {
         assert(mArray->getType()->isArrayType() || mArray->getType()->isStringType());
-        mType = static_cast<ArrayType*>(mArray->getType())->getElementType();
         mRequiresVReg = false;
+        if (mArray->getType()->isStringType()) {
+            mType = Type::GetIntegerType(1); // char type is a 1byte int
+        } else if (mArray->getType()->isArrayType()) {
+            mType = static_cast<ArrayType*>(mArray->getType())->getElementType();
+        }
     }
 }
