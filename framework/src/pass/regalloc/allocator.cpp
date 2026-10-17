@@ -81,16 +81,22 @@ namespace bibblir {
                     }
 
                     if (i - runStart + 1 == count) {
+                        std::vector<size_t> toErase(order.begin() + runStart, order.begin() + i + 1);
+
                         std::vector<VReg*> result;
                         result.reserve(count);
-                        std::vector<size_t> toErase(order.begin() + runStart, order.begin() + i + 1);
-                        std::ranges::sort(toErase, std::greater<>());
+
                         for (size_t idx : toErase) {
                             VReg* v = availableVRegs[idx];
                             v->mUses++;
                             result.push_back(v);
+                        }
+
+                        std::ranges::sort(toErase, std::greater<>());
+                        for (size_t idx : toErase) {
                             availableVRegs.erase(availableVRegs.begin() + idx);
                         }
+
                         return result;
                     }
                 }
@@ -105,9 +111,9 @@ namespace bibblir {
         };
 
         std::vector<Value*> activeValues;
-        auto expireOldIntervals = [&activeValues, &availableVRegs](int i) {
-            std::erase_if(activeValues, [i, &availableVRegs](Value* value) {
-                if (value->mInterval.second <= i) {
+        auto expireOldIntervals = [&activeValues, &availableVRegs](int i, bool strict = false) {
+            std::erase_if(activeValues, [i, strict, &availableVRegs](Value* value) {
+                if (strict ? value->mInterval.second < i : value->mInterval.second <= i) {
                     if (value->mVReg) availableVRegs.push_back(value->mVReg);
                     for (VReg* vreg : value->mVRegRange) {
                         availableVRegs.push_back(vreg);
@@ -136,6 +142,13 @@ namespace bibblir {
             }
         }
 
+        auto activate = [&activeValues](Value* value) {
+            activeValues.push_back(value);
+            std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
+                return lhs->mInterval.second < rhs->mInterval.second;
+            });
+        };
+
         for (auto value : values) {
             expireOldIntervals(value->mId);
 
@@ -153,27 +166,19 @@ namespace bibblir {
                     phi->mVReg = getNextFreeVReg(phi->mPreferredRegister);
                 }
 
-                activeValues.push_back(phi);
-                std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
-                    return lhs->mInterval.second < rhs->mInterval.second;
-                });
+                activate(phi);
             } else {
-                if (value->requiresVReg()) {
-                    activeValues.push_back(value);
-                    std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
-                        return lhs->mInterval.second < rhs->mInterval.second;
-                    });
+                if (value->requiresVRegRange()) {
+                    value->mVRegRange = getNextFreeVRegRange(value->mVRegRangeSize);
+                    expireOldIntervals(value->mId);
+                }
 
+                if (value->requiresVReg()) {
                     value->mVReg = getNextFreeVReg(value->mPreferredRegister);
                 }
 
-                if (value->requiresVRegRange()) {
-                    activeValues.push_back(value);
-                    std::ranges::sort(activeValues, [](Value* lhs, Value* rhs) {
-                        return lhs->mInterval.second < rhs->mInterval.second;
-                    });
-
-                    value->mVRegRange = getNextFreeVRegRange(value->mVRegRangeSize);
+                if (value->requiresVRegRange() || value->requiresVReg()) {
+                    activate(value);
                 }
             }
         }
