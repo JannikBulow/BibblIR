@@ -38,7 +38,7 @@ namespace bibblir {
         , mArray(array)
         , mIndex(index)
         , mValueId(mModule.getNextValueId()) {
-        assert(mArray->getType()->isArrayType());
+        assert(mArray->getType()->isArrayType() || mArray->getType()->isStringType());
         mType = static_cast<ArrayType*>(mArray->getType())->getElementType();
         mRequiresVReg = false;
     }
