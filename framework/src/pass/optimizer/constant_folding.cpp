@@ -113,6 +113,10 @@ namespace bibblir {
 
     }
 
+    void ConstantFoldingPass::visit(ArrayInstruction& instruction) {
+
+    }
+
     void ConstantFoldingPass::visit(BinaryInstruction& instruction) {
         if (instruction.getLeft()->isConstantFolded() && instruction.getRight()->isConstantFolded()) {
             if (instruction.getLeft()->getType()->isIntegerType()) {

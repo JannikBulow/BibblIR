@@ -6,6 +6,7 @@
 #include "BibblIR/ir/constant/constant_int.h"
 #include "BibblIR/ir/constant/constant_string.h"
 
+#include "BibblIR/ir/instruction/array_instruction.h"
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
@@ -192,6 +193,44 @@ namespace bibblir {
 
     void CodegenVisitor::visit(ConstantString& constant) {
         constant.mEmittedValue = ConstPoolIndex(getStringConstant(constant.mValue));
+    }
+
+    void CodegenVisitor::visit(ArrayInstruction& instruction) {
+        if (instruction.isConstantFolded()) {
+            instruction.mEmittedValue = Immediate(static_cast<int64_t>(instruction.getConstantFoldedValue()));
+            return;
+        }
+
+        ScratchManager scratchManager(instruction);
+
+        Register arrayReg(-1);
+        Register otherReg(-1);
+
+        if (IsAlternative<Register>(instruction.getArrayOperand()->getEmittedValue())) {
+            arrayReg = GetAlternative<Register>(instruction.getArrayOperand()->getEmittedValue());
+        } else {
+            arrayReg = scratchManager.get()->toOperand();
+            bytecode::Move(*mInstBuilder, arrayReg, *instruction.getArrayOperand()->getEmittedValue());
+        }
+
+        if (instruction.getOtherOperand()) {
+            if (IsAlternative<Register>(instruction.getOtherOperand()->getEmittedValue())) {
+                otherReg = GetAlternative<Register>(instruction.getOtherOperand()->getEmittedValue());
+            } else {
+                otherReg = scratchManager.get()->toOperand();
+                bytecode::Move(*mInstBuilder, otherReg, *instruction.getOtherOperand()->getEmittedValue());
+            }
+        }
+
+        Register dst = instruction.mVReg->toOperand();
+
+        switch (instruction.getOperator()) {
+            case ArrayInstruction::Length:
+                mInstBuilder->arraylength(dst, arrayReg);
+                break;
+        }
+
+        instruction.mEmittedValue = dst;
     }
 
     void CodegenVisitor::visit(BinaryInstruction& instruction) {

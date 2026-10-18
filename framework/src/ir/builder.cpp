@@ -4,6 +4,7 @@
 #include "BibblIR/ir/constant/constant_int.h"
 #include "BibblIR/ir/constant/constant_string.h"
 
+#include "BibblIR/ir/instruction/array_instruction.h"
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
@@ -233,6 +234,14 @@ namespace bibblir {
 
     UnaryInstruction* IRBuilder::createNot(Value* value) {
         UnaryInstruction* instruction = new UnaryInstruction(mInsertPoint, value, UnaryInstruction::NOT);
+
+        mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
+
+        return instruction;
+    }
+
+    ArrayInstruction* IRBuilder::createArrayLength(Value* array) {
+        ArrayInstruction* instruction = new ArrayInstruction(mInsertPoint, ArrayInstruction::Length, array);
 
         mInsertPoint->insertValue(mInsertAfter, ValuePtr(instruction));
 

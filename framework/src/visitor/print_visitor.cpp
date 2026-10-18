@@ -3,6 +3,7 @@
 #include "BibblIR/ir/constant/constant_boolean.h"
 #include "BibblIR/ir/constant/constant_int.h"
 
+#include "BibblIR/ir/instruction/array_instruction.h"
 #include "BibblIR/ir/instruction/binary_instruction.h"
 #include "BibblIR/ir/instruction/branch_instruction.h"
 #include "BibblIR/ir/instruction/call_instruction.h"
@@ -140,6 +141,17 @@ namespace bibblir {
 
     void PrintVisitor::visit(ConstantString& constant) {
         
+    }
+
+    void PrintVisitor::visit(ArrayInstruction& instruction) {
+        std::string operation;
+        switch (instruction.getOperator()) {
+            case ArrayInstruction::Length:
+                operation = std::format("strlen {}", instruction.getArrayOperand()->identifier());
+                break;
+        }
+
+        mStream << std::format("{} = {}", instruction.getName(instruction.mValueId), operation);
     }
 
     void PrintVisitor::visit(BinaryInstruction& instruction) {

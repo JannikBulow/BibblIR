@@ -16,6 +16,7 @@ namespace bibblir {
     class ConstantInt;
     class ConstantString;
 
+    class ArrayInstruction;
     class BinaryInstruction;
     class BranchInstruction;
     class CallInstruction;
@@ -70,6 +71,9 @@ namespace bibblir {
         UnaryInstruction* createNeg(Value* value);
         UnaryInstruction* createAbs(Value* value);
         UnaryInstruction* createNot(Value* value);
+
+
+        ArrayInstruction* createArrayLength(Value* array);
 
 
         StringInstruction* createStrlen(Value* value);
