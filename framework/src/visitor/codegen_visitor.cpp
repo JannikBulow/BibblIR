@@ -505,7 +505,18 @@ namespace bibblir {
         if (auto* clas = dynamic_cast<ClassType*>(instruction.getType())) {
             mInstBuilder->newinstance(reg, getClassInfoConstant(std::string(clas->getModuleName()), std::string(clas->getClassName())));
         } else if (auto* array = dynamic_cast<ArrayType*>(instruction.getType())) {
-            mInstBuilder->newarray(reg, std::get<Register>(*instruction.getParameter()->getEmittedValue()), array->getElementType()->getIDByte());
+            ScratchManager scratchManager(instruction);
+
+            Register parameterReg(-1);
+
+            if (IsAlternative<Register>(instruction.getParameter()->getEmittedValue())) {
+                parameterReg = GetAlternative<Register>(instruction.getParameter()->getEmittedValue());
+            } else {
+                parameterReg = scratchManager.get()->toOperand();
+                bytecode::Move(*mInstBuilder, parameterReg, *instruction.getParameter()->getEmittedValue());
+            }
+
+            mInstBuilder->newarray(reg, parameterReg, array->getElementType()->getIDByte());
         }
 
         instruction.mEmittedValue = reg;
