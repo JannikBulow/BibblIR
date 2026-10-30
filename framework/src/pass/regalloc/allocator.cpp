@@ -1,5 +1,6 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
+#include "BibblIR/ir/instruction/call_instruction.h"
 #include "BibblIR/ir/instruction/getmember_instruction.h"
 #include "BibblIR/ir/instruction/phi_instruction.h"
 
@@ -110,6 +111,14 @@ namespace bibblir {
             return range;
         };
 
+        auto mustAvoidOperands = [](Value* value) {
+            if (!value->requiresVRegRange()) return false;
+            if (value->mVRegRangeSize > 1) return true;
+
+            auto* call = dynamic_cast<CallInstruction*>(value);
+            return call && !dynamic_cast<AbstractFunction*>(call->getCallee());
+        };
+
         std::vector<Value*> activeValues;
         auto expireOldIntervals = [&activeValues, &availableVRegs](int i, bool strict = false) {
             std::erase_if(activeValues, [i, strict, &availableVRegs](Value* value) {
@@ -150,7 +159,7 @@ namespace bibblir {
         };
 
         for (auto value : values) {
-            expireOldIntervals(value->mId);
+            expireOldIntervals(value->mId, mustAvoidOperands(value));
 
             if (auto* phi = dynamic_cast<PhiInstruction*>(value)) {
                 for (auto it = phi->mIncoming.rbegin(); it != phi->mIncoming.rend(); ++it) {
