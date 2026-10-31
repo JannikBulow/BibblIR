@@ -22,6 +22,10 @@ namespace bibblir {
         return mParameters;
     }
 
+    bool CallInstruction::calleeReturns() const {
+        return mCalleeReturns;
+    }
+
     std::vector<std::reference_wrapper<Value*>> CallInstruction::getOperands() {
         std::vector<std::reference_wrapper<Value*>> operands;
         operands.reserve(mParameters.size());
@@ -49,7 +53,8 @@ namespace bibblir {
         : Instruction(parent->getModule(), parent)
         , mCallee(callee)
         , mParameters(std::move(parameters))
-        , mValueId(mModule.getNextValueId()) {
+        , mValueId(mModule.getNextValueId())
+        , mCalleeReturns(true) {
         FunctionType* functionType = dynamic_cast<FunctionType*>(mCallee->getType());
         assert(functionType);
 
@@ -64,5 +69,9 @@ namespace bibblir {
         }
 
         mVRegRangeSize = mParameters.size();
+
+        if (auto* func = dynamic_cast<AbstractFunction*>(mCallee)) {
+            if (func->properties().noreturn) mCalleeReturns = false;
+        }
     }
 }

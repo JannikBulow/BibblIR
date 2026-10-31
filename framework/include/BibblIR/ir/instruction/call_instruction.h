@@ -14,6 +14,8 @@ namespace bibblir {
         Value* getCallee() const;
         const std::vector<Value*>& getParameters() const;
 
+        bool calleeReturns() const;
+
         std::vector<std::reference_wrapper<Value*>> getOperands() override;
 
         std::string identifier() const override;
@@ -24,6 +26,8 @@ namespace bibblir {
         Value* mCallee;
         std::vector<Value*> mParameters;
         int mValueId;
+
+        bool mCalleeReturns;
 
         CallInstruction(BasicBlock* parent, Value* callee, std::vector<Value*> parameters);
     };
