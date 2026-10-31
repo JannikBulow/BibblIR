@@ -1,6 +1,7 @@
 // Copyright 2026 Jannik Laugmand Bülow
 
 #include "BibblIR/ir/instruction/branch_instruction.h"
+#include "BibblIR/ir/instruction/call_instruction.h"
 #include "BibblIR/ir/instruction/return_instruction.h"
 
 #include "BibblIR/ir/basicblock.h"
@@ -48,6 +49,7 @@ namespace bibblir {
 
     bool BasicBlock::hasTerminator() const {
         return std::any_of(mValueList.rbegin(), mValueList.rend(), [](const ValuePtr& value) {
+            if (auto* call = dynamic_cast<CallInstruction*>(value.get()); call && call->calleeReturns()) return true;
             return dynamic_cast<BranchInstruction*>(value.get()) || dynamic_cast<ReturnInstruction*>(value.get());
         });
     }
