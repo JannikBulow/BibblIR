@@ -12,6 +12,9 @@ namespace bibblir {
     class BIBBLIR_EXPORT PassPipeline {
         friend class PassManager;
     public:
+        PassPipeline(const PassPipeline&) = delete;
+        PassPipeline& operator=(const PassPipeline&) = delete;
+
         void run(Module& module);
 
     private:
@@ -22,6 +25,9 @@ namespace bibblir {
 
     class BIBBLIR_EXPORT PassManager {
     public:
+        PassManager(const PassManager&) = delete;
+        PassManager& operator=(const PassManager&) = delete;
+
         explicit PassManager(PassRegistry& passRegistry);
 
         void addPass(PassPtr pass);

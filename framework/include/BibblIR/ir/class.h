@@ -14,6 +14,9 @@ namespace bibblir {
         friend class Method;
         friend class PrintVisitor;
     public:
+        Class(const Class&) = delete;
+        Class& operator=(const Class&) = delete;
+        
         static Class* Create(Module& module, std::string name);
 
         const std::vector<FieldPtr>& getFields() const override;
