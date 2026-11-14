@@ -10,6 +10,9 @@
 namespace bibblir {
     class BIBBLIR_EXPORT ExternalClass : public AbstractClass {
     public:
+        ExternalClass(const ExternalClass&) = delete;
+        ExternalClass& operator=(const ExternalClass&) = delete;
+
         static ExternalClass* Create(Module& module, std::string moduleName, std::string name);
 
         std::string_view getModuleName() const override;
