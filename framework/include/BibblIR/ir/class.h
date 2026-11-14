@@ -8,7 +8,7 @@
 #include "BibblIR/ir/method.h"
 
 namespace bibblir {
-    class Class : public AbstractClass {
+    class BIBBLIR_EXPORT Class : public AbstractClass {
         friend class CodegenVisitor;
         friend class Field;
         friend class Method;
