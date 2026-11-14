@@ -46,6 +46,9 @@ namespace bibblir {
 
         void accept(Visitor& visitor) override;
 
+        BasicBlock(const BasicBlock&) = delete;
+        BasicBlock& operator=(const BasicBlock&) = delete;
+
     private:
         struct ParallelMove {
             bibbleasm::Operand dst;
