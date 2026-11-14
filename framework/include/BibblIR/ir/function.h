@@ -51,6 +51,9 @@ namespace bibblir {
 
         void accept(Visitor& visitor) override;
 
+        Function(const Function&) = delete;
+        Function& operator=(const Function&) = delete;
+
     private:
         struct Scratch {
             VReg* vreg;
